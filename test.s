@@ -12,6 +12,8 @@ constant INPUTS_LO($07C4)
 
 constant L_INPUT($00002000)
 constant R_INPUT($00001000)
+constant CL_INPUT($00000200)
+constant CR_INPUT($00000100)
 
 constant INJECTED_RAM_HI($8000)
 constant X_BAC($02B0)
@@ -38,8 +40,8 @@ Start:
 	srl t1, t1, $08 // shift 4 bits to have an easier time anding
 
 	// check L press 
-	andi t1, t1, L_INPUT
-	blez t1, not_L 
+	andi t1, t1, CL_INPUT
+	blez t1, not_CL 
 	nop // delay slot 
 
 	lui t3, GLOVER_XYZ_HI // address for glover ram start 
@@ -53,7 +55,7 @@ Start:
 
 	lw t2, GLOVER_Z_LO(t3) // load Z position 
 	sw t2, Z_BAC(t1)
-not_L:
+not_CL:
 
 	lui t3, INPUTS_HI // inputs bit 
 	lw t1, INPUTS_LO(t3)
@@ -61,8 +63,8 @@ not_L:
 	srl t1, t1, $08 // shift 4 bits to have an easier time anding
 
 	// check R press 
-	andi t1, t1, R_INPUT
-	blez t1, not_R 
+	andi t1, t1, CR_INPUT
+	blez t1, not_CR 
 	nop // delay slot 
 
 	lui t3, GLOVER_XYZ_HI // address for glover ram start 
@@ -80,7 +82,7 @@ not_L:
 	lw t2, Z_BAC(t1) // load Z position 
 	sw t2, GLOVER_Z_LO(t3)
 	sw t2, BALL_Z_LO(t4)
-not_R:
+not_CR:
 
 	// return
 	lui t3, $B078 // set up direct load for return address
