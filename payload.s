@@ -1,6 +1,6 @@
 arch n64.cpu
 endian msb
-output "payload.bin", create
+output "./bin/payload.bin", create
 
 origin $00000000
 base $B0780000

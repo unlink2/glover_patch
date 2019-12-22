@@ -1,3 +1,3 @@
-bin:
+glover_patch:
 	bass payload.s
-	./glovepatch.py ../Glover\ \(U\)\ \[b1\].z64 ./payload.bin ./test.z64
+	./glovepatch.py ./rom/glover_base_ntsc.z64 ./bin/payload.bin ./rom/test.z64
