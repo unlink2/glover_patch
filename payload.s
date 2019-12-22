@@ -10,6 +10,7 @@ include "lib/N64.INC" // Include N64 Definitions
 constant INPUTS_HI($BFC0)
 constant INPUTS_LO($07C4)
 
+constant L_INPUT($15)
 constant CL_INPUT($11)
 constant CR_INPUT($10)
 constant START_INPUT($1C)
@@ -43,12 +44,17 @@ macro read_input(shift) {
 	andi t1, t1, $01  // check button press
 }
 
+// removes the pause menu as soon as it wants to appear 
+macro disable_pause() {
+
+}
+
 start:
 	// jal $80178E98 // call the function we are replacing
 	nop
 
 	// check start input
-	read_input(START_INPUT)
+	read_input(L_INPUT)
 	blez t1, not_start
 	nop 
 
@@ -96,7 +102,7 @@ not_start:
 	lw ra, return(t3) // load it 
 	jr ra // return
 	nop // need a nop after jr
-rext:
+text:
   db "Hello World!"
 return:
   dw $8013F378
