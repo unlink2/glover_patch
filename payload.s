@@ -10,10 +10,9 @@ include "lib/N64.INC" // Include N64 Definitions
 constant INPUTS_HI($BFC0)
 constant INPUTS_LO($07C4)
 
-constant L_INPUT($00002000)
-constant R_INPUT($00001000)
-constant CL_INPUT($00000200)
-constant CR_INPUT($00000100)
+constant CL_INPUT($11)
+constant CR_INPUT($10)
+constant START_INPUT($1C)
 
 constant INJECTED_RAM_HI($8000)
 constant X_BAC($02B0)
@@ -30,17 +29,30 @@ constant BALL_X_LO($F9AC)
 constant BALL_Z_LO($F9B0)
 constant BALL_Y_LO($F9B4)
 
-Start:
+// reads inputs, shifts by N shifts
+// then ands
+// side effects:
+//	uses t3 and t1
+// returns 
+// 	t1 == 0 if not pressed 
+//	t1 != 0 if pressed
+macro read_input(shift) {
+	lui t3, INPUTS_HI // inputs bits 
+	lw t1, INPUTS_LO(t3) // load inputs value
+	srl t1, t1, {shift} // shift by N bits to get the pressed bit in the right position 
+	andi t1, t1, $01  // check button press
+}
+
+start:
 	// jal $80178E98 // call the function we are replacing
 	nop
 
-	lui t3, INPUTS_HI // inputs bit 
-	lw t1, INPUTS_LO(t3)
+	// check start input
+	read_input(START_INPUT)
+	blez t1, not_start
+	nop 
 
-	srl t1, t1, $08 // shift 4 bits to have an easier time anding
-
-	// check L press 
-	andi t1, t1, CL_INPUT
+	read_input(CL_INPUT)
 	blez t1, not_CL 
 	nop // delay slot 
 
@@ -56,14 +68,8 @@ Start:
 	lw t2, GLOVER_Z_LO(t3) // load Z position 
 	sw t2, Z_BAC(t1)
 not_CL:
-
-	lui t3, INPUTS_HI // inputs bit 
-	lw t1, INPUTS_LO(t3)
-
-	srl t1, t1, $08 // shift 4 bits to have an easier time anding
-
-	// check R press 
-	andi t1, t1, CR_INPUT
+	
+	read_input(CR_INPUT)
 	blez t1, not_CR 
 	nop // delay slot 
 
@@ -83,13 +89,14 @@ not_CL:
 	sw t2, GLOVER_Z_LO(t3)
 	sw t2, BALL_Z_LO(t4)
 not_CR:
+not_start:
 
 	// return
 	lui t3, $B078 // set up direct load for return address
-	lw ra, Return(t3) // load it 
+	lw ra, return(t3) // load it 
 	jr ra // return
-	nop // need a nop after jr??
-Text:
+	nop // need a nop after jr
+rext:
   db "Hello World!"
-Return:
+return:
   dw $8013F378
