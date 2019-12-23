@@ -54,7 +54,7 @@ start:
 	nop
 
 	// check start input
-	read_input(L_INPUT)
+	read_input(START_INPUT)
 	blez t1, not_start
 	nop 
 

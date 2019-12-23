@@ -22,6 +22,11 @@ for i in range(0, len(jump)):
 for i in range(0, len(payload)):
     rom[payload_address+i] = payload[i]
 
+# same as this gs code:
+# 801396D0 0000
+# 801396D1 0000
+# 801396D2 0000
+# 801396D3 0000
 rom[force_easy_ball] = 0x00
 rom[force_easy_ball+1] = 0x00
 rom[force_easy_ball+2] = 0x00
