@@ -50,9 +50,14 @@ macro disable_pause() {
 }
 
 start:
-	// jal $80178E98 // call the function we are replacing
-	nop
-
+	lw ra, after_original_call(ra) // next return address
+	
+	// call original function 
+	lui t3, $B078 // set up direct load for original function address
+	lw t3, original(t3) // load it 
+	jr t3 // return
+	nop // need a nop after jr
+after:
 	// check start input
 	read_input(START_INPUT)
 	blez t1, not_start
@@ -96,7 +101,6 @@ not_CL:
 	sw t2, BALL_Z_LO(t4)
 not_CR:
 not_start:
-
 	// return
 	lui t3, $B078 // set up direct load for return address
 	lw ra, return(t3) // load it 
@@ -106,3 +110,7 @@ text:
   db "Hello World!"
 return:
   dw $8013F378
+original:
+  dw $80178E98
+after_original_call:
+  dw after
