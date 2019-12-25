@@ -17,18 +17,18 @@ constant START_INPUT($1C)
 
 constant INJECTED_RAM_HI($8000)
 constant X_BAC($02B0)
-constant Z_BAC($02B4)
-constant Y_BAC($02B8)
+constant Y_BAC($02B4)
+constant Z_BAC($02B8)
 
 constant GLOVER_XYZ_HI($8029)
 constant GLOVER_X_LO($030C)
-constant GLOVER_Z_LO($0310)
-constant GLOVER_Y_LO($0314)
+constant GLOVER_Y_LO($0310)
+constant GLOVER_Z_LO($0314)
 
 constant BALL_XYZ_HI($802A)
 constant BALL_X_LO($F9AC)
-constant BALL_Z_LO($F9B0)
-constant BALL_Y_LO($F9B4)
+constant BALL_Y_LO($F9B0)
+constant BALL_Z_LO($F9B4)
 
 // reads inputs, shifts by N shifts
 // then ands
