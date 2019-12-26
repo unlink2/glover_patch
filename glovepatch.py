@@ -2,6 +2,7 @@
 
 import sys
 
+import cksm
 from pathlib import Path
 
 if len(sys.argv) < 4:
@@ -32,7 +33,9 @@ rom[force_easy_ball+1] = 0x00
 rom[force_easy_ball+2] = 0x00
 rom[force_easy_ball+3] = 0x00
 
+buf = bytearray(rom)
+cksm.update_checksum(buf)
+
 f = open(sys.argv[3], 'w+b')
-binary_format = bytearray(rom)
-f.write(binary_format)
+f.write(buf)
 f.close()

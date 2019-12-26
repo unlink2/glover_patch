@@ -2,3 +2,4 @@
 *.z64
 bin/
 rom/
+__pycache__/
