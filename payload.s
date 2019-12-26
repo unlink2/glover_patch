@@ -24,11 +24,15 @@ constant GLOVER_XYZ_HI($8029)
 constant GLOVER_X_LO($030C)
 constant GLOVER_Y_LO($0310)
 constant GLOVER_Z_LO($0314)
+constant GLOVER_VEL($0354)
 
 constant BALL_XYZ_HI($802A)
 constant BALL_X_LO($F9AC)
 constant BALL_Y_LO($F9B0)
 constant BALL_Z_LO($F9B4)
+constant BALL_VEL_X($FA24)
+constant BALL_VEL_Y($FA24)
+constant BALL_VEL_Z($FA28)
 
 // reads inputs, shifts by N shifts
 // then ands
@@ -99,6 +103,12 @@ not_CL:
 	lw t2, Z_BAC(t1) // load Z position 
 	sw t2, GLOVER_Z_LO(t3)
 	sw t2, BALL_Z_LO(t4)
+	
+	// stop glover
+	lui t2, $00 
+	sw t2, BALL_VEL_X(t4)
+	sw t2, BALL_VEL_Y(t4)
+	sw t2, BALL_VEL_Z(t4)
 not_CR:
 not_start:
 	// return
