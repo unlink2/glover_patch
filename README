@@ -1,2 +1,30 @@
-This is a small patcher for the n64 game glover.
-Written in MIPS assembly.
+This is a glover romhack project intended to become a practice tool for speedrunning.
+
+How to build?
+
+I recommend using the Windows Subsystem for Linux if you are on Linux. 
+A lot of tools used are related to Linux so this is the easiest way of building it for now and I primarily developed 
+this on Linux.
+How to install WSL:
+https://docs.microsoft.com/en-us/windows/wsl/install-win10 
+I tested this with Debian GNU/Linux WSL. 
+
+After WSL is set up run the following commands.
+
+sudo apt update
+sudo apt install gcc make python3 git
+mkdir /mnt/c/glover
+cd /mnt/c/glover
+git clone https://github.com/ARM9/bass.git && cd bass/bass && make && sudo make install 
+cd /mtn/c/glover 
+git clone https://github.com/unlink2/glover_patch
+cd glover_patch
+mkdir rom
+
+Now you have a folder called glover on your C drive that contains almost everything you need to patch the rom.
+Navigate to C:\glover\rom and copy a NTSC rom of glover into it. The filename must be "glover_base_ntsc.z64".
+Once done go back to WSL and run the last command:
+
+make 
+
+Now inside of the rom folder you will find a file called glover_patched.z64. This is the final patched rom.
