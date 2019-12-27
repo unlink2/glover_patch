@@ -34,6 +34,13 @@ constant BALL_VEL_X($FA24)
 constant BALL_VEL_Y($FA24)
 constant BALL_VEL_Z($FA28)
 
+constant STRCPY($801468EC) 
+constant ORIGINAL($80178E98)
+
+// hi bytes of data address
+evaluate CODE_MASK(section_code >> 16)
+evaluate DATA_MASK(section_data >> 16)
+
 // reads inputs, shifts by N shifts
 // then ands
 // side effects:
@@ -53,15 +60,25 @@ macro disable_pause() {
 
 }
 
-start:
-	lw ra, after_original_call(ra) // next return address
-	
-	// call original function 
-	lui t3, $B078 // set up direct load for original function address
-	lw t3, original(t3) // load it 
-	jr t3 // return
+// calls strcpy
+// copies a string from a1 to a0
+macro far_call_strcpy(from, to) {
+	// call print function
+	la a0, {to} 
+	la a1, {from} 
+	la t3, STRCPY 
+	jalr t3 // far call
 	nop // need a nop after jr
-after:
+}
+
+section_code:
+	// call the original function we replaced
+	la t3, ORIGINAL
+	jalr t3 // far call
+	nop
+
+	// far_call_strcpy($8010271C, $802B2258)
+
 	// check start input
 	read_input(START_INPUT)
 	blez t1, not_start
@@ -112,15 +129,15 @@ not_CL:
 not_CR:
 not_start:
 	// return
-	lui t3, $B078 // set up direct load for return address
+	lui t3, {DATA_MASK} // set up direct load for return address
 	lw ra, return(t3) // load it 
 	jr ra // return
 	nop // need a nop after jr
+
+section_data:
 text:
-  db "Hello World!"
+  db "Glove is love!", $00
+align($04)
 return:
   dw $8013F378
-original:
-  dw $80178E98
-after_original_call:
-  dw after
+
