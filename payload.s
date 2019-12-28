@@ -16,6 +16,7 @@ constant CR_INPUT($10)
 constant START_INPUT($1C)
 
 constant INJECTED_RAM_HI($8000)
+constant EXP_RAM_HI($8040)
 constant X_BAC($02B0)
 constant Y_BAC($02B4)
 constant Z_BAC($02B8)
@@ -38,6 +39,11 @@ constant BALL_VEL_Z($FA30)
 constant BALL_ROLL_VEL_X($F9D0)
 constant BALL_ROLL_VEL_Y($F9D8)
 constant BALL_ROLL_VEL_Z($F9DC)
+
+constant ACTOR_HEAP_START($80299A10)
+constant ACTOR_HEAP_SIZE($FFFF)
+
+constant ACTOR_HEAP_CLONE($80400000)
 
 constant STRCPY($801468EC) 
 constant ORIGINAL($80178E98)
@@ -82,6 +88,7 @@ section_code:
 	jalr t3 // far call
 	nop
 
+
 	// far_call_strcpy($8010271C, $802B2258)
 
 	// check start input
@@ -104,6 +111,13 @@ section_code:
 
 	lw t2, GLOVER_Z_LO(t3) // load Z position 
 	sw t2, Z_BAC(t1)
+
+	// test memcpy
+	la a0, ACTOR_HEAP_START
+	la a1, ACTOR_HEAP_CLONE
+	la a2, ACTOR_HEAP_SIZE
+	jal memcpy
+	nop
 not_CL:
 	
 	read_input(CR_INPUT)
@@ -137,6 +151,13 @@ not_CL:
 	sw t2, BALL_ROLL_VEL_X(t4)
 	sw t2, BALL_ROLL_VEL_Y(t4)
 	sw t2, BALL_ROLL_VEL_Z(t4)
+
+	// test memcpy
+	la a0, ACTOR_HEAP_CLONE
+	la a1, ACTOR_HEAP_START
+	la a2, ACTOR_HEAP_SIZE
+	jal memcpy
+	nop
 not_CR:
 not_start:
 	// return
@@ -144,6 +165,26 @@ not_start:
 	lw ra, return(t3) // load it 
 	jr ra // return
 	nop // need a nop after jr
+
+// copies a block of memory from 
+// one address to another 
+// inputs:
+// 	A0 -> src
+//	A1 -> dest 
+//	A2 -> size
+memcpy:
+	la t1, $01
+memcpy_loop:
+	lb t0, $00(a0)
+	sb t0, $00(a1)
+	addu a0, a0, t1
+	addu a1, a1, t1
+	sub a2, a2, t1
+	bne a2, r0, memcpy_loop
+	nop // delay 
+	jr ra
+	nop // delay 
+
 
 section_data:
 text:
