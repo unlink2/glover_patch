@@ -24,15 +24,20 @@ constant GLOVER_XYZ_HI($8029)
 constant GLOVER_X_LO($030C)
 constant GLOVER_Y_LO($0310)
 constant GLOVER_Z_LO($0314)
-constant GLOVER_VEL($0354)
+constant GLOVER_VEL_X($0354)
+constant GLOVER_VEL_Y($0338)
+constant GLOVER_VEL_Z($033C)
 
 constant BALL_XYZ_HI($802A)
 constant BALL_X_LO($F9AC)
 constant BALL_Y_LO($F9B0)
 constant BALL_Z_LO($F9B4)
 constant BALL_VEL_X($FA24)
-constant BALL_VEL_Y($FA24)
-constant BALL_VEL_Z($FA28)
+constant BALL_VEL_Y($FA2C)
+constant BALL_VEL_Z($FA30)
+constant BALL_ROLL_VEL_X($F9D0)
+constant BALL_ROLL_VEL_Y($F9D8)
+constant BALL_ROLL_VEL_Z($F9DC)
 
 constant STRCPY($801468EC) 
 constant ORIGINAL($80178E98)
@@ -122,10 +127,16 @@ not_CL:
 	sw t2, BALL_Z_LO(t4)
 	
 	// stop glover
-	lui t2, $00 
+	lui t2, $00
+	sw t2, GLOVER_VEL_X(t3)
+	sw t2, GLOVER_VEL_Y(t3)
+	sw t2, GLOVER_VEL_Z(t3)
 	sw t2, BALL_VEL_X(t4)
 	sw t2, BALL_VEL_Y(t4)
 	sw t2, BALL_VEL_Z(t4)
+	sw t2, BALL_ROLL_VEL_X(t4)
+	sw t2, BALL_ROLL_VEL_Y(t4)
+	sw t2, BALL_ROLL_VEL_Z(t4)
 not_CR:
 not_start:
 	// return
