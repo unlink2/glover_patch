@@ -47,8 +47,8 @@ constant ACTOR_HEAP_START($8028FFFC)
 constant ACTOR_HEAP_END($803FFFFF) 
 // actor visible flag, search for this to find actors, search value is alwaus $20 bytes away from copy start
 constant ACTOR_SEARCH_VALUE($64) 
-constant ACTOR_OFFSET($3C) // offset from search value to copy start
-constant ACTOR_SIZE($110) // bytes to copy per actor 
+constant ACTOR_OFFSET($6C) // offset from search value to copy start
+constant ACTOR_SIZE($200) // bytes to copy per actor 
 evaluate ACTOR_HEAP_SIZE((ACTOR_HEAP_END-ACTOR_HEAP_START+$04)/$04)
 
 constant ACTOR_HEAP_CLONE($80400000)
