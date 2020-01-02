@@ -1,0 +1,24 @@
+General Actor:
+
+14: Visibility/Enable (uint32)
+24: X (Float)
+28: Y (Float)
+2C: Z (Float)
+48: VX (Float)
+50: VY (Float)
+54: VZ (Float)
+n7: Transform (Word)
+B8: Model (Word)
+C0: Function Pointer (???)
+
+====================================
+
+Ball Instance: 
+
+Total Size: CC bytes 
+
+====================================
+
+Sharl Instance:
+
+Total Size: F0 bytes
