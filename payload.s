@@ -42,6 +42,9 @@ constant BALL_ROLL_VEL_X($F9D0)
 constant BALL_ROLL_VEL_Y($F9D8)
 constant BALL_ROLL_VEL_Z($F9DC)
 
+constant FILE1_HI($801E0000)
+constant FILE1_START($801EAA44)
+constant FILE1_LEVELS($801EAA48)
 
 constant ACTOR_HEAP_START($8028FFFC)
 constant ACTOR_HEAP_END($803FFFFF) 
@@ -170,6 +173,10 @@ not_CU:
 	nop
 not_CD:
 not_start:
+	// init check 
+	jal clear_file1
+	nop
+
 	// return
 	lui t3, {DATA_MASK} // set up direct load for return address
 	lw ra, return(t3) // load it 
@@ -283,10 +290,56 @@ memcpy_loop:
 	jr ra
 	nop // delay 
 
+// clears file 1
+clear_file1:
+	la t0, FILE1_LEVELS
+	lw t0, $00(t0)
+	la t1, $FFFFFFFF
+	beq t0, t1, file1_init_done
+	nop
+
+	// init file with memcpy 
+	la a1, FILE1_START
+	la t2, $04
+	la t1, $4B4C4D00
+	sw t1, $00(a1)
+	
+	addu a1, a1, t2
+	la t1, $FFFFFFFF
+	sw t1, $00(a1)
+	addu a1, a1, t2
+	sw t1, $00(a1)
+
+	addu a1, a1, t2
+	la t1, $00000190
+	sw t1, $00(a1)
+
+	addu a1, a1, t2
+	la t1, $0A000606
+	sw t1, $00(a1)
+
+	addu a1, a1, t2
+	la t1, $40000001
+	sw t1, $00(a1)
+
+	addu a1, a1, t2
+	la t1, $006E006E
+	sw t1, $00(a1)
+file1_init_done:
+	jr ra
+	nop
 
 section_data:
 text:
   db "Glove is love!", $00
+file_1:
+  dw $4B4C4D00
+  dw $FFFFFFFF 
+  dw $FFFFFFFF 
+  dw $00000190 
+  dw $0A000606
+  dw $40000001 
+  dw $006E006E
 align($04)
 return:
   dw $8013F378
