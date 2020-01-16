@@ -22,6 +22,9 @@ constant EXP_RAM_HI($8040)
 constant X_BAC($02B0)
 constant Y_BAC($02B4)
 constant Z_BAC($02B8)
+constant CAMX_BAC($02BC)
+constant CAMY_BAC($02C0)
+constant CAMZ_BAC($02C4)
 
 constant GLOVER_XYZ_HI($8029)
 constant GLOVER_X_LO($030C)
@@ -30,6 +33,16 @@ constant GLOVER_Z_LO($0314)
 constant GLOVER_VEL_X($0354)
 constant GLOVER_VEL_Y($0338)
 constant GLOVER_VEL_Z($033C)
+
+constant CAM_XYZ_HI($8020)
+constant CAM_X_LO($2254)
+constant CAM_Y_LO($2258)
+constant CAM_Z_LO($225C)
+
+constant CAMR_XYZ_HI($8029)
+constant CAMR_X_LO($F920)
+constant CAMR_Y_LO($F924)
+constant CAMR_Z_LO($F928)
 
 constant BALL_XYZ_HI($802A)
 constant BALL_X_LO($F9AC)
@@ -46,13 +59,9 @@ constant FILE1_HI($801E0000)
 constant FILE1_START($801EAA44)
 constant FILE1_LEVELS($801EAA48)
 
-constant ACTOR_HEAP_START($8028FFFC)
-constant ACTOR_HEAP_END($803FFFFF) 
-// actor visible flag, search for this to find actors, search value is alwaus $20 bytes away from copy start
-constant ACTOR_SEARCH_VALUE($64) 
-constant ACTOR_OFFSET($14) // offset from search value to copy start
-constant ACTOR_SIZE($CC) // bytes to copy per actor 
-evaluate ACTOR_HEAP_SIZE((ACTOR_HEAP_END-ACTOR_HEAP_START+$04)/$04)
+constant ACTOR_HEAP_START($802902D8)
+constant ACTOR_SIZE($F0) // bytes to copy per actor 
+// evaluate ACTOR_HEAP_SIZE((ACTOR_HEAP_END-ACTOR_HEAP_START+$04)/$04)
 
 constant ACTOR_HEAP_CLONE($80400000)
 
@@ -123,6 +132,17 @@ section_code:
 	lw t2, GLOVER_Z_LO(t3) // load Z position 
 	sw t2, Z_BAC(t1)
 
+	// camera x/y/z
+	lui t3, CAM_XYZ_HI
+	lw t2, CAM_X_LO(t3)
+	sw t2, CAMX_BAC(t1)
+
+	lw t2, CAM_Y_LO(t3)
+	sw t2, CAMY_BAC(t1)
+
+	lw t2, CAM_Z_LO(t3)
+	sw t2, CAMZ_BAC(t1)
+
 not_CL:
 	
 	read_input(CR_INPUT)
@@ -144,7 +164,7 @@ not_CL:
 	lw t2, Z_BAC(t1) // load Z position 
 	sw t2, GLOVER_Z_LO(t3)
 	sw t2, BALL_Z_LO(t4)
-	
+
 	// stop glover
 	lui t2, $00
 	sw t2, GLOVER_VEL_X(t3)
@@ -156,6 +176,28 @@ not_CL:
 	sw t2, BALL_ROLL_VEL_X(t4)
 	sw t2, BALL_ROLL_VEL_Y(t4)
 	sw t2, BALL_ROLL_VEL_Z(t4)
+
+	// camera x/y/z
+	lui t3, CAM_XYZ_HI
+	lw t2, CAMX_BAC(t1)
+	sw t2, CAM_X_LO(t3)
+
+	lw t2, CAMY_BAC(t1)
+	sw t2, CAM_Y_LO(t3)
+
+	lw t2, CAMZ_BAC(t1)
+	sw t2, CAM_Z_LO(t3)
+
+	// camera x/y/z
+	lui t3, CAMR_XYZ_HI
+	lw t2, CAMX_BAC(t1)
+	sw t2, CAMR_X_LO(t3)
+
+	lw t2, CAMY_BAC(t1)
+	sw t2, CAMR_Y_LO(t3)
+
+	lw t2, CAMZ_BAC(t1)
+	sw t2, CAMR_Z_LO(t3)
 not_CR:
 	read_input(CU_INPUT)
 	blez t1, not_CU
@@ -184,11 +226,12 @@ not_start:
 	nop // need a nop after jr
 
 // finds all actors 
-// in the heap
-// based on a given search value ($64)
+// in the heap starting at glover
+// all actors loop on each other and are stored in a linked list
 // and memcpys them using the following format:
 // actor backup format:
 // 	4 bytes for original start address
+//	4 bytes of actor size
 // 	ACTOR_SIZE of data
 //	List ends with a word of $00
 // uses A1 as the pointer to the next free backup heap location
@@ -199,43 +242,35 @@ copy_actors:
 	// avoid t1, t0, a0, a1 and a2 
 	// because memcpy uses those
 	la t4, ACTOR_HEAP_START
+	la t6, ACTOR_HEAP_START // end value for bne 
 	la t5, $01 // -1
-	la t6, ACTOR_SEARCH_VALUE
 	la t7, $04 // word size
 	la a1, ACTOR_HEAP_CLONE
-	la v0, {ACTOR_HEAP_SIZE} // loop counter
 
 	// search heap by the word 
 copy_actor_loop:
-	// next address
-	addu t4, t4, t7
-	lw t0, $00(t4) 
-
-	subu v0, v0, t5
-	beq v0, r0, copy_actor_done // if end address is reached quit 
-	nop 
-
-	// check search value 
-	bne t0, t6, copy_actor_loop
-	nop
-	// if loop falls through do a memcpy from a4 - $20 for ACTOR_SIZE 
-	// also write original address to A1 first and inc A1
-	// set up a0 src ptr
-	la t1, ACTOR_OFFSET // offset start
-	subu a0, t4, t1 // src ptr 
+	// next address to copy 
+	move a0, t4 
+	
+	lw t4, $00(t4) // next ptr
 
 	// store src ptr
 	sw a0, $00(a1)
 	addu a1, a1, t7 // next dest ptr
 
 	la a2, ACTOR_SIZE
+	sw a2, $00(a1)
+	addu a1, a1, t7 // next dest ptr
+
 	// memcpy increments a1 so we do not have to do it here
 	// hold return address in v1 for now 
 	move v1, ra
 	jal memcpy
 	nop 
 	move ra, v1
-	j copy_actor_loop
+	// the actor list loops on itself so when we have reached the start 
+	// actor we are done!
+	bne t4, t6, copy_actor_loop
 	nop
 copy_actor_done:
 
@@ -261,7 +296,9 @@ restore_actor_loop:
 
 	addu a0, a0, t5 // add 1 to src
 	move t7, ra 
-	la a2, ACTOR_SIZE
+	lw a2, $00(a0)
+	addu a0, a0, t5 // next word
+
 	jal memcpy 
 	nop
 	move ra, t7 
