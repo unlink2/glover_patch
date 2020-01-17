@@ -15,6 +15,7 @@ constant CL_INPUT($11)
 constant CR_INPUT($10)
 constant CD_INPUT($12)
 constant CU_INPUT($13)
+constant A_INPUT($FF)
 constant START_INPUT($1C)
 
 constant INJECTED_RAM_HI($8000)
@@ -58,6 +59,8 @@ constant BALL_ROLL_VEL_Z($F9DC)
 constant FILE1_HI($801E0000)
 constant FILE1_START($801EAA44)
 constant FILE1_LEVELS($801EAA48)
+
+constant TIMER_HW($801FA754)
 
 constant ACTOR_HEAP_START($802902D8)
 constant ACTOR_SIZE($F0) // bytes to copy per actor 
@@ -214,6 +217,12 @@ not_CU:
 	jal restore_actors
 	nop
 not_CD:
+	read_input(A_INPUT)
+	blez t1, not_A
+	nop 
+	jal enable_timer
+	nop
+not_A:
 not_start:
 	// init check 
 	jal clear_file1
@@ -363,6 +372,15 @@ clear_file1:
 	la t1, $006E006E
 	sw t1, $00(a1)
 file1_init_done:
+	jr ra
+	nop
+
+// enables a timer 
+enable_timer:
+	la t1, $FF
+	la t3, TIMER_HW 
+	sb r0, $00(t3)
+	sb t1, $01(t3)
 	jr ra
 	nop
 
