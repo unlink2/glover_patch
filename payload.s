@@ -61,6 +61,7 @@ constant FILE1_START($801EAA44)
 constant FILE1_LEVELS($801EAA48)
 
 constant TIMER_HW($801FA754)
+constant RNG($801ED3F0)
 
 constant ACTOR_HEAP_START($802902D8)
 constant ACTOR_SIZE($F0) // bytes to copy per actor 
@@ -243,6 +244,9 @@ not_start:
 //	4 bytes of actor size
 // 	ACTOR_SIZE of data
 //	List ends with a word of $00
+//	at the end of the list the following helper values 
+//	are stored: 
+//		RNG - WORD
 // uses A1 as the pointer to the next free backup heap location
 // each actor is ACTOR_SIZE bytes
 // the backup heap is locates at the start of exp pack memory
@@ -285,6 +289,11 @@ copy_actor_done:
 
 	// end list with 1 word of $00
 	sw r0, $00(a1)
+	// save rng value 
+	la t0, RNG
+	lw t1, $00(t0)
+	sw t1, $04(a1)
+
 	jr ra
 	nop
 
@@ -314,6 +323,11 @@ restore_actor_loop:
 	j restore_actor_loop
 	nop
 restore_actor_done:
+	// get rng value 
+	la t0, RNG 
+	lw t1, $04(a0) // RNG value 
+	sw t1, $00(t0)
+
 	jr ra
 	nop
 
