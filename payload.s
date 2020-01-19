@@ -16,6 +16,7 @@ constant CR_INPUT($10)
 constant CD_INPUT($12)
 constant CU_INPUT($13)
 constant A_INPUT($FF)
+constant B_INPUT($1E)
 constant START_INPUT($1C)
 
 constant INJECTED_RAM_HI($8000)
@@ -26,6 +27,7 @@ constant Z_BAC($02B8)
 constant CAMX_BAC($02BC)
 constant CAMY_BAC($02C0)
 constant CAMZ_BAC($02C4)
+constant temp_ra($02C8) // store ra here avoid using the stack
 
 constant GLOVER_XYZ_HI($8029)
 constant GLOVER_X_LO($030C)
@@ -62,9 +64,12 @@ constant FILE1_LEVELS($801EAA48)
 
 constant TIMER_HW($801FA754)
 constant RNG($801ED3F0)
+constant MAP_ID($801E7531) // byte
+
+constant GAME_MODE($801E7530) // byte 04 = gameplay 02 = level select
 
 constant ACTOR_HEAP_START($802902D8)
-constant ACTOR_SIZE($F0) // bytes to copy per actor 
+constant ACTOR_SIZE($F0) // bytes to copy per actor
 // evaluate ACTOR_HEAP_SIZE((ACTOR_HEAP_END-ACTOR_HEAP_START+$04)/$04)
 
 constant ACTOR_HEAP_CLONE($80400000)
@@ -224,6 +229,12 @@ not_CD:
 	jal enable_timer
 	nop
 not_A:
+    read_input(B_INPUT)
+    blez t1, not_B
+    nop
+    jal level_select
+    nop
+not_B:
 not_start:
 	// init check 
 	jal clear_file1
@@ -395,8 +406,21 @@ enable_timer:
 	la t3, TIMER_HW 
 	sb r0, $00(t3)
 	sb t1, $01(t3)
+
 	jr ra
 	nop
+
+// calls level select
+level_select:
+    addi t0, r0, $02
+    la t1, GAME_MODE
+    sb t0, $00(t1)
+
+    la t1, $801EC7D3
+    sb r0, $00(t1) // stop pause state
+
+    jr ra
+    nop
 
 section_data:
 text:
