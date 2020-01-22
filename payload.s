@@ -9,6 +9,7 @@ include "lib/N64.INC" // Include N64 Definitions
 
 constant INPUTS_HI($BFC0)
 constant INPUTS_LO($07C4)
+constant INPUTS_LOP2($07CC)
 
 constant L_INPUT($15)
 constant CL_INPUT($11)
@@ -27,7 +28,9 @@ constant Z_BAC($02B8)
 constant CAMX_BAC($02BC)
 constant CAMY_BAC($02C0)
 constant CAMZ_BAC($02C4)
-constant temp_ra($02C8) // store ra here avoid using the stack
+constant pframe_last($02C8) // last frames inputs, eor
+constant pframe_advance($02CC) // if 01 = enable frame advance
+constant pframe_lastcup($02CD) // delay timer
 
 constant GLOVER_XYZ_HI($8029)
 constant GLOVER_X_LO($030C)
@@ -88,11 +91,15 @@ evaluate DATA_MASK(section_data >> 16)
 // returns 
 // 	t1 == 0 if not pressed 
 //	t1 != 0 if pressed
-macro read_input(shift) {
-	lui t3, INPUTS_HI // inputs bits 
-	lw t1, INPUTS_LO(t3) // load inputs value
-	srl t1, t1, {shift} // shift by N bits to get the pressed bit in the right position 
+macro read_input_n(shift, register) {
+	lui t3, INPUTS_HI // inputs bits
+	lw t1, {register}(t3) // load inputs value
+	srl t1, t1, {shift} // shift by N bits to get the pressed bit in the right position
 	andi t1, t1, $01  // check button press
+}
+
+macro read_input(shift) {
+    read_input_n({shift}, INPUTS_LO)
 }
 
 // removes the pause menu as soon as it wants to appear 
@@ -117,6 +124,9 @@ section_code:
 	jalr t3 // far call
 	nop
 
+
+    jal frame_advance
+    nop
 
 	// far_call_strcpy($8010271C, $802B2258)
 
@@ -422,14 +432,62 @@ level_select:
     jr ra
     nop
 
+// frame advance delay loop
+frame_advance:
+    lui t6, INJECTED_RAM_HI
+    lb t7, pframe_advance(t6)
+    la t1, $01
+
+
+    // toggle if c up on p2
+    read_input_n(CU_INPUT, INPUTS_LOP2)
+    lb t2, pframe_lastcup(t6)
+    sb t1, pframe_lastcup(t6)
+    beq r0, t1, no_swap
+    nop
+
+    // check previous input
+    xor t1, t2
+    beq r0, t1, no_swap
+    nop
+
+    // toggle
+    lb t4, pframe_advance(t6)
+    la t2, $01
+    xor t1, t4, t2
+    sb t1, pframe_advance(t6)
+    b frame_advance_done
+
+no_swap:
+
+    // advance if down on p2
+    read_input_n(CD_INPUT, INPUTS_LOP2)
+    lw t2, pframe_last(t6)
+
+    // check previous input
+    sw t1, pframe_last(t6)
+    xor t1, t2
+    bne r0, t1, frame_advance_done
+    nop
+
+skip_inputs:
+    beq r0, t7, frame_advance_done
+    nop
+    b frame_advance
+    nop
+
+frame_advance_done:
+    jr ra
+    nop
+
 section_data:
 text:
   db "Glove is love!", $00
 file_1:
   dw $4B4C4D00
-  dw $FFFFFFFF 
-  dw $FFFFFFFF 
-  dw $00000190 
+  dw $FFFFFFFF
+  dw $FFFFFFFF
+  dw $00000190
   dw $0A000606
   dw $40000001 
   dw $006E006E
