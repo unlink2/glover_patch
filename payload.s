@@ -28,9 +28,8 @@ constant Z_BAC($02B8)
 constant CAMX_BAC($02BC)
 constant CAMY_BAC($02C0)
 constant CAMZ_BAC($02C4)
-constant pframe_last($02C8) // last frames inputs, eor
+constant pframe_last($02C8) // last frames inputs, player2
 constant pframe_advance($02CC) // if 01 = enable frame advance
-constant pframe_lastcup($02CD) // delay timer
 
 constant GLOVER_XYZ_HI($8029)
 constant GLOVER_X_LO($030C)
@@ -70,6 +69,9 @@ constant RNG($801ED3F0)
 constant MAP_ID($801E7531) // byte
 
 constant GAME_MODE($801E7530) // byte 04 = gameplay 02 = level select
+constant GAME_RAW_INPUTS($801FB280)
+constant INPUT_HANDLER($8013407C)
+constant LAST_Z_WRITE($801349B4)
 
 constant ACTOR_HEAP_START($802902D8)
 constant ACTOR_SIZE($F0) // bytes to copy per actor
@@ -102,10 +104,17 @@ macro read_input(shift) {
     read_input_n({shift}, INPUTS_LO)
 }
 
-// removes the pause menu as soon as it wants to appear 
-macro disable_pause() {
-
+// reads last frames stored inputs
+// returns:
+//  t1 == 0 if not pressed last frame
+//  t1 != 0 if pressed
+macro last_input_n(shift, register) {
+	lui t3, INJECTED_RAM_HI // inputs bits
+	lw t1, {register}(t3) // load inputs value
+	srl t1, t1, {shift} // shift by N bits to get the pressed bit in the right position
+	andi t1, t1, $01  // check button press
 }
+
 
 // calls strcpy
 // copies a string from a1 to a0
@@ -441,15 +450,14 @@ frame_advance:
 
     // toggle if c up on p2
     read_input_n(CU_INPUT, INPUTS_LOP2)
-    lb t2, pframe_lastcup(t6)
-    sb t1, pframe_lastcup(t6)
     beq r0, t1, no_swap
     nop
 
     // check previous input
+    move t2, t1
+    last_input_n(CU_INPUT, pframe_last)
     xor t1, t2
     beq r0, t1, no_swap
-    nop
 
     // toggle
     lb t4, pframe_advance(t6)
@@ -462,21 +470,43 @@ no_swap:
 
     // advance if down on p2
     read_input_n(CD_INPUT, INPUTS_LOP2)
-    lw t2, pframe_last(t6)
+    beq r0, t1, no_advance
 
     // check previous input
-    sw t1, pframe_last(t6)
+    move t2, t1
+    last_input_n(CD_INPUT, pframe_last)
     xor t1, t2
     bne r0, t1, frame_advance_done
     nop
+no_advance:
+    // store last inputs during the loop as well
+    lui t2, INPUTS_HI
+    lw t2, INPUTS_LOP2(t2)
+    sw t2, pframe_last(t6)
 
 skip_inputs:
     beq r0, t7, frame_advance_done
     nop
+
+    // replace with nop
+    la t5, LAST_Z_WRITE
+    sw r0, $00(t5) // replace with nop
     b frame_advance
     nop
 
 frame_advance_done:
+
+    // restore input handler code
+    la t5, LAST_Z_WRITE
+    la t4, $A0440000 // original instruction
+    sw t4, $00(t5)
+
+    // propably not needed
+    // just store last inputs again just in case
+    lui t2, INPUTS_HI
+    lw t2, INPUTS_LOP2(t2)
+    sw t2, pframe_last(t6)
+
     jr ra
     nop
 
@@ -489,7 +519,7 @@ file_1:
   dw $FFFFFFFF
   dw $00000190
   dw $0A000606
-  dw $40000001 
+  dw $40000001
   dw $006E006E
 align($04)
 return:
