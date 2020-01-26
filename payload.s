@@ -30,6 +30,7 @@ constant CAMY_BAC($02C0)
 constant CAMZ_BAC($02C4)
 constant pframe_last($02C8) // last frames inputs, player2
 constant pframe_advance($02CC) // if 01 = enable frame advance
+constant STRING_BUFFER($800002E0) // 32 bytes for strings to be printed
 
 constant GLOVER_XYZ_HI($8029)
 constant GLOVER_X_LO($030C)
@@ -79,7 +80,7 @@ constant ACTOR_SIZE($F0) // bytes to copy per actor
 
 constant ACTOR_HEAP_CLONE($80400000)
 
-constant STRCPY($801468EC) 
+constant STRCPY($801468EC)
 constant ORIGINAL($80178E98)
 
 // hi bytes of data address
@@ -90,8 +91,8 @@ evaluate DATA_MASK(section_data >> 16)
 // then ands
 // side effects:
 //	uses t3 and t1
-// returns 
-// 	t1 == 0 if not pressed 
+// returns
+// 	t1 == 0 if not pressed
 //	t1 != 0 if pressed
 macro read_input_n(shift, register) {
 	lui t3, INPUTS_HI // inputs bits
@@ -116,18 +117,35 @@ macro last_input_n(shift, register) {
 }
 
 
-// calls strcpy
-// copies a string from a1 to a0
-macro far_call_strcpy(from, to) {
+// call string print
+macro far_call_print(str_ptr, x, y) {
 	// call print function
-	la a0, {to} 
-	la a1, {from} 
-	la t3, STRCPY 
+    la a1, {str_ptr}
+	la a0, $80202240 // value from other calls
+	la a2, $801ED324 // value from other calls
+	la t3, $8014666C // function ptr
+
+    la t0, $801ED394 // x coordinate
+    la t1, {x}
+    sw t1, $00(t0) // store x
+    la t1, {y}
+    sw t1, $04(t0) // store y
+
 	jalr t3 // far call
 	nop // need a nop after jr
 }
 
+// mode is based on ra
+// inputs:
+//  ra == 8013E854 -> call render code
 section_code:
+    la t0, $8013E850
+    bne ra, t0, not_render_mode
+    nop
+    j render_inject
+    nop
+not_render_mode:
+
 	// call the original function we replaced
 	la t3, ORIGINAL
 	jalr t3 // far call
@@ -136,8 +154,6 @@ section_code:
 
     jal frame_advance
     nop
-
-	// far_call_strcpy($8010271C, $802B2258)
 
 	// check start input
 	read_input(START_INPUT)
@@ -507,6 +523,23 @@ frame_advance_done:
     lw t2, INPUTS_LOP2(t2)
     sw t2, pframe_last(t6)
 
+    jr ra
+    nop
+
+// inject location during rendering
+// must be pretty fast, only do actual rendering here
+render_inject:
+    // call original functions
+    la t0, $8014AD0C
+    jalr t0
+    nop
+    la t0, $80145EAC
+    jalr t0
+    nop 
+    far_call_print(STRING_BUFFER, $55, $55)
+
+    // load return address
+    la ra, $8013E850
     jr ra
     nop
 
