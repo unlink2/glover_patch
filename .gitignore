@@ -3,3 +3,4 @@
 bin/
 rom/
 __pycache__/
+obj/
