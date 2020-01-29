@@ -10,8 +10,8 @@ BINDIR=./bin
 LIBS= 
 CFLAGS=-Wall -g
 MAIN = decompress
-
-MODULES =
+TEST_MAIN = test
+MODULES = fla2
 
 
 DEPS=$(patsubst %,$(INCLUDEDIR)/%.h,$(MODULES))
@@ -28,6 +28,17 @@ $(ODIR)/%.o: $(SRCDIR)/%.c $(DEPS) | init
 decompress: $(OBJ)
 	$(CC) -o $(BINDIR)/$@ $^ $(LIBS)
 
+
+# test
+
+$(ODIR)/%.o: $(SRCDIR)/%.c $(DEPS) | init
+	$(CC) -c -o $@ $< $(CFLAGS)
+
+build_test: $(TEST_OBJ)
+	$(CC) -o $(BINDIR)/${TEST_MAIN} $^ $(LIBS) -l cmocka
+
+test: build_test
+	$(BINDIR)/$(TEST_MAIN)
 
 .PHONY: clean
 clean:
