@@ -12,17 +12,17 @@ I tested this with Debian GNU/Linux WSL.
 After WSL is set up run the following commands.
 
 sudo apt update
-sudo apt install gcc make python3 git
-mkdir /mnt/c/glover
-cd /mnt/c/glover
-git clone https://github.com/ARM9/bass.git && cd bass/bass && make && sudo make install 
-cd /mtn/c/glover 
+sudo apt install gcc g++ make python3 git coreutils
+git clone https://github.com/ARM9/bass.git && cd bass/bass && make && sudo make install
+cd
 git clone https://github.com/unlink2/glover_patch
+chmod +x ./glovepatch.py
 cd glover_patch
 mkdir rom
+explorer.exe .
 
-Now you have a folder called glover on your C drive that contains almost everything you need to patch the rom.
-Navigate to C:\glover\rom and copy a NTSC rom of glover into it. The filename must be "glover_base_ntsc.z64".
+Now you can browse the glover patch folder that contains almost everything you need to patch the rom.
+Navigate to glover\rom and copy a NTSC rom of glover into it. The filename must be "glover_base_ntsc.z64".
 Once done go back to WSL and run the last command:
 
 make 
