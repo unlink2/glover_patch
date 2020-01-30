@@ -10,7 +10,7 @@ import ctypes
 # e.g. atlantis.bmp is expected to return 9B 7E 1E 61
 def read_path(path, lookup_table):
     a0 = ctypes.c_uint32(0)
-    a3 = ctypes.c_uint32() # start of index in lookup table
+    a3 = ctypes.c_uint32(0) # start of index in lookup table
     v0 = ctypes.c_uint32(0)
     v1 = ctypes.c_uint32(0)
     # loop the whole string
