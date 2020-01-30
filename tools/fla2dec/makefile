@@ -25,7 +25,7 @@ TEST_OBJ+=$(patsubst %,$(ODIR)/%.o,$(TEST_MAIN))
 $(ODIR)/%.o: $(SRCDIR)/%.c $(DEPS) | init
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-decompress: $(OBJ)
+fla2dec: $(OBJ)
 	$(CC) -o $(BINDIR)/$@ $^ $(LIBS)
 
 
