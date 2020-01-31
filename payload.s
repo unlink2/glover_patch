@@ -6,6 +6,7 @@ origin $00000000
 base $B0780000
 
 include "lib/N64.INC" // Include N64 Definitions
+// include "lib/N64_GFX.INC" // gfx macros
 
 constant INPUTS_HI($BFC0)
 constant INPUTS_LO($07C4)
@@ -139,6 +140,7 @@ macro far_call_print(str_ptr, x, y) {
 // inputs:
 //  ra == 8013E854 -> call render code
 section_code:
+scope {
     la t0, $8013E850
     bne ra, t0, not_render_mode
     nop
@@ -158,22 +160,22 @@ not_render_mode:
 	// check start input
 	read_input(START_INPUT)
 	blez t1, not_start
-	nop 
+	nop
 
 	read_input(CL_INPUT)
-	blez t1, not_CL 
-	nop // delay slot 
+	blez t1, not_CL
+	nop // delay slot
 
-	lui t3, GLOVER_XYZ_HI // address for glover ram start 
+	lui t3, GLOVER_XYZ_HI // address for glover ram start
 	lui t1, INJECTED_RAM_HI
 
-	lw t2, GLOVER_X_LO(t3) // load X position 
+	lw t2, GLOVER_X_LO(t3) // load X position
 	sw t2, X_BAC(t1)
 
-	lw t2, GLOVER_Y_LO(t3) // load Y position 
+	lw t2, GLOVER_Y_LO(t3) // load Y position
 	sw t2, Y_BAC(t1)
 
-	lw t2, GLOVER_Z_LO(t3) // load Z position 
+	lw t2, GLOVER_Z_LO(t3) // load Z position
 	sw t2, Z_BAC(t1)
 
 	// camera x/y/z
@@ -188,24 +190,24 @@ not_render_mode:
 	sw t2, CAMZ_BAC(t1)
 
 not_CL:
-	
-	read_input(CR_INPUT)
-	blez t1, not_CR 
-	nop // delay slot 
 
-	lui t3, GLOVER_XYZ_HI // address for glover ram start 
+	read_input(CR_INPUT)
+	blez t1, not_CR
+	nop // delay slot
+
+	lui t3, GLOVER_XYZ_HI // address for glover ram start
 	lui t1, INJECTED_RAM_HI
 	lui t4, BALL_XYZ_HI
 
-	lw t2, X_BAC(t1) // load X position 
+	lw t2, X_BAC(t1) // load X position
 	sw t2, GLOVER_X_LO(t3)
 	sw t2, BALL_X_LO(t4)
 
-	lw t2, Y_BAC(t1) // load Y position 
+	lw t2, Y_BAC(t1) // load Y position
 	sw t2, GLOVER_Y_LO(t3)
 	sw t2, BALL_Y_LO(t4)
 
-	lw t2, Z_BAC(t1) // load Z position 
+	lw t2, Z_BAC(t1) // load Z position
 	sw t2, GLOVER_Z_LO(t3)
 	sw t2, BALL_Z_LO(t4)
 
@@ -253,14 +255,14 @@ not_CU:
 
 	read_input(CD_INPUT)
 	blez t1, not_CD
-	nop 
+	nop
 
 	jal restore_actors
 	nop
 not_CD:
 	read_input(A_INPUT)
 	blez t1, not_A
-	nop 
+	nop
 	jal enable_timer
 	nop
 not_A:
@@ -271,17 +273,18 @@ not_A:
     nop
 not_B:
 not_start:
-	// init check 
+	// init check
 	jal clear_file1
 	nop
 
 	// return
 	lui t3, {DATA_MASK} // set up direct load for return address
-	lw ra, return(t3) // load it 
+	lw ra, return(t3) // load it
 	jr ra // return
 	nop // need a nop after jr
+}
 
-// finds all actors 
+// finds all actors
 // in the heap starting at glover
 // all actors loop on each other and are stored in a linked list
 // and memcpys them using the following format:
@@ -290,27 +293,28 @@ not_start:
 //	4 bytes of actor size
 // 	ACTOR_SIZE of data
 //	List ends with a word of $00
-//	at the end of the list the following helper values 
-//	are stored: 
+//	at the end of the list the following helper values
+//	are stored:
 //		RNG - WORD
 // uses A1 as the pointer to the next free backup heap location
 // each actor is ACTOR_SIZE bytes
 // the backup heap is locates at the start of exp pack memory
 copy_actors:
+scope {
 	// set up all values we need
-	// avoid t1, t0, a0, a1 and a2 
+	// avoid t1, t0, a0, a1 and a2
 	// because memcpy uses those
 	la t4, ACTOR_HEAP_START
-	la t6, ACTOR_HEAP_START // end value for bne 
+	la t6, ACTOR_HEAP_START // end value for bne
 	la t5, $01 // -1
 	la t7, $04 // word size
 	la a1, ACTOR_HEAP_CLONE
 
-	// search heap by the word 
+	// search heap by the word
 copy_actor_loop:
-	// next address to copy 
-	move a0, t4 
-	
+	// next address to copy
+	move a0, t4
+
 	lw t4, $00(t4) // next ptr
 
 	// store src ptr
@@ -322,12 +326,12 @@ copy_actor_loop:
 	addu a1, a1, t7 // next dest ptr
 
 	// memcpy increments a1 so we do not have to do it here
-	// hold return address in v1 for now 
+	// hold return address in v1 for now
 	move v1, ra
 	jal memcpy
-	nop 
+	nop
 	move ra, v1
-	// the actor list loops on itself so when we have reached the start 
+	// the actor list loops on itself so when we have reached the start
 	// actor we are done!
 	bne t4, t6, copy_actor_loop
 	nop
@@ -335,47 +339,50 @@ copy_actor_done:
 
 	// end list with 1 word of $00
 	sw r0, $00(a1)
-	// save rng value 
+	// save rng value
 	la t0, RNG
 	lw t1, $00(t0)
 	sw t1, $04(a1)
 
 	jr ra
 	nop
+}
 
 // reverses actor backup
 // uses A0 as actor heap pointer
 restore_actors:
+scope {
 	// start of clone list
 	la a0, ACTOR_HEAP_CLONE
 	la t5, $04 // +1 word
 	la t6, ACTOR_SIZE // +110
 
 restore_actor_loop:
-	// load address 
+	// load address
 	lw a1, $00(a0)
-	// if a1 is zero end of list 
+	// if a1 is zero end of list
 	beq a1, r0, restore_actor_done
 	nop
 
 	addu a0, a0, t5 // add 1 to src
-	move t7, ra 
+	move t7, ra
 	lw a2, $00(a0)
 	addu a0, a0, t5 // next word
 
-	jal memcpy 
+	jal memcpy
 	nop
-	move ra, t7 
+	move ra, t7
 	j restore_actor_loop
 	nop
 restore_actor_done:
-	// get rng value 
-	la t0, RNG 
-	lw t1, $04(a0) // RNG value 
+	// get rng value
+	la t0, RNG
+	lw t1, $04(a0) // RNG value
 	sw t1, $00(t0)
 
 	jr ra
 	nop
+}
 
 // copies a block of memory from 
 // one address to another 
@@ -384,32 +391,35 @@ restore_actor_done:
 //	A1 -> dest 
 //	A2 -> size
 memcpy:
+scope {
 	la t1, $01
-memcpy_loop:
+loop:
 	lb t0, $00(a0)
 	sb t0, $00(a1)
 	addu a0, a0, t1
 	addu a1, a1, t1
 	sub a2, a2, t1
-	bne a2, r0, memcpy_loop
-	nop // delay 
+	bne a2, r0, loop
+	nop // delay
 	jr ra
-	nop // delay 
+	nop // delay
+}
 
 // clears file 1
 clear_file1:
+scope {
 	la t0, FILE1_LEVELS
 	lw t0, $00(t0)
 	la t1, $FFFFFFFF
 	beq t0, t1, file1_init_done
 	nop
 
-	// init file with memcpy 
+	// init file with memcpy
 	la a1, FILE1_START
 	la t2, $04
 	la t1, $4B4C4D00
 	sw t1, $00(a1)
-	
+
 	addu a1, a1, t2
 	la t1, $FFFFFFFF
 	sw t1, $00(a1)
@@ -435,18 +445,23 @@ file1_init_done:
 	jr ra
 	nop
 
-// enables a timer 
+}
+
+// enables a timer
 enable_timer:
+scope {
 	la t1, $FF
-	la t3, TIMER_HW 
+	la t3, TIMER_HW
 	sb r0, $00(t3)
 	sb t1, $01(t3)
 
 	jr ra
 	nop
+}
 
 // calls level select
 level_select:
+scope {
     addi t0, r0, $02
     la t1, GAME_MODE
     sb t0, $00(t1)
@@ -456,9 +471,11 @@ level_select:
 
     jr ra
     nop
+}
 
 // frame advance delay loop
 frame_advance:
+scope {
     lui t6, INJECTED_RAM_HI
     lb t7, pframe_advance(t6)
     la t1, $01
@@ -525,23 +542,27 @@ frame_advance_done:
 
     jr ra
     nop
+}
 
 // inject location during rendering
 // must be pretty fast, only do actual rendering here
 render_inject:
+scope {
     // call original functions
     la t0, $8014AD0C
     jalr t0
     nop
     la t0, $80145EAC
     jalr t0
-    nop 
+    nop
     far_call_print(STRING_BUFFER, $55, $55)
 
     // load return address
     la ra, $8013E850
     jr ra
     nop
+
+}
 
 section_data:
 text:
@@ -558,3 +579,6 @@ align($04)
 return:
   dw $8013F378
 
+align(8) // Align 64-Bit
+rdp_buffer:
+arch n64.rdp
