@@ -12,7 +12,7 @@ import os
 RDRAM_START = 0x80000000 # base address of ram
 RDRAM_END = 0x80400000 # after this we only have expansion ram, no need to search
 OBJ_BANK = 0x8025D698 # start of obj_bank
-OBJ_BANK_END = 0x80260008
+OBJ_BANK_END = 0x803F0008
 
 def ram_addr_to_real(addr):
     return addr-RDRAM_START
@@ -22,7 +22,11 @@ def search_ram(data, outdir):
     face_index = 0
     for addr in range(OBJ_BANK, OBJ_BANK_END, 0x14):
         real_offset = ram_addr_to_real(addr)
-        type_str = bytearray(data[real_offset:real_offset+0xC]).decode('utf-8')
+        type_str = ''
+        try:
+            type_str = bytearray(data[real_offset:real_offset+0xC]).decode('utf-8')
+        except:
+            type_str = ''
         # if we found an object start converting
         if type_str.startswith('Obj_Planes'):
             # get pointer
@@ -67,6 +71,7 @@ def search_ram(data, outdir):
             elif line.startswith('f'):
                 face_data.append(line)
     # the last face always causes issues so we just drop it
+    face_data.pop()
     for data in face_data:
         m.write(data)
         m.write('\n')
