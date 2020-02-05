@@ -7,3 +7,23 @@ unsigned int strlen(char *str) {
     }
     return i;
 }
+
+void memcpy(unsigned char *src, unsigned char *dest, unsigned int size) {
+    for (int i = 0; i < size; i++) {
+        dest[i] = src[i];
+    }
+}
+
+void memset(unsigned char *ptr, unsigned char value, unsigned int size) {
+    for (int i = 0; i < size; i++) {
+        ptr[i] = value;
+    }
+}
+
+void assert(int expression) {
+#ifndef NDEBUG
+    if (!expression) {
+        while (TRUE) {}
+    }
+#endif 
+}

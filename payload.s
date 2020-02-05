@@ -159,9 +159,8 @@ not_render_mode:
 	nop
 
 
-    // jump to c code
-    // la t9, GP_BUFFER
-    move t9, r0
+    // jump to c code in logic mode
+    la a0, $00
     la ra, C_CODE_START
     jalr ra
     nop
@@ -275,13 +274,15 @@ not_CD:
 	read_input(A_INPUT)
 	blez t1, not_A
 	nop
-	jal enable_timer
+    // ported to C code
+	// jal enable_timer
 	nop
 not_A:
     read_input(B_INPUT)
     blez t1, not_B
     nop
-    jal level_select
+    // ported to C code
+    // jal level_select
     nop
 not_B:
 not_start:
@@ -568,6 +569,12 @@ scope {
     jalr t0
     nop
     far_call_print(STRING_BUFFER, $55, $55)
+
+    // jump to c code in rendering mode
+    la a0, $01
+    la ra, C_CODE_START
+    jalr ra
+    nop
 
     // load return address
     la ra, $8013E850
