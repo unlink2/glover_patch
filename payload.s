@@ -8,6 +8,10 @@ base $B0780000
 include "lib/N64.INC" // Include N64 Definitions
 // include "lib/N64_GFX.INC" // gfx macros
 
+// jump here to get to c code
+// TODO dma to ram to have string constants
+constant C_CODE_START($B0790000)
+
 constant INPUTS_HI($BFC0)
 constant INPUTS_LO($07C4)
 constant INPUTS_LOP2($07CC)
@@ -32,6 +36,7 @@ constant CAMZ_BAC($02C4)
 constant pframe_last($02C8) // last frames inputs, player2
 constant pframe_advance($02CC) // if 01 = enable frame advance
 constant STRING_BUFFER($800002E0) // 32 bytes for strings to be printed
+// constant GP_BUFFER($80500000)
 
 constant GLOVER_XYZ_HI($8029)
 constant GLOVER_X_LO($030C)
@@ -153,6 +158,13 @@ not_render_mode:
 	jalr t3 // far call
 	nop
 
+
+    // jump to c code
+    // la t9, GP_BUFFER
+    move t9, r0
+    la ra, C_CODE_START
+    jalr ra
+    nop
 
     jal frame_advance
     nop

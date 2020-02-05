@@ -4,3 +4,4 @@ bin/
 rom/
 __pycache__/
 obj/
+gcc_build/
