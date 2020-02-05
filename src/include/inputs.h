@@ -23,4 +23,11 @@
  */
 BOOLEAN read_button(unsigned int, unsigned int *);
 
+/**
+ * Stores controller input in another location
+ */
+void store_inputs(unsigned int *, unsigned int *);
+
+void clear_last_inputs(unsigned int*);
+
 #endif
