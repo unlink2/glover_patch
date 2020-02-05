@@ -11,29 +11,10 @@ include "lib/N64.INC" // Include N64 Definitions
 // TODO dma to ram to have string constants
 constant C_CODE_START($B0790000)
 
-constant STRING_BUFFER($800002E0) // 32 bytes for strings to be printed
-
 // function that was replaced by inject
 constant ORIGINAL($80178E98)
 
 
-// call string print
-macro far_call_print(str_ptr, x, y) {
-	// call print function
-    la a1, {str_ptr}
-	la a0, $80202240 // value from other calls
-	la a2, $801ED324 // value from other calls
-	la t3, $8014666C // function ptr
-
-    la t0, $801ED394 // x coordinate
-    la t1, {x}
-    sw t1, $00(t0) // store x
-    la t1, {y}
-    sw t1, $04(t0) // store y
-
-	jalr t3 // far call
-	nop // need a nop after jr
-}
 
 // mode is based on ra
 // inputs:
@@ -78,7 +59,6 @@ scope {
     la t0, $80145EAC
     jalr t0
     nop
-    far_call_print(STRING_BUFFER, $55, $55)
 
     // jump to c code in rendering mode
     la a0, $01

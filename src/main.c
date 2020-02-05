@@ -1,5 +1,6 @@
 #include "include/utility.h"
 #include "include/logic.h"
+#include "include/render.h"
 
 enum START_MODE {
     START_LOGIC,
@@ -20,6 +21,7 @@ int __start(enum START_MODE mode) {
             logic();
             break;
         case START_RENDERING:
+            render();
             break;
         case START_DMA:
             break;
