@@ -9,11 +9,15 @@ export PREFIX=/usr/local/$TARGET
 # download all the stuff
 mkdir gcc_build
 cd gcc_build
-wget https://ftp.gnu.org/gnu/binutils/binutils-2.34.tar.bz2 -o binutils.tar.bz2
-wget https://ftp.gnu.org/gnu/gcc/gcc-9.2.0/gcc-9.2.0.tar.gz -o gcc.tar.gz
+wget https://ftp.gnu.org/gnu/binutils/binutils-2.34.tar.bz2 -O binutils.tar.bz2
+wget https://ftp.gnu.org/gnu/gcc/gcc-9.2.0/gcc-9.2.0.tar.gz -O gcc.tar.gz
 # wget https://ftp.gnu.org/gnu/gdb/gdb-8.3.tar.gz -o gdb.tar.gz
 tar xjfv binutils.tar.bz2
 tar xzfv gcc.tar.gz
+# move to nicer names
+mv binutils-2.34 binutils
+mv gcc-9.2.0 gcc
+
 mkdir gcc_build
 mkdir binutils_build
 # mkdir gdb_build
