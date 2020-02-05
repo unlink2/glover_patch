@@ -33,4 +33,9 @@
 #define ACTOR_SIZE 0xF0
 #define RNG_VALUE (WORD_T*)0x801ED3F0
 
+#define STRING_BUFFER (BYTE_T*)0x800002E0 // 32 bytes to store temporary strings for printing
+#define PUTS_XY (WORD_T*)0x8014666C // puts function ptr
+#define PUTS_X_POS (WORD_T*)0x801ED394
+#define PUTS_Y_POS (WORD_T*)0x801ED398
+
 #endif
