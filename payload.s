@@ -165,8 +165,9 @@ not_render_mode:
     jalr ra
     nop
 
-    jal frame_advance
-    nop
+    // ported to C
+    // jal frame_advance
+    // nop
 
 	// check start input
 	read_input(START_INPUT)

@@ -1,16 +1,16 @@
 #include "include/utility.h"
 
-unsigned int strlen(char *str) {
+unsigned int strlen(char *pstr) {
     int i = 0;
-    while (str[i] != '\0') {
+    while (pstr[i] != '\0') {
         i++;
     }
     return i;
 }
 
-void memcpy(unsigned char *src, unsigned char *dest, unsigned int size) {
+void memcpy(unsigned char *psrc, unsigned char *pdest, unsigned int size) {
     for (int i = 0; i < size; i++) {
-        dest[i] = src[i];
+        pdest[i] = psrc[i];
     }
 }
 

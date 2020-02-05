@@ -33,7 +33,7 @@ $(ODIR)/%.o: $(SRCDIR)/%.c $(DEPS) | init
 $(BINDIR)/code.bin: $(OBJ)
 	$(LD) -T linker.ld $^ -o $(BINDIR)/code.elf
 	mips-elf-objcopy -O binary --only-section=.text --only-section=.rodata $(BINDIR)/code.elf $@
-
+	mips-elf-objdump -S $(BINDIR)/code.elf > $(BINDIR)/code.sym
 
 glover_patch: $(BINDIR)/code.bin
 	bass payload.s -sym ./bin/payload.sym
