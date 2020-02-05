@@ -1,6 +1,8 @@
 #ifndef __UTILITY_H__
 #define __UTILITY_H__
 
+#include "typedefs.h"
+
 typedef unsigned char BOOLEAN;
 enum BOOL_VALUE {
         FALSE,
@@ -10,8 +12,8 @@ enum BOOL_VALUE {
 
 unsigned int strlen(char *);
 
-void memcpy(unsigned char *, unsigned char *, unsigned int size);
-void memset(unsigned char *, unsigned char, unsigned int);
+void memcpy(BYTE_T *, BYTE_T *, unsigned int);
+void memset(BYTE_T *, unsigned char, unsigned int);
 
 /**
  * Assert verifies an expression

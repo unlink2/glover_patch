@@ -1,8 +1,10 @@
 #ifndef __INPUTS_H__
 #define __INPUTS_H__
 
-#define CONTROLLER_1 (unsigned int*)0xBFC007C4
-#define CONTROLLER_2 (unsigned int*)0xBFC007CC
+#include "typedefs.h"
+
+#define CONTROLLER_1 (WORD_T*)0xBFC007C4
+#define CONTROLLER_2 (WORD_T*)0xBFC007CC
 
 #define L_INPUT 0x15
 #define CL_INPUT 0x11
@@ -21,13 +23,13 @@
  *  1 if input
  *  0 if no input
  */
-BOOLEAN read_button(unsigned int, unsigned int *);
+BOOLEAN read_button(unsigned int, WORD_T *);
 
 /**
  * Stores controller input in another location
  */
-void store_inputs(unsigned int *, unsigned int *);
+void store_inputs(WORD_T *, WORD_T *);
 
-void clear_last_inputs(unsigned int*);
+void clear_last_inputs(WORD_T*);
 
 #endif
