@@ -8,13 +8,13 @@ unsigned int strlen(char *pstr) {
     return i;
 }
 
-void memcpy(unsigned char *psrc, unsigned char *pdest, unsigned int size) {
+void memcpy(BYTE_T *psrc, BYTE_T *pdest, unsigned int size) {
     for (int i = 0; i < size; i++) {
         pdest[i] = psrc[i];
     }
 }
 
-void memset(unsigned char *ptr, unsigned char value, unsigned int size) {
+void memset(BYTE_T *ptr, unsigned char value, unsigned int size) {
     for (int i = 0; i < size; i++) {
         ptr[i] = value;
     }
