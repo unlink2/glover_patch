@@ -1,17 +1,36 @@
-int test(int);
+#include "include/utility.h"
+#include "include/logic.h"
 
+enum START_MODE {
+    START_LOGIC,
+    START_RENDERING,
+    START_DMA
+};
 
-int __start() {
-    int a = 0xFFF;
-    int dd = 0xDD;
-    a = test(a+dd);
-    return a;
+/**
+ * Start function
+ * inputs:
+ *  mode = 0 run non-critical code
+ *  mode = 1 run rendering code
+ *  mode = 2 run dam (not implemented)
+ */
+int __start(enum START_MODE mode) {
+    switch (mode) {
+        case START_LOGIC:
+            logic();
+            break;
+        case START_RENDERING:
+            break;
+        case START_DMA:
+            break;
+        default:
+            assert(FALSE);
+            break;
+    }
+    return 0;
 }
 
-int test(int i) {
-    int f = 0x11;
-    return i+f;
-}
+
 
 
 
