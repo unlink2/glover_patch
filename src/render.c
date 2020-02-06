@@ -1,7 +1,9 @@
 #include "include/render.h"
+#include "include/memwatch.h"
 
 void render() {
-    puts_xy((char*)STRING_BUFFER, 0x55, 0x55);
+    memwatch *pmemwatch = memwatch_from_addr(MEMWATCH_STRUCT);
+    render_memwatch(pmemwatch);
 }
 
 void puts_xy(char *str, unsigned int x, unsigned int y) {
@@ -18,5 +20,6 @@ void puts_xy(char *str, unsigned int x, unsigned int y) {
     // need to make sure that
     // the call happens exactly in this order
     // with a0 == arg0, a1 == str, a2 == arg2
+    // arg2 might be a ptr to a struct used for printing
     pfunction(0x80202240, str, 0x801ED324);
 }

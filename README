@@ -42,3 +42,14 @@ Now inside of the rom folder you will find a file called glover_patched.z64. Thi
 
 To make this you will need gcc-mips-linux-gnu installed.
 
+Controls:
+Controller 1:
+Start+Cleft/Start+Cright => Store/Load Position
+Start+Cup/Start+Cdown => Actor Savestate (Experimental might crash!)
+Start+A => Start timer
+Start+B => Level select
+
+Controller 2:
+Start => Launch RAM viewer
+Dpad Left/Right => Increase/Decrease RAM address by 0x20
+Dpad Up/Down => Increase/Decrease RAM address by 0x1000
