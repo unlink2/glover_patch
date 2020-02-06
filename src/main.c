@@ -36,7 +36,7 @@ int __start(enum START_MODE mode) {
         case START_DMA:
             break;
         default:
-            assert(FALSE);
+            gassert(FALSE);
             break;
     }
     return 0;
