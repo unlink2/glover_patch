@@ -1,6 +1,11 @@
 #include "include/inputs.h"
 
 BOOLEAN read_button(unsigned int button, WORD_T *pcontroller) {
+    // if the controller is not connected it will
+    // return this value
+    if (*pcontroller == 0xFFFFFFFF) {
+        return 0;
+    }
     return (*pcontroller) >> button & 0x01;
 }
 
