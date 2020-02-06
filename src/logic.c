@@ -1,7 +1,11 @@
 #include "include/logic.h"
 #include "include/inputs.h"
+#include "include/memwatch.h"
 
 void logic() {
+    memwatch *pmemwatch = memwatch_from_addr(MEMWATCH_STRUCT);
+    update_memwatch(pmemwatch);
+
     // only trigger this code if start is held
     if (read_button(START_INPUT, CONTROLLER_1)) {
         if (read_button(A_INPUT, CONTROLLER_1)) {

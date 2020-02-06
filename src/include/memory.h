@@ -10,6 +10,9 @@
 #define LAST_INPUT_2 (WORD_T*)0x800002C8
 #define FRAME_ADVANCE (BYTE_T*)0x800002CC
 
+// memwatch struct location
+#define MEMWATCH_STRUCT (WORD_T*)0x800002D0
+
 #define FILE1_START (WORD_T*)0x801EAA44
 
 #define EXP_RAM (WORD_T*)0x80400000 // freely available ram!

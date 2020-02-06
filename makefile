@@ -15,7 +15,7 @@ CFLAGS=-Wall -nostdlib -nodefaultlibs -fno-builtin -EB -g -fno-pic -mabi=eabi\
 # 			-mno-check-zero-division -mxgot
 MAIN = main
 TEST_MAIN = test
-MODULES = utility inputs logic render memory
+MODULES = utility inputs logic render memory memwatch
 
 .DEFAULT_GOAL := glover_patch
 

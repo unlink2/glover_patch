@@ -23,4 +23,11 @@ void memset(BYTE_T *, unsigned char, unsigned int);
  */
 void assert(int);
 
+/**
+ * Converts a word to string
+ * The string buffer must have enough space to
+ * fit a hex string for 4 bytes + \00
+ */
+void word_to_hexstr(WORD_T, char *);
+
 #endif
