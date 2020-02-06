@@ -38,4 +38,8 @@
 #define PUTS_X_POS (WORD_T*)0x801ED394
 #define PUTS_Y_POS (WORD_T*)0x801ED398
 
+#define CURRENT_MAP (BYTE_T*)0x801E7531
+
+void init_mem();
+
 #endif
