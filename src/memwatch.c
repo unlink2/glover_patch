@@ -3,9 +3,11 @@
 #include "include/render.h"
 
 memwatch* memwatch_from_addr(WORD_T *paddress) {
-    ((memwatch*)paddress)->pstr = STRING_BUFFER;
-    ((memwatch*)paddress)->base_addr = 0x80000000;
-    return (memwatch*)paddress;
+    get_ptr(memwatch, newwatch, paddress);
+    get_ptr(BYTE_T, string_buffer, STRING_BUFFER);
+    newwatch->pstr = string_buffer;
+    newwatch->base_addr = 0x80000000;
+    return newwatch;
 }
 
 void render_memwatch(memwatch *pmw) {

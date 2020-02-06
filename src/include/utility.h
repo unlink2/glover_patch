@@ -9,6 +9,8 @@ enum BOOL_VALUE {
         TRUE
 };
 
+// create a pointer from an address
+#define get_ptr(type, name, addr) type *name = (type*)addr;
 
 unsigned int strlen(char *);
 
