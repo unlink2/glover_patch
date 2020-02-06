@@ -1,6 +1,23 @@
 #include "include/utility.h"
 
-unsigned int strlen(char *pstr) {
+#ifdef UNIT_TESTS
+
+void* my_malloc(size_t size) {
+    void *ptr = malloc(size);
+    memset(ptr, 0, size);
+
+    return ptr;
+}
+
+void my_free(void *ptr) {
+    if (ptr != NULL) {
+        free(ptr);
+    }
+}
+
+#endif
+
+unsigned int gstrlen(char *pstr) {
     int i = 0;
     while (pstr[i] != '\0') {
         i++;
@@ -8,24 +25,24 @@ unsigned int strlen(char *pstr) {
     return i;
 }
 
-void memcpy(BYTE_T *psrc, BYTE_T *pdest, unsigned int size) {
+void gmemcpy(BYTE_T *psrc, BYTE_T *pdest, unsigned int size) {
     for (int i = 0; i < size; i++) {
         pdest[i] = psrc[i];
     }
 }
 
-void memset(BYTE_T *ptr, unsigned char value, unsigned int size) {
+void gmemset(BYTE_T *ptr, unsigned char value, unsigned int size) {
     for (int i = 0; i < size; i++) {
         ptr[i] = value;
     }
 }
 
-void assert(int expression) {
+void gassert(int expression) {
 #ifndef NDEBUG
     if (!expression) {
         while (TRUE) {}
     }
-#endif 
+#endif
 }
 
 void word_to_hexstr(WORD_T value, char *pstr) {

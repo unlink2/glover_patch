@@ -3,8 +3,8 @@
 #include "include/render.h"
 
 memwatch* memwatch_from_addr(WORD_T *paddress) {
-    get_ptr(memwatch, newwatch, paddress);
-    get_ptr(BYTE_T, string_buffer, STRING_BUFFER);
+    get_ptr(memwatch, newwatch, paddress, sizeof(memwatch));
+    get_ptr(BYTE_T, string_buffer, STRING_BUFFER, 20);
     newwatch->pstr = string_buffer;
     newwatch->base_addr = 0x80000000;
     return newwatch;

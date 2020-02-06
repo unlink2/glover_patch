@@ -1,9 +1,11 @@
 CC=mips-elf-gcc
+CCLOC = gcc
 LD=mips-elf-ld
 
 INCLUDEDIR=./src/include
 SRCDIR=./src
 ODIR=./obj
+ODIRLOC=./obj/local
 BINDIR=./bin
 
 LIBS=
@@ -22,8 +24,8 @@ MODULES = utility inputs logic render memory memwatch
 DEPS=$(patsubst %,$(INCLUDEDIR)/%.h,$(MODULES))
 OBJ=$(patsubst %,$(ODIR)/%.o,$(MODULES))
 OBJ+=$(patsubst %,$(ODIR)/%.o,$(MAIN))
-TEST_OBJ=$(patsubst %,$(ODIR)/%.o,$(MODULES))
-TEST_OBJ+=$(patsubst %,$(ODIR)/%.o,$(TEST_MAIN))
+TEST_OBJ=$(patsubst %,$(ODIRLOC)/%.o,$(MODULES))
+TEST_OBJ+=$(patsubst %,$(ODIRLOC)/%.o,$(TEST_MAIN))
 
 # main
 
@@ -39,6 +41,17 @@ glover_patch: $(BINDIR)/code.bin
 	bass payload.s -sym ./bin/payload.sym
 	python3 glovepatch.py ./rom/glover_base_ntsc.z64 ./bin/payload.bin ./bin/code.bin ./rom/glover_patched.z64
 
+# test
+
+$(ODIRLOC)/%.o: $(SRCDIR)/%.c $(DEPS) | init
+	$(CCLOC) -c -o $@ $< -Wall -g
+
+build_test: $(TEST_OBJ)
+	$(CCLOC) -o $(BINDIR)/${TEST_MAIN} $^ $(LIBS) -l cmocka
+
+test: build_test
+	$(BINDIR)/$(TEST_MAIN)
+
 .PHONY: clean
 clean:
 	@echo Cleaning stuff. This make file officially is doing better than you irl.
@@ -50,4 +63,5 @@ clean:
 init:
 	mkdir -p $(ODIR)
 	mkdir -p $(BINDIR)
+	mkdir -p $(ODIRLOC)
 

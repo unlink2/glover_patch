@@ -36,7 +36,7 @@ void logic() {
 
     if (read_button(CU_INPUT, CONTROLLER_2)
         && !read_button(CU_INPUT, LAST_INPUT_2)) {
-        get_ptr(BYTE_T, pframe_advance, FRAME_ADVANCE);
+        get_ptr(BYTE_T, pframe_advance, FRAME_ADVANCE, 1);
         *pframe_advance = 2; // set to 2 to prevent double input
 
         // store last input values
@@ -45,7 +45,7 @@ void logic() {
 
     frame_advance();
 
-    get_ptr(WORD_T, file1, FILE1_START)
+    get_ptr(WORD_T, file1, FILE1_START, 7);
     complete_file(file1);
 
     // store last input values
@@ -53,20 +53,20 @@ void logic() {
 }
 
 void enable_timer() {
-    get_ptr(HWORD_T, ptr, TIMER_HW);
+    get_ptr(HWORD_T, ptr, TIMER_HW, 1);
     (*ptr) = 0xFF;
 }
 
 void level_select() {
-    get_ptr(BYTE_T, pgamemode_ptr, GAME_MODE);
-    get_ptr(BYTE_T, ppause_ptr, PAUSE_FLAG);
+    get_ptr(BYTE_T, pgamemode_ptr, GAME_MODE, 1);
+    get_ptr(BYTE_T, ppause_ptr, PAUSE_FLAG, 1);
     *pgamemode_ptr = 0x02; // enable level select
     *ppause_ptr = 0x00; // disable pause
 }
 
 void frame_advance() {
-    get_ptr(BYTE_T, pframe_advance, FRAME_ADVANCE);
-    get_ptr(WORD_T, plast_z_write, 0x801349B4);
+    get_ptr(BYTE_T, pframe_advance, FRAME_ADVANCE, 1);
+    get_ptr(WORD_T, plast_z_write, 0x801349B4, 1);
 
     while (*pframe_advance) {
         if (read_button(CD_INPUT, CONTROLLER_2)
@@ -160,8 +160,8 @@ void clone_actors() {
     // actor value here is also the actor's next ptr
     // actor heap loops on itself
     // if we're back at the start we are done
-    get_ptr(WORD_T, pactor, ACTOR_HEAP_START);
-    get_ptr(WORD_T, pcloneptr, ACTOR_HEAP_CLONE); // current clone address
+    get_ptr(WORD_T, pactor, ACTOR_HEAP_START, 1);
+    get_ptr(WORD_T, pcloneptr, ACTOR_HEAP_CLONE, 1); // current clone address
 
     do {
         *pcloneptr = (WORD_T)pactor;
@@ -170,7 +170,7 @@ void clone_actors() {
         pcloneptr += 1;
 
         // clone here
-        memcpy((BYTE_T*)pactor, (BYTE_T*)pcloneptr, ACTOR_SIZE);
+        gmemcpy((BYTE_T*)pactor, (BYTE_T*)pcloneptr, ACTOR_SIZE);
 
         // + F0
         pcloneptr += ACTOR_SIZE/4;
@@ -180,7 +180,7 @@ void clone_actors() {
     pcloneptr += 1;
     *pcloneptr = 0x00;
 
-    get_ptr(WORD_T, prng, RNG_VALUE)
+    get_ptr(WORD_T, prng, RNG_VALUE, 1)
     // store rng value
     pcloneptr += 1;
     *pcloneptr = *prng;
@@ -188,7 +188,7 @@ void clone_actors() {
 
 void restore_actors() {
     WORD_T *pactor = NULL;
-    get_ptr(WORD_T, pcloneptr, ACTOR_HEAP_CLONE);  // current clone address
+    get_ptr(WORD_T, pcloneptr, ACTOR_HEAP_CLONE, 1);  // current clone address
 
     do {
         pactor = (WORD_T*)*pcloneptr;
@@ -197,11 +197,11 @@ void restore_actors() {
         WORD_T size = *pcloneptr;
         pcloneptr += 1;
 
-        memcpy((BYTE_T*)pcloneptr, (BYTE_T*)pactor, size);
+        gmemcpy((BYTE_T*)pcloneptr, (BYTE_T*)pactor, size);
         pcloneptr += ACTOR_SIZE/4; // next value
     } while (*pcloneptr != 0x00);
 
-    get_ptr(WORD_T, prng, RNG_VALUE);
+    get_ptr(WORD_T, prng, RNG_VALUE, 1);
     // restore rng
     pcloneptr += 1;
     *prng = *pcloneptr;

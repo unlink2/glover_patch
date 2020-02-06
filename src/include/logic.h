@@ -11,7 +11,7 @@ void level_select();
 
 void frame_advance();
 
-void complete_file(unsigned int *);
+void complete_file(WORD_T *);
 
 void store_glover_pos();
 void restore_glover_pos();
