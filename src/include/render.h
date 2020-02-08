@@ -15,6 +15,11 @@ void render();
 HWORD_T *get_frame_buffer();
 
 /**
+ * Decompresses a font to a location in DRAM
+ */
+void decompress_font(WORD_T *, HWORD_T *, HWORD_T, HWORD_T);
+
+/**
  * Draws a string
  */
 void gputs(char *, HWORD_T *, WORD_T, WORD_T, const WORD_T *, HWORD_T, HWORD_T);
@@ -24,12 +29,63 @@ void gputs(char *, HWORD_T *, WORD_T, WORD_T, const WORD_T *, HWORD_T, HWORD_T);
  */
 void draw_char(char, HWORD_T *, WORD_T, WORD_T, const WORD_T *, HWORD_T, HWORD_T);
 
+
+/**
+ * Not really DMA yet, but maybe in the future
+ * Requires a decompressed font instead of the data from rom
+ */
+void gputs_dma(char *, HWORD_T *, WORD_T, WORD_T, HWORD_T *);
+
+/**
+ * Not really DMA yet, but maybe in the future
+ * Requires a decompressed font instead of the data from rom
+ * should be faster than draw_char. requires less calculations.
+ * X coordiniate must be evenly divisible by 4
+ */
+void draw_char_dma(char, HWORD_T *, WORD_T, WORD_T, HWORD_T *);
+
 /**
  * Write to framebuffer, the value is 2 bytes per pixel
  * RGBA format
  */
 void write_to_framebuffer(HWORD_T *, HWORD_T, WORD_T);
 
-#define __FB_WRITE_HW(pframebuffer, color, offset) pframebuffer[offset] = color;
+// guaranteed inline write to framebuffer
+#define FB_WRITE_HW(pframebuffer, color, offset) pframebuffer[offset] = color;
+#define FB_WRITE_W(pframebuffer, color, offset) *((WORD_T*)pframebuffer+offset) = color;
+
+// guaranteed inline rendering of a character. if speed is not an issue call the
+// function instead
+#define INLINE_DRAW_CHAR(c, pframebuffer, x, y, pcharset, fg, bg) /* initial character offset */\
+    const WORD_T *pchar = pcharset+(WORD_T)c*8;\
+    HWORD_T offset = SCREEN_W * y + x; /* start address of framebuffer */\
+    for (int y = 0; y < CHAR_H; y++) {\
+        HWORD_T fdata = pchar[0];\
+        for (int x = 0; x < CHAR_W; x++) {\
+            HWORD_T set = fdata & 1 << x;\
+            if (set) {\
+                FB_WRITE_HW(pframebuffer, fg, offset);\
+            } else {\
+                FB_WRITE_HW(pframebuffer, bg, offset);\
+            }\
+            offset++; /* +1 offset */\
+        }\
+        pchar++; /* +1 font pixel */\
+        offset += SCREEN_W-CHAR_W; /* next line */\
+    }
+
+// guaranteed inline rendering of a character. if speed is not an issue call the
+// function instead
+#define INLINE_DRAW_CHAR_DMA(c, pframebuffer, x, y, pfont) /* first pixel data*/\
+    HWORD_T *pchar = pfont+(WORD_T)c*CHAR_W*CHAR_H;\
+    HWORD_T offset = SCREEN_W/2 * y + x/2; /* start address of framebuffer */\
+    for (int y = 0; y < CHAR_H; y++) {\
+        for (int x = 0; x < CHAR_W/2; x++) {\
+            FB_WRITE_W(pframebuffer, ((WORD_T*)pchar)[0], offset);\
+            offset++; /* +1 offset */\
+            pchar+=2; /* +1 font pixel */\
+        }\
+        offset += SCREEN_W/2-CHAR_W/2; /* next line */\
+    }
 
 #endif
