@@ -4,9 +4,13 @@
 #include "utility.h"
 #include "memory.h"
 
+#define WORDS_PER_PAGE 16
+#define BYTES_PER_LINE 4
+
 typedef struct memwatch {
     //  7th bit == 1 -> Watch enable flag
-    WORD_T flags; // this really only needs to be 1 byte, but it is word for padding
+    HWORD_T flags; // this really only needs to be 1 byte, but it is word for padding
+    HWORD_T cursor_pos;
     WORD_T offset;
     BYTE_T *pstr; // string buffer, should have at least 18 bytes
     WORD_T base_addr; // start address of ram

@@ -93,6 +93,10 @@ static void test_gputs(void **state) {
     gputs("Hello, ", pframebuffer, 10, 10, (WORD_T*)font8x8_basic, 0x000F, 0xFFFF);
     gputsf("WORLD!", pframebuffer, 50, 60, pfont);
 
+    // test full transparent puts
+    // should not overwrite H due to the last byte being 0 (transparent)
+    draw_char('\0', pframebuffer, 10, 10, (WORD_T*)font8x8_basic, 0x000F, 0xFFF0);
+
     FILE *fp = fopen("./tests/puts_expected.dmp", "rb");
     // this file is not BE!
     fread(pframebuffer_expected, SCREEN_W*SCREEN_H*sizeof(HWORD_T), 1, fp);

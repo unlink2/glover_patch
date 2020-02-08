@@ -26,6 +26,7 @@ void gputs(char *, HWORD_T *, WORD_T, WORD_T, const WORD_T *, HWORD_T, HWORD_T);
 
 /**
  * Draws a char to the framebuffer
+ * if the bg color is 0xNNN0 it will not be drawn because it is fully transparent
  */
 void draw_char(char, HWORD_T *, WORD_T, WORD_T, const WORD_T *, HWORD_T, HWORD_T);
 
@@ -65,7 +66,7 @@ void write_to_framebuffer(HWORD_T *, HWORD_T, WORD_T);
             HWORD_T set = fdata & 1 << x;\
             if (set) {\
                 FB_WRITE_HW(pframebuffer, fg, offset);\
-            } else {\
+            } else if ((bg & 0x000F) != 0) {\
                 FB_WRITE_HW(pframebuffer, bg, offset);\
             }\
             offset++; /* +1 offset */\
