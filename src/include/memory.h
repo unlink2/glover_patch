@@ -41,6 +41,10 @@
 #define PUTS_X_POS (WORD_T*)0x801ED394
 #define PUTS_Y_POS (WORD_T*)0x801ED398
 
+#define __OS_DISABLE_INT (WORD_T*)0x801C6F70 // function ptr void ()
+#define __OS_RESTORE_INT (WORD_T*)0x801C6F90 // function ptr void ()
+#define __OS_GET_CURRENT_FRAMEBUFFER (WORD_T*)0x801CE910 // function ptr WORDL_T *()
+
 #define CURRENT_MAP (BYTE_T*)0x801E7531
 
 void init_mem();
