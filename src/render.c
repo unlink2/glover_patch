@@ -55,16 +55,16 @@ void draw_char(char c, HWORD_T *pframebuffer, WORD_T x, WORD_T y, const WORD_T *
     INLINE_DRAW_CHAR(c, pframebuffer, x, y, pcharset, fg, bg);
 }
 
-void gputs_dma(char *str, HWORD_T *pframebuffer, WORD_T x, WORD_T y, HWORD_T *pfont) {
+void gputsf(char *str, HWORD_T *pframebuffer, WORD_T x, WORD_T y, HWORD_T *pfont) {
     while (str[0] != '\0') {
-        INLINE_DRAW_CHAR_DMA(str[0], pframebuffer, x, y, pfont);
+        INLINE_DRAW_CHARF(str[0], pframebuffer, x, y, pfont);
         x += CHAR_W; // next
         str++; // next char
     }
 }
 
-void draw_char_dma(char c, HWORD_T *pframebuffer, WORD_T x, WORD_T y, HWORD_T *pfont) {
-    INLINE_DRAW_CHAR_DMA(c, pframebuffer, x, y, pfont);
+void draw_charf(char c, HWORD_T *pframebuffer, WORD_T x, WORD_T y, HWORD_T *pfont) {
+    INLINE_DRAW_CHARF(c, pframebuffer, x, y, pfont);
 }
 
 void write_to_framebuffer(HWORD_T *pframebuffer, HWORD_T color, WORD_T offset) {
