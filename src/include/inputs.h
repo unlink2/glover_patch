@@ -6,6 +6,7 @@
 #define CONTROLLER_1 (WORD_T*)0xBFC007C4
 #define CONTROLLER_2 (WORD_T*)0xBFC007CC
 
+#define R_INPUT 0x14
 #define L_INPUT 0x15
 #define CL_INPUT 0x11
 #define CR_INPUT 0x10

@@ -56,6 +56,7 @@ test: build_test
 clean:
 	@echo Cleaning stuff. This make file officially is doing better than you irl.
 	rm $(ODIR)/*.o
+	rm $(ODIRLOC)/*.o
 	rm $(BINDIR)/*
 
 

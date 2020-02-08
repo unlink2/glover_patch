@@ -20,9 +20,8 @@ void render_memwatch(memwatch *pmw) {
 
     get_ptr(HWORD_T, pfont, FONT8X8, 0x4000);
 
-    const short words_per_page = 16;
 
-    WORD_T *paddr = (WORD_T*)pmw->base_addr+(pmw->offset*words_per_page);
+    WORD_T *paddr = (WORD_T*)pmw->base_addr+(pmw->offset*WORDS_PER_PAGE);
 
     if ((WORD_T)paddr < pmw->base_addr
             || (WORD_T)paddr >= 0x80400000) {
@@ -36,12 +35,21 @@ void render_memwatch(memwatch *pmw) {
     // display 16 bytes on screen 2 words per line
     unsigned short start_x = 0x04;
     unsigned short start_y = 0x020;
-    for (int i = 0; i < words_per_page; i++, start_y += CHAR_H+1) {
+    for (int i = 0; i < WORDS_PER_PAGE; i++, start_y += CHAR_H+1) {
         WORD_T *ptr = (WORD_T*)paddr+i;
         word_to_hexstr(*ptr, (char*)pmw->pstr);
         gputsf((char*)pmw->pstr, pframebuffer, start_x, start_y, pfont);
 
     }
+
+    int x_offset = (pmw->cursor_pos%BYTES_PER_LINE)*CHAR_W*2;
+    int y_offset = (pmw->cursor_pos/BYTES_PER_LINE)*(CHAR_H+1);
+
+    // render memwatch cursor
+    draw_char('_', pframebuffer, 0x04+x_offset, 0x20+y_offset,
+            (WORD_T*)font8x8_basic, 0xF00F, 0x0000);
+    draw_char('_', pframebuffer, 0x0C+x_offset, 0x20+y_offset,
+            (WORD_T*)font8x8_basic, 0xF00F, 0x0000);
 }
 
 void update_memwatch(memwatch *pmw) {
@@ -49,6 +57,11 @@ void update_memwatch(memwatch *pmw) {
     if (read_button(START_INPUT, CONTROLLER_2)
             && !read_button(START_INPUT, LAST_INPUT_2)) {
         pmw->flags = pmw->flags ^ 0b1000000000000000;
+    }
+
+    // don't test these if memwatch is off
+    if ((pmw->flags & 0x8000) == 0) {
+        return;
     }
 
     // inc/dec memory offset
@@ -60,5 +73,37 @@ void update_memwatch(memwatch *pmw) {
         pmw->offset += 0x100;
     } else if (read_button(DPAD_DOWN, CONTROLLER_2)) {
         pmw->offset -= 0x100;
+    } else if (read_button(L_INPUT, CONTROLLER_2)
+        && !read_button(L_INPUT, LAST_INPUT_2)) {
+        pmw->cursor_pos++;
+        if (pmw->cursor_pos >= WORDS_PER_PAGE*BYTES_PER_LINE) {
+            pmw->cursor_pos = 0;
+        }
+    } else if (read_button(R_INPUT, CONTROLLER_2)
+        && !read_button(R_INPUT, LAST_INPUT_2)) {
+        pmw->cursor_pos--;
+        if (pmw->cursor_pos >= WORDS_PER_PAGE*BYTES_PER_LINE) {
+            pmw->cursor_pos = WORDS_PER_PAGE*BYTES_PER_LINE-1;
+        }
+    } else if (read_button(A_INPUT, CONTROLLER_2)
+        && !read_button(A_INPUT, LAST_INPUT_2)) {
+        BYTE_T *paddr = (BYTE_T*)pmw->base_addr+(pmw->offset*WORDS_PER_PAGE)+pmw->cursor_pos;
+
+        if ((WORD_T)paddr < pmw->base_addr
+                || (WORD_T)paddr >= 0x80400000) {
+            pmw->offset = 0;
+            return;
+        }
+        *paddr += 1;
+    } else if (read_button(B_INPUT, CONTROLLER_2)
+        && !read_button(B_INPUT, LAST_INPUT_2)) {
+        BYTE_T *paddr = (BYTE_T*)pmw->base_addr+(pmw->offset*WORDS_PER_PAGE)+pmw->cursor_pos;
+
+        if ((WORD_T)paddr < pmw->base_addr
+                || (WORD_T)paddr >= 0x80400000) {
+            pmw->offset = 0;
+            return;
+        }
+        *paddr -= 1;
     }
 }
