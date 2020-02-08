@@ -34,7 +34,7 @@ void draw_char(char, HWORD_T *, WORD_T, WORD_T, const WORD_T *, HWORD_T, HWORD_T
  * Not really DMA yet, but maybe in the future
  * Requires a decompressed font instead of the data from rom
  */
-void gputs_dma(char *, HWORD_T *, WORD_T, WORD_T, HWORD_T *);
+void gputsf(char *, HWORD_T *, WORD_T, WORD_T, HWORD_T *);
 
 /**
  * Not really DMA yet, but maybe in the future
@@ -42,7 +42,7 @@ void gputs_dma(char *, HWORD_T *, WORD_T, WORD_T, HWORD_T *);
  * should be faster than draw_char. requires less calculations.
  * X coordiniate must be evenly divisible by 4
  */
-void draw_char_dma(char, HWORD_T *, WORD_T, WORD_T, HWORD_T *);
+void draw_charf(char, HWORD_T *, WORD_T, WORD_T, HWORD_T *);
 
 /**
  * Write to framebuffer, the value is 2 bytes per pixel
@@ -76,7 +76,7 @@ void write_to_framebuffer(HWORD_T *, HWORD_T, WORD_T);
 
 // guaranteed inline rendering of a character. if speed is not an issue call the
 // function instead
-#define INLINE_DRAW_CHAR_DMA(c, pframebuffer, x, y, pfont) /* first pixel data*/\
+#define INLINE_DRAW_CHARF(c, pframebuffer, x, y, pfont) /* first pixel data*/\
     HWORD_T *pchar = pfont+(WORD_T)c*CHAR_W*CHAR_H;\
     HWORD_T offset = SCREEN_W/2 * y + x/2; /* start address of framebuffer */\
     for (int y = 0; y < CHAR_H; y++) {\
