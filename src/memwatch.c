@@ -1,6 +1,7 @@
 #include "include/memwatch.h"
 #include "include/inputs.h"
 #include "include/render.h"
+#include "include/font8x8_basic.h"
 
 memwatch* memwatch_from_addr(WORD_T *paddress) {
     get_ptr(memwatch, newwatch, paddress, sizeof(memwatch));
@@ -15,7 +16,9 @@ void render_memwatch(memwatch *pmw) {
         return;
     }
 
-    const short words_per_page = 8;
+    HWORD_T *pframebuffer = get_frame_buffer();
+
+    const short words_per_page = 16;
 
     WORD_T *paddr = (WORD_T*)pmw->base_addr+(pmw->offset*words_per_page);
 
@@ -26,15 +29,16 @@ void render_memwatch(memwatch *pmw) {
     }
 
     word_to_hexstr((WORD_T)paddr, (char*)pmw->pstr);
-    puts_xy((char*)pmw->pstr, 0x04, 0x04);
+    gputs((char*)pmw->pstr, pframebuffer, 0x04, 0x04, (WORD_T*)font8x8_basic, 0x000F, 0xFFFF);
 
     // display 16 bytes on screen 2 words per line
     unsigned short start_x = 0x04;
     unsigned short start_y = 0x020;
-    for (int i = 0; i < words_per_page; i++, start_y += 0x13) {
+    for (int i = 0; i < words_per_page; i++, start_y += CHAR_H+1) {
         WORD_T *ptr = (WORD_T*)paddr+i;
         word_to_hexstr(*ptr, (char*)pmw->pstr);
-        puts_xy((char*)pmw->pstr, start_x, start_y);
+        gputs((char*)pmw->pstr, pframebuffer, start_x, start_y, (WORD_T*)font8x8_basic, 0x000F, 0xFFFF);
+
     }
 }
 
