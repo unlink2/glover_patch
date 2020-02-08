@@ -1,6 +1,7 @@
 #ifndef __TYPEDEFS_H__
 #define __TYPEDEFS_H__
 
+typedef unsigned long DWORD_T;
 #ifdef __LP64__
 typedef unsigned long WORD_T;
 #else

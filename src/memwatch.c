@@ -18,6 +18,8 @@ void render_memwatch(memwatch *pmw) {
 
     HWORD_T *pframebuffer = get_frame_buffer();
 
+    get_ptr(HWORD_T, pfont, FONT8X8, 0x4000);
+
     const short words_per_page = 16;
 
     WORD_T *paddr = (WORD_T*)pmw->base_addr+(pmw->offset*words_per_page);
@@ -29,7 +31,7 @@ void render_memwatch(memwatch *pmw) {
     }
 
     word_to_hexstr((WORD_T)paddr, (char*)pmw->pstr);
-    gputs((char*)pmw->pstr, pframebuffer, 0x04, 0x04, (WORD_T*)font8x8_basic, 0x000F, 0xFFFF);
+    gputs_dma((char*)pmw->pstr, pframebuffer, 0x04, 0x04, pfont);
 
     // display 16 bytes on screen 2 words per line
     unsigned short start_x = 0x04;
@@ -37,7 +39,7 @@ void render_memwatch(memwatch *pmw) {
     for (int i = 0; i < words_per_page; i++, start_y += CHAR_H+1) {
         WORD_T *ptr = (WORD_T*)paddr+i;
         word_to_hexstr(*ptr, (char*)pmw->pstr);
-        gputs((char*)pmw->pstr, pframebuffer, start_x, start_y, (WORD_T*)font8x8_basic, 0x000F, 0xFFFF);
+        gputs_dma((char*)pmw->pstr, pframebuffer, start_x, start_y, pfont);
 
     }
 }

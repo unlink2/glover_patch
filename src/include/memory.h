@@ -20,6 +20,10 @@
 #define Y_BAC (WORD_T*)0x800002B4
 #define Z_BAC (WORD_T*)0x800002B8
 
+// uncompressed location of font 0x4000 bytes
+// TODO make sure this is a good location
+#define FONT8X8 (WORD_T*)0x80025C30
+
 #define GLOVER_X (WORD_T*)0x8029030C
 #define GLOVER_Y (WORD_T*)0x80290310
 #define GLOVER_Z (WORD_T*)0x80290314
@@ -46,6 +50,8 @@
 #define __OS_GET_CURRENT_FRAMEBUFFER (WORD_T*)0x801CE910 // function ptr WORDL_T *()
 
 #define CURRENT_MAP (BYTE_T*)0x801E7531
+
+
 
 void init_mem();
 
