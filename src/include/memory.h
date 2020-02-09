@@ -24,6 +24,10 @@
 // TODO make sure this is a good location
 #define FONT8X8 (WORD_T*)0x80025C30
 
+// 0x20 strings of 0x10 bytes each. will be rendered to the screen
+// every frame if needed
+#define SCREEN_BUFFER (BYTE_T*)0x80029C30 
+
 #define GLOVER_X (WORD_T*)0x8029030C
 #define GLOVER_Y (WORD_T*)0x80290310
 #define GLOVER_Z (WORD_T*)0x80290314
