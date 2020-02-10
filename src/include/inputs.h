@@ -8,6 +8,7 @@
 
 #define R_INPUT 0x14
 #define L_INPUT 0x15
+#define Z_INPUT 0x1D
 #define CL_INPUT 0x11
 #define CR_INPUT 0x10
 #define CD_INPUT 0x12

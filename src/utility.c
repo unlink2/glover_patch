@@ -45,9 +45,10 @@ void gassert(int expression) {
 #endif
 }
 
-void word_to_hexstr(WORD_T value, char *pstr) {
-    unsigned char shift = 28;
-    for (int i = 0; i < 8; i++, shift -= 4) {
+void to_hexstr(WORD_T value, char *pstr, WORD_T size) {
+    unsigned char shift = size*8-4; // bits to shift
+    int i = 0;
+    for (i = 0; i < 2*size; i++, shift -= 4) {
          char c = (value >> shift) & 0x0F;
          // to ascii
          if (c < 0xA) {
@@ -57,5 +58,5 @@ void word_to_hexstr(WORD_T value, char *pstr) {
          }
          pstr[i] = c;
     }
-    pstr[8] = '\0';
+    pstr[i] = '\0';
 }

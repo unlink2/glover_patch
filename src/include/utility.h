@@ -45,6 +45,6 @@ void gassert(int);
  * The string buffer must have enough space to
  * fit a hex string for 4 bytes + \00
  */
-void word_to_hexstr(WORD_T, char *);
+void to_hexstr(WORD_T, char *, WORD_T);
 
 #endif

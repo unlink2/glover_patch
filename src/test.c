@@ -120,6 +120,16 @@ static void test_memwatch_from_addr(void **state) {
     my_free(pmw);
 }
 
+static void test_to_hexstr(void **state) {
+    char *pstr = my_malloc(20);
+
+    to_hexstr(0x80106901, pstr, sizeof(unsigned int));
+
+    assert_string_equal(pstr, "80106901");
+
+    my_free(pstr);
+}
+
 int main() {
     const struct CMUnitTest tests[] = {
         cmocka_unit_test(test_gmemcpy),
@@ -127,7 +137,8 @@ int main() {
         cmocka_unit_test(test_gstrlen),
         cmocka_unit_test(test_memwatch_from_addr),
         cmocka_unit_test(test_decompress_font),
-        cmocka_unit_test(test_gputs)
+        cmocka_unit_test(test_gputs),
+        cmocka_unit_test(test_to_hexstr)
     };
 
     return cmocka_run_group_tests(tests, NULL, NULL);
