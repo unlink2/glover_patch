@@ -30,4 +30,6 @@ void prepare_memwatch(memwatch *);
 
 void update_memwatch(memwatch *);
 
+#define memwatch_current_addr(pmw) (BYTE_T*)pmw->base_addr+(pmw->offset*WORDS_PER_PAGE*sizeof(WORD_T))
+
 #endif
