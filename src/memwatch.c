@@ -90,7 +90,7 @@ void render_memwatch(memwatch *pmw) {
             (WORD_T*)font8x8_basic, 0xF00F, 0x0000);
 }
 
-void prepware_watchaddr(memwatch *pmw) {
+void prepare_watchaddr(memwatch *pmw) {
     // string buffer
     char *pstr = (char*)pmw->pstr;
     switch(pmw->watch_type) {
@@ -179,7 +179,7 @@ void update_memwatch(memwatch *pmw) {
         return;
     } else if ((pmw->flags & 0x80) == 0) {
         if (pmw->watch_addr != NULL && pmw->watch_type != NO_WATCH) {
-            prepware_watchaddr(pmw);
+            prepare_watchaddr(pmw);
         }
         return;
     }
