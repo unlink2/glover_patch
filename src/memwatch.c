@@ -50,7 +50,7 @@ void render_memwatch(memwatch *pmw) {
 }
 
 void prepare_memwatch(memwatch *pmw) {
-    WORD_T *paddr = (WORD_T*)pmw->base_addr+(pmw->offset*WORDS_PER_PAGE);
+    WORD_T *paddr = (WORD_T*)(memwatch_current_addr(pmw));
 
     if ((WORD_T)paddr < pmw->base_addr
             || (WORD_T)paddr >= 0x80400000) {
@@ -110,7 +110,7 @@ void update_memwatch(memwatch *pmw) {
         if (pmw->cursor_pos == 0xFFFF) {
             pmw->offset++;
         } else {
-            BYTE_T *paddr = (BYTE_T*)(pmw->base_addr+(pmw->offset*WORDS_PER_PAGE*sizeof(WORD_T)))+pmw->cursor_pos;
+            BYTE_T *paddr = memwatch_current_addr(pmw)+pmw->cursor_pos;
 
             if ((WORD_T)paddr < pmw->base_addr
                     || (WORD_T)paddr >= 0x80400000) {
@@ -125,7 +125,7 @@ void update_memwatch(memwatch *pmw) {
         if (pmw->cursor_pos == 0xFFFF) {
             pmw->offset--;
         } else {
-            BYTE_T *paddr = (BYTE_T*)pmw->base_addr+(pmw->offset*WORDS_PER_PAGE*sizeof(WORD_T))+pmw->cursor_pos;
+            BYTE_T *paddr = memwatch_current_addr(pmw)+pmw->cursor_pos;
 
             if ((WORD_T)paddr < pmw->base_addr
                     || (WORD_T)paddr >= 0x80400000) {
@@ -134,6 +134,21 @@ void update_memwatch(memwatch *pmw) {
             }
             *paddr -= 1;
         }
+    } else if (read_button(A_INPUT, CONTROLLER_2)
+            && read_button(A_INPUT, LAST_INPUT_2)) {
+        // get current address and read it
+        WORD_T *paddr = (WORD_T*)(memwatch_current_addr(pmw)+pmw->cursor_pos);
+
+        // get start of word
+        paddr = (WORD_T*)((WORD_T)paddr & ~3);
+        // read value and verify it is in range
+        WORD_T value = (WORD_T)*paddr;
+
+        if ((WORD_T)value >= 0x80000000 && (WORD_T)value < 0x80400000) {
+            // follow pointer if in bounds
+            pmw->offset = (value-pmw->base_addr)/WORDS_PER_PAGE/sizeof(WORD_T);
+        }
+
     }
 
     pmw->frame_counter++;
