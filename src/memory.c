@@ -2,14 +2,21 @@
 #include "include/utility.h"
 #include "include/render.h"
 #include "include/font8x8_basic.h"
+#include "include/memwatch.h"
+#include "include/debug.h"
+
 
 void init_mem() {
     get_ptr(BYTE_T, pframe_advance, FRAME_ADVANCE, 1);
     *pframe_advance = 0x00;
+    init_memwatch(&pmemwatch);
+
+    // evd_init();
+    // evd_write_msg(0x21);
 
     // draw intro message
     // unrolled draw loop to avoid ram usage during init
-    HWORD_T *pfb = get_frame_buffer();
+    /*HWORD_T *pfb = get_frame_buffer();
     draw_char('g', pfb, 10, 10, (WORD_T*)font8x8_basic, 0xFFFF, 0x000F);
     draw_char('i', pfb, 18, 10, (WORD_T*)font8x8_basic, 0xFFFF, 0x000F);
     draw_char('t', pfb, 26, 10, (WORD_T*)font8x8_basic, 0xFFFF, 0x000F);
@@ -40,5 +47,5 @@ void init_mem() {
     draw_char('a', pfb, 226, 10, (WORD_T*)font8x8_basic, 0xFFFF, 0x000F);
     draw_char('t', pfb, 234, 10, (WORD_T*)font8x8_basic, 0xFFFF, 0x000F);
     draw_char('c', pfb, 242, 10, (WORD_T*)font8x8_basic, 0xFFFF, 0x000F);
-    draw_char('h', pfb, 250, 10, (WORD_T*)font8x8_basic, 0xFFFF, 0x000F);
+    draw_char('h', pfb, 250, 10, (WORD_T*)font8x8_basic, 0xFFFF, 0x000F);*/
 }

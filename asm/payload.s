@@ -584,6 +584,58 @@ scope {
 
 }
 
+// inject at start point and DMA all code to
+// expansion ram
+// do not call this from render thread!
+dma:
+scope {
+    // call original
+    sw s3, $0034(sp)
+    sw s1, $002C(sp)
+    sw s0, $0028 (SP)
+
+    la v0, $A4600000
+
+dma_wait:
+    lw v1, $0010(v0)
+    andi v1, v1, 0x0001
+    bnez v1, dma_wait
+    nop
+
+    la v1, ((DMA_RAM) & $00FFFFFF)
+    sw v1, $0000(v0)
+    la v1, ((DMA_ROM) & $1FFFFFFF)
+    sw v1, $0004(v0)
+    la v1, ((DMA_SIZE))
+    sw v1, $000C(v0)
+dma_loop:
+    lw v1, $0010(v0)
+    andi v1, v1, 0x0001
+    bnez v1, dma_loop
+    nop
+
+    la v1, $00000002
+    sw v1, $0010(v0)
+
+    // call init c code
+    // jump to c code in init mode
+    la a0, $03
+    la v0, C_CODE_START
+    jalr v0
+    nop
+
+
+
+    jr ra
+    nop
+}
+
+skip:
+    jr ra
+    nop
+
+
+
 section_data:
 text:
   db "Glove is love!", $00

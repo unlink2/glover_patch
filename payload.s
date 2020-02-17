@@ -9,11 +9,14 @@ include "lib/N64.INC" // Include N64 Definitions
 
 // jump here to get to c code
 // TODO dma to ram to have string constants
-constant C_CODE_START($B0790000)
+constant C_CODE_START($80400200) //($B0780200)
 
 // function that was replaced by inject
 constant ORIGINAL($80178E98)
 
+constant DMA_RAM($80400000)
+constant DMA_ROM($B0780000)
+constant DMA_SIZE($FFFF)
 
 
 // mode is based on ra
@@ -21,12 +24,13 @@ constant ORIGINAL($80178E98)
 //  ra == 8013E854 -> call render code
 section_code:
 scope {
-    la t0, $8013E850
+    la t0, $8013E850 // rendering ra
     bne ra, t0, not_render_mode
     nop
-    j render_inject
+    b render_inject
     nop
 not_render_mode:
+
 
 	// call the original function we replaced
 	la t3, ORIGINAL
@@ -44,7 +48,7 @@ not_render_mode:
 	// return
     la ra, $8013F378 // return address
 	jr ra // return
-	nop // need a nop after jr
+    lui v0, $801F // nop // need a nop after jr
 }
 
 
@@ -72,6 +76,7 @@ scope {
     nop
 
 }
+
 
 section_data:
 text:

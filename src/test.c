@@ -111,15 +111,6 @@ static void test_gputs(void **state) {
     my_free(pframebuffer);
 }
 
-static void test_memwatch_from_addr(void **state) {
-    // address only matters on the n64 here we just malloc
-    memwatch *pmw = memwatch_from_addr(0x00);
-    assert_non_null(pmw);
-    assert_non_null(pmw->pstr);
-    my_free(pmw->pstr);
-    my_free(pmw);
-}
-
 static void test_to_hexstr(void **state) {
     char *pstr = my_malloc(20);
 
@@ -135,7 +126,6 @@ int main() {
         cmocka_unit_test(test_gmemcpy),
         cmocka_unit_test(test_gmemset),
         cmocka_unit_test(test_gstrlen),
-        cmocka_unit_test(test_memwatch_from_addr),
         cmocka_unit_test(test_decompress_font),
         cmocka_unit_test(test_gputs),
         cmocka_unit_test(test_to_hexstr)

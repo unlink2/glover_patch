@@ -1,10 +1,10 @@
 #include "include/logic.h"
 #include "include/inputs.h"
 #include "include/memwatch.h"
+#include "include/debug.h"
 
 void logic() {
-    memwatch *pmemwatch = memwatch_from_addr(MEMWATCH_STRUCT);
-    update_memwatch(pmemwatch);
+    update_memwatch(&pmemwatch);
 
     // only trigger this code if start is held
     if (read_button(START_INPUT, CONTROLLER_1)) {
@@ -23,12 +23,16 @@ void logic() {
             restore_glover_pos();
         }
 
-        if (read_button(CU_INPUT, CONTROLLER_1)) {
+        if (read_button(CU_INPUT, CONTROLLER_1)
+                && !read_button(CU_INPUT, LAST_INPUT_1)) {
             clone_actors();
+            // evd_write_msg(0x21);
         }
 
-        if (read_button(CD_INPUT, CONTROLLER_1)) {
+        if (read_button(CD_INPUT, CONTROLLER_1)
+                && !read_button(CD_INPUT, LAST_INPUT_1)) {
             restore_actors();
+            // evd_init();
         }
     }
 
@@ -50,6 +54,7 @@ void logic() {
 
     // store last input values
     store_inputs(CONTROLLER_2, LAST_INPUT_2);
+    store_inputs(CONTROLLER_1, LAST_INPUT_1);
 }
 
 void enable_timer() {

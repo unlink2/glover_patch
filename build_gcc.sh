@@ -11,16 +11,18 @@ mkdir gcc_build
 cd gcc_build
 wget https://ftp.gnu.org/gnu/binutils/binutils-2.34.tar.bz2 -O binutils.tar.bz2
 wget https://ftp.gnu.org/gnu/gcc/gcc-9.2.0/gcc-9.2.0.tar.gz -O gcc.tar.gz
-# wget https://ftp.gnu.org/gnu/gdb/gdb-8.3.tar.gz -o gdb.tar.gz
+wget https://ftp.gnu.org/gnu/gdb/gdb-8.3.tar.gz -O gdb.tar.gz
 tar xjfv binutils.tar.bz2
 tar xzfv gcc.tar.gz
+tar xzfv gdb.tar.gz
 # move to nicer names
 mv binutils-2.34 binutils
 mv gcc-9.2.0 gcc
+mv gdb-8.3 gdb
 
 mkdir gcc_build
 mkdir binutils_build
-# mkdir gdb_build
+mkdir gdb_build
 
 # binutils
 cd binutils_build
@@ -37,7 +39,7 @@ sudo make install-gcc
 cd ..
 
 # gdb
-# cd build_gdb
-# ../gdb/configure --target=$TARGET --prefix=$PREFIX --enable-sim-mips --enable-sim-stdio
-# make all
-# sudo make install
+cd gdb_build
+../gdb/configure --target=$TARGET --prefix=$PREFIX --enable-sim-mips --enable-sim-stdio
+make all
+sudo make install

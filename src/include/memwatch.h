@@ -4,7 +4,7 @@
 #include "utility.h"
 #include "memory.h"
 
-#define WORDS_PER_PAGE 16
+#define WORDS_PER_PAGE 8
 #define BYTES_PER_LINE 4
 #define MEMWATCH_POLLING_RATE 4 // every N frames
 
@@ -28,8 +28,9 @@ typedef struct memwatch {
     watch_type watch_type;
 } memwatch;
 
+extern memwatch pmemwatch;
 
-memwatch* memwatch_from_addr(WORD_T *);
+void init_memwatch(memwatch *);
 
 /**
  * Renders one specific address at all times
