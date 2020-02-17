@@ -6,7 +6,8 @@
 enum START_MODE {
     START_LOGIC,
     START_RENDERING,
-    START_DMA
+    START_DMA,
+    START_INIT
 };
 
 /**
@@ -24,6 +25,7 @@ int __start(enum START_MODE mode) {
     // init memory
     if (*pmap == 0xFF) {
         init_mem();
+        return 0;
     }
 
     switch (mode) {
@@ -35,6 +37,9 @@ int __start(enum START_MODE mode) {
             break;
         case START_DMA:
             break;
+        case START_INIT:
+            init_mem();
+            break; 
         default:
             gassert(FALSE);
             break;

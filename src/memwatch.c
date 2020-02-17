@@ -3,12 +3,13 @@
 #include "include/render.h"
 #include "include/font8x8_basic.h"
 
-memwatch* memwatch_from_addr(WORD_T *paddress) {
-    get_ptr(memwatch, newwatch, paddress, sizeof(memwatch));
+memwatch pmemwatch;
+
+void init_memwatch(memwatch *pmw) {
     get_ptr(BYTE_T, string_buffer, SCREEN_BUFFER, 0x20*0x10);
-    newwatch->pstr = string_buffer;
-    newwatch->base_addr = 0x80000000;
-    return newwatch;
+    pmw->pstr = string_buffer;
+    pmw->base_addr = 0x80000000;
+    pmw->flags = 0x0;
 }
 
 void render_watchaddr(memwatch *pmw) {

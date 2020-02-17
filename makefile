@@ -17,7 +17,7 @@ CFLAGS=-Wall -nostdlib -nodefaultlibs -fno-builtin -EB -g -fno-pic -mabi=eabi\
 # 			-mno-check-zero-division -mxgot
 MAIN = main
 TEST_MAIN = test
-MODULES = utility inputs logic render memory memwatch font8x8_basic
+MODULES = utility inputs logic render memory memwatch font8x8_basic debug
 
 .DEFAULT_GOAL := glover_patch
 
@@ -39,7 +39,8 @@ $(BINDIR)/code.bin: $(OBJ)
 
 glover_patch: $(BINDIR)/code.bin
 	bass payload.s -sym ./bin/payload.sym
-	python3 glovepatch.py ./rom/glover_base_ntsc.z64 ./bin/payload.bin ./bin/code.bin ./rom/glover_patched.z64
+	bass entry.s -sym ./bin/entry.sym
+	python3 glovepatch.py ./rom/glover_base_ntsc.z64 ./bin/payload.bin ./bin/code.bin ./bin/entry.bin ./rom/glover_patched.z64
 
 # test
 

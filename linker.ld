@@ -6,7 +6,7 @@ OUTPUT_ARCH(mips)
 ENTRY(__start)
 SECTIONS
 {
-  PROVIDE(start = 0xB0790000) ;
+  PROVIDE(start = 0x80400200) ;
   . = start ;
 
   .text :

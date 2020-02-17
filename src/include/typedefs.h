@@ -10,6 +10,14 @@ typedef unsigned int WORD_T;
 typedef unsigned short HWORD_T;
 typedef unsigned char BYTE_T;
 
+typedef char s8;
+typedef short s16;
+typedef int s32;
+
+typedef BYTE_T u8;
+typedef HWORD_T u16;
+typedef WORD_T u32;
+
 #ifndef NULL
 #define NULL ((void*)0)
 #endif
