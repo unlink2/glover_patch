@@ -4,7 +4,7 @@
 #include "utility.h"
 #include "memory.h"
 
-#define WORDS_PER_PAGE 8
+#define WORDS_PER_PAGE 16
 #define BYTES_PER_LINE 4
 #define MEMWATCH_POLLING_RATE 4 // every N frames
 
