@@ -19,7 +19,7 @@ void render_watchaddr(memwatch *pmw) {
 
     // render strings
     char *pstr = (char*)pmw->pstr;
-    gputsf(pstr, pframebuffer, 0x04, 0x04, pfont);
+    gputsf(pstr, pframebuffer, 0x10, 0x10, pfont);
 }
 
 void render_watchselect(memwatch *pmw) {
@@ -30,20 +30,20 @@ void render_watchselect(memwatch *pmw) {
     // render strings
     char *pstr = (char*)pmw->pstr;
 
-    gputsf(pstr, pframebuffer, 0x04, 0x04, pfont);
+    gputsf(pstr, pframebuffer, 0x10, 0x10, pfont);
     pstr += 0x10;
 
-    gputsf(pstr, pframebuffer, 0x04, 0x04+9, pfont);
+    gputsf(pstr, pframebuffer, 0x10, 0x10+9, pfont);
     pstr += 0x10;
 
-    gputsf(pstr, pframebuffer, 0x04, 0x04+18, pfont);
+    gputsf(pstr, pframebuffer, 0x10, 0x10+18, pfont);
 
     int y_offset = pmw->cursor_pos*9;
 
     // render memwatch cursor
-    draw_char('_', pframebuffer, 0x04, 0x04+y_offset,
+    draw_char('_', pframebuffer, 0x10, 0x10+y_offset,
             (WORD_T*)font8x8_basic, 0xF00F, 0x0000);
-    draw_char('_', pframebuffer, 0x0C, 0x04+y_offset,
+    draw_char('_', pframebuffer, 0x18, 0x10+y_offset,
             (WORD_T*)font8x8_basic, 0xF00F, 0x0000);
 }
 
@@ -64,12 +64,12 @@ void render_memwatch(memwatch *pmw) {
 
     // render strings
     char *pstr = (char*)pmw->pstr;
-    gputsf(pstr, pframebuffer, 0x04, 0x04, pfont);
+    gputsf(pstr, pframebuffer, 0x10, 0x10, pfont);
     pstr += 0x10;
 
 
-    unsigned short start_x = 0x04;
-    unsigned short start_y = 0x020;
+    unsigned short start_x = 0x10;
+    unsigned short start_y = 0x20;
     // display 16 bytes on screen 1 word per line
     for (int i = 0; i < WORDS_PER_PAGE; i++, start_y += CHAR_H+1, pstr += 0x10) {
         gputsf(pstr, pframebuffer, start_x, start_y, pfont);
@@ -77,7 +77,7 @@ void render_memwatch(memwatch *pmw) {
 
     int x_offset = (pmw->cursor_pos%BYTES_PER_LINE)*CHAR_W*2;
     // +1C to offset from address header
-    int y_offset = (pmw->cursor_pos/BYTES_PER_LINE)*(CHAR_H+1)+0x1C;
+    int y_offset = (pmw->cursor_pos/BYTES_PER_LINE)*(CHAR_H+1)+0x10;
 
     // if cursor is pointing at address
     if (pmw->cursor_pos == 0xFFFF) {
@@ -85,9 +85,9 @@ void render_memwatch(memwatch *pmw) {
         y_offset = 0;
     }
     // render memwatch cursor
-    draw_char('_', pframebuffer, 0x04+x_offset, 0x04+y_offset,
+    draw_char('_', pframebuffer, 0x10+x_offset, 0x10+y_offset,
             (WORD_T*)font8x8_basic, 0xF00F, 0x0000);
-    draw_char('_', pframebuffer, 0x0C+x_offset, 0x04+y_offset,
+    draw_char('_', pframebuffer, 0x18+x_offset, 0x10+y_offset,
             (WORD_T*)font8x8_basic, 0xF00F, 0x0000);
 }
 
