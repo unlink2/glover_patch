@@ -146,11 +146,11 @@ HWORD_T *get_frame_buffer() {
     pfunction = (HWORD_T *(*)())__OS_GET_CURRENT_FRAMEBUFFER;
     HWORD_T *pfb = pfunction();
 
-    /*if ((HWORD_T)pfb == 0x80092030) {
+    if ((WORD_T)pfb == 0x80092030) {
         return (HWORD_T*)0x800B7830;
     } else {
         return (HWORD_T*)0x80092030;
-    }*/
+    }
     return (HWORD_T*)(((WORD_T)pfb & 0x0FFFFFFF) | 0xA0000000);
 }
 

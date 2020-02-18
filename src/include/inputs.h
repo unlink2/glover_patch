@@ -18,8 +18,8 @@
 #define START_INPUT 0x1C
 #define DPAD_UP 0x1B
 #define DPAD_DOWN 0x1A
-#define DPAD_LEFT 0x19
-#define DPAD_RIGHT 0x18
+#define DPAD_RIGHT 0x19
+#define DPAD_LEFT 0x18
 
 #include "utility.h"
 
