@@ -71,14 +71,14 @@ void level_select() {
 
 void frame_advance() {
     get_ptr(BYTE_T, pframe_advance, FRAME_ADVANCE, 1);
-    get_ptr(WORD_T, plast_z_write, 0x801349B4, 1);
+    // get_ptr(WORD_T, plast_z_write, 0x801349B4, 1);
 
     while (*pframe_advance) {
         if (read_button(CD_INPUT, CONTROLLER_2)
                 && *pframe_advance == 1) {
             *pframe_advance = 2;
             // restore instruction
-            *plast_z_write = 0xA0440000; // original instruction
+            // *plast_z_write = 0xA0440000; // original instruction
             break;
         } else if (!read_button(CD_INPUT, CONTROLLER_2)
                 && !read_button(CU_INPUT, CONTROLLER_2)) {
@@ -92,7 +92,7 @@ void frame_advance() {
         // patch out bad code we dont want
         // this code prevents Z inputs from working correctly
         // replace with nop
-        *plast_z_write = 0x00; // nop
+        // *plast_z_write = 0x00; // nop
     }
 }
 
