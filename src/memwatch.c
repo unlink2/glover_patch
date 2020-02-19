@@ -153,14 +153,14 @@ void prepare_memwatch(memwatch *pmw) {
 }
 
 void update_memwatch(memwatch *pmw) {
-    // toggle memwatch on start p2
-    if (read_button(START_INPUT, CONTROLLER_2)
-            && !read_button(START_INPUT, LAST_INPUT_2)) {
-        pmw->flags = pmw->flags ^ 0x80;
-    }
-
     // don't test these if memwatch is off
     if ((pmw->flags & 0x40) != 0) {
+        // toggle memwatch on start p2
+        if (read_button(START_INPUT, CONTROLLER_2)
+           && !read_button(START_INPUT, LAST_INPUT_2)) {
+            pmw->flags = pmw->flags ^ 0x80;
+        }
+
         prepare_watchselect(pmw);
 
         // watch select specific update inputs

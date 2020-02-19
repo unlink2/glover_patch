@@ -2,9 +2,11 @@
 #include "include/inputs.h"
 #include "include/memwatch.h"
 #include "include/debug.h"
+#include "include/menu.h"
 
 void logic() {
     update_memwatch(&pmemwatch);
+    update_menu(&pmenu);
 
     // only trigger this code if start is held
     if (read_button(START_INPUT, CONTROLLER_1)) {
