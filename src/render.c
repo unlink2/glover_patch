@@ -3,6 +3,8 @@
 #include "include/utility.h"
 #include "include/font8x8_basic.h"
 #include "include/debug.h"
+#include "include/rdp.h"
+#include "include/menu.h"
 
 void render() {
     get_ptr(HWORD_T, pfont, FONT8X8, 0x4000);
@@ -14,132 +16,19 @@ void render() {
     }
 
     render_memwatch(&pmemwatch);
+    render_menu(&pmenu);
 
     // get_ptr(WORD_T, pbuffer, RDP_DL_BUFFER, 0xFF);
-    // pbuffer += rdp_sync_pipe(pbuffer);
-    // pbuffer += rdp_draw_rect(0xF00Ff00f, 0, 0, 30, 30, pbuffer);
-    // pbuffer += rdp_draw_rect(0xFFFF00FF, 15, 15, 35, 35, pbuffer);
+    /*pbuffer += rdp_draw_rect(0xF00Ff00f, 0, 0, 30, 30, pbuffer);
+    pbuffer += rdp_draw_rect(0xFFFF00FF, 15, 15, 35, 35, pbuffer);*/
     // testing testing
     /*pbuffer += rdp_texture_mode(pbuffer);
-    pbuffer += rdp_load_char('a', (HWORD_T*)0x80026DB0, pbuffer);
+    pbuffer += rdp_sync_load(pbuffer);
+    pbuffer += rdp_load_char('a', (HWORD_T*)0x80526EC0, pbuffer);
     pbuffer += rdp_draw_char(pbuffer);*/
 }
 
 
-void rdp_send_dl(WORD_T *start, WORD_T *end) {
-    void *(*pdisableint)() = (void *(*)())DISABLE_INT;
-    void *(*prestoreint)() = (void *(*)())RESTORE_INT;
-
-    // wait for rdp to not be busy
-    RDP_WAIT_PIPE(0x00);
-
-    // turn off interrupts to prevent conflicts
-    pdisableint();
-
-    // set flush flag
-    ((WORD_T *)0xA4100000)[3] = 0x15;
-
-    // wait again to flush
-    RDP_WAIT_PIPE(0x00);
-
-    // & 0x00FFFFFF -> converts to physical address for dma
-    ((volatile WORD_T*)0xA4100000)[0] = ((WORD_T)start) & 0x00FFFFFF;
-    ((volatile WORD_T*)0xA4100000)[1] = ((WORD_T)end) & 0x00FFFFFF;
-    prestoreint();
-}
-
-int rdp_sync_full(WORD_T *pbuffer) {
-    // full pipeline sync
-    pbuffer[0] = 0x29000000;
-    pbuffer[1] = 0x00000000;
-    rdp_send_dl(pbuffer, pbuffer+8);
-
-    // set frame buffer
-    // pbuffer += 8;
-    // pbuffer[0] = 0x3F20013F;
-    // pbuffer[1] = (WORD_T)get_frame_buffer();
-    // rdp_send_dl(pbuffer, pbuffer+8);
-    return 8;
-}
-
-int rdp_sync_pipe(WORD_T *pbuffer) {
-    pbuffer[0] = 0x27000000;
-    pbuffer[1] = 0x00000000;
-    rdp_send_dl(pbuffer, pbuffer+8);
-
-    return 8;
-}
-
-int rdp_draw_rect(WORD_T color, int tx, int ty, int bx, int by, WORD_T *pbuffer) {
-    // enable primitive mode
-    pbuffer[0] = 0xEFB000FF;
-    pbuffer[1] = 0x00004004;
-    // set color
-    pbuffer[2] = 0xF7000000;
-    pbuffer[3] = color;
-
-    pbuffer[4] = 0xF6000000 | ( bx << 14 ) | ( by << 2 );
-    pbuffer[5] = ( tx << 14 ) | ( ty << 2 );
-    rdp_send_dl(pbuffer, pbuffer+8);
-
-    return 8;
-}
-
-
-
-int rdp_load_char(char c, HWORD_T *pfont, WORD_T *pbuffer) {
-    pbuffer[0] = 0xFD100000; // load texture 2 bitdepth
-    pbuffer[1] = (WORD_T)pfont; // pointer
-
-    // +4 because DMA needs to be aligned
-    // copy sprite data
-    pbuffer[2] = 0x35100000;
-    pbuffer[3] = 0x07000000; // no mirrorning
-
-    int sl = 8;
-    int tl = 0;
-    int sh = 8;
-    int th = 0;
-    pbuffer[4] =  0xF4000000 | (((sl << 2) & 0xFFF) << 12) | ((tl << 2) & 0xFFF);
-    pbuffer[5] = (((sh << 2) & 0xFFF) << 12) | ((th << 2) & 0xFFF);
-
-    rdp_send_dl(pbuffer, pbuffer+8);
-
-    return 8;
-}
-
-int rdp_texture_mode(WORD_T *pbuffer) {
-    pbuffer += 32;
-    // setup texture mode
-    pbuffer[0] = 0xEFA000FF;
-    pbuffer[1] = 0x00004001;
-    rdp_send_dl(pbuffer, pbuffer+8);
-
-    return 8;
-}
-
-int rdp_draw_char(WORD_T *pbuffer) {
-    //float x_scale = 1.0;
-    //float y_scale = 1.0;
-    int xs = 10; //(int)((1.0 / x_scale) * 4096.0);
-    int ys = 10; //(int)((1.0 / y_scale) * 1024.0);
-
-    int bx = 58;
-    int by = 58;
-    int tx = 50;
-    int ty = 50;
-    int s = 0;
-    int t = 0;
-    int texslot = 7;
-
-    pbuffer[0] =  0xE4000000 | (bx << 14) | (by << 2);
-    pbuffer[1] = ((texslot & 0x7) << 24) | (tx << 14) | (ty << 2);
-    pbuffer[2] = (s << 16) | t;
-    pbuffer[3] = (xs & 0xFFFF) << 16 | (ys & 0xFFFF);
-    rdp_send_dl(pbuffer, pbuffer+8);
-
-    return 8;
-}
 
 HWORD_T *get_frame_buffer() {
     HWORD_T *(*pfunction)();
