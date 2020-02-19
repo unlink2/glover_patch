@@ -11,15 +11,26 @@ menudef pmenu;
 void init_default_menu(menudef *pmenu) {
     get_ptr(char, string_buffer, SCREEN_BUFFER, 0x20*0x10);
     pmenu->pstr = string_buffer;
-    pmenu->size = 5;
+    pmenu->size = 7;
     pmenu->cursor = 0;
     pmenu->strings[0] = "Memory Monitor";
     pmenu->strings[1] = "Save Position";
     pmenu->strings[2] = "Load Position";
     pmenu->strings[3] = "Save Actors";
     pmenu->strings[4] = "Load Actors";
+    pmenu->strings[5] = "Start Timer";
+    pmenu->strings[6] = "Level Select";
+
+    pmenu->type[0] = MENU_BUTTON;
+    pmenu->type[1] = MENU_BUTTON;
+    pmenu->type[2] = MENU_BUTTON;
+    pmenu->type[3] = MENU_BUTTON;
+    pmenu->type[4] = MENU_BUTTON;
+    pmenu->type[5] = MENU_BUTTON;
+    pmenu->type[6] = MENU_BUTTON;
 
     pmenu->pactions = &main_menu_select;
+    pmenu->pupdate = &main_menu_update;
 }
 
 void main_menu_select(menudef *pmenu) {
@@ -40,11 +51,20 @@ void main_menu_select(menudef *pmenu) {
         case 4:
             restore_actors();
             break;
+        case 5:
+            enable_timer();
+            break;
+        case 6:
+            level_select();
+            break;
         default:
             pmenu->flags = 0x00;
             pmenu->cursor = 0;
             break;
     }
+}
+
+void main_menu_update(menudef *pmenu) {
 }
 
 void render_menu(menudef *pmenu) {
@@ -83,6 +103,8 @@ void update_menu(menudef *pmenu) {
     if ((pmenu->flags & 0x80) == 0) {
         return;
     }
+
+    pmenu->pupdate(pmenu);
 
     if (read_button(A_INPUT, CONTROLLER_2)
             && !read_button(A_INPUT, LAST_INPUT_2)) {

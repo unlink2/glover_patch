@@ -2,6 +2,7 @@
 #include "include/logic.h"
 #include "include/render.h"
 #include "include/memory.h"
+#include "include/font8x8_basic.h"
 
 enum START_MODE {
     START_LOGIC,
@@ -25,6 +26,12 @@ int __start(enum START_MODE mode) {
     // init memory
     if (*pmap == 0xFF) {
         init_mem();
+        if (mode == START_RENDERING) {
+            // draw intro message
+            // unrolled draw loop to avoid ram usage during init
+            HWORD_T *pfb = get_frame_buffer();
+            gputs("github.com/unlink2/glover_patch", pfb, 18, 18, (WORD_T*)font8x8_basic, 0xFFFF, 0x000F);
+        }
         return 0;
     }
 

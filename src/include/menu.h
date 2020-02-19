@@ -6,6 +6,10 @@
 
 #define BACK_ACTION 0xFF
 
+typedef enum menu_entry_t {
+    MENU_BUTTON
+} menu_entry_t;
+
 typedef struct menudef {
     /*
      * Menu flags
@@ -16,9 +20,12 @@ typedef struct menudef {
 
     HWORD_T size; // size of menu strings (max is 0xF)
     char *strings[0xF]; // strings
+    menu_entry_t type[0xF]; // type of item
+
     // actions for each item
     // if cursor == 0xFFFF -> back action
     void (*pactions)(struct menudef *);
+    void (*pupdate)(struct menudef *);
     char *pstr; // string buffer
 
 } menudef;
@@ -27,6 +34,7 @@ extern menudef pmenu;
 
 void init_default_menu(menudef *);
 void main_menu_select(menudef *);
+void main_menu_update(menudef *);
 
 void render_menu(menudef *);
 
