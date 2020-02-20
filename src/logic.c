@@ -213,3 +213,17 @@ void restore_actors() {
     pcloneptr += 1;
     *prng = *pcloneptr;
 }
+
+void toggle_collision() {
+    get_ptr(WORD_T, pcol, COLLISION_DISABLE, 1);
+    if (*pcol == 0x00000000) {
+        *pcol = 0x0C057828; // restore code
+    } else {
+        *pcol = 0x000000000; // nop
+    }
+}
+
+void toggle_fog() {
+    get_ptr(BYTE_T, pfog, FOG, 1);
+    *pfog ^= 1;
+}

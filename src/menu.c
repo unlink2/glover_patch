@@ -11,7 +11,7 @@ menudef pmenu;
 void init_default_menu(menudef *pmenu) {
     get_ptr(char, string_buffer, SCREEN_BUFFER, 0x20*0x10);
     pmenu->pstr = string_buffer;
-    pmenu->size = 7;
+    pmenu->size = 9;
     pmenu->cursor = 0;
     pmenu->strings[0] = "Memory Monitor";
     pmenu->strings[1] = "Save Position";
@@ -20,6 +20,8 @@ void init_default_menu(menudef *pmenu) {
     pmenu->strings[4] = "Load Actors";
     pmenu->strings[5] = "Start Timer";
     pmenu->strings[6] = "Level Select";
+    pmenu->strings[7] = "Toggle Collision";
+    pmenu->strings[8] = "Fog";
 
     pmenu->type[0] = MENU_BUTTON;
     pmenu->type[1] = MENU_BUTTON;
@@ -28,6 +30,8 @@ void init_default_menu(menudef *pmenu) {
     pmenu->type[4] = MENU_BUTTON;
     pmenu->type[5] = MENU_BUTTON;
     pmenu->type[6] = MENU_BUTTON;
+    pmenu->type[7] = MENU_BUTTON;
+    pmenu->type[8] = MENU_BUTTON;
 
     pmenu->pactions = &main_menu_select;
     pmenu->pupdate = &main_menu_update;
@@ -56,6 +60,12 @@ void main_menu_select(menudef *pmenu) {
             break;
         case 6:
             level_select();
+            break;
+        case 7:
+            toggle_collision();
+            break;
+        case 8:
+            toggle_fog();
             break;
         default:
             pmenu->flags = 0x00;

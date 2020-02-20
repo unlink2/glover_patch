@@ -35,6 +35,9 @@
 #define PUTS_X_POS (WORD_T*)0x801ED394
 #define PUTS_Y_POS (WORD_T*)0x801ED398
 
+#define COLLISION_DISABLE (WORD_T*)0x8015D728
+#define FOG (BYTE_T*)0x801ED403
+
 #define __OS_DISABLE_INT (WORD_T*)0x801C6F70 // function ptr void ()
 #define __OS_RESTORE_INT (WORD_T*)0x801C6F90 // function ptr void ()
 #define __OS_GET_CURRENT_FRAMEBUFFER (WORD_T*)0x801CE910 // function ptr WORDL_T *()
