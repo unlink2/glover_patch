@@ -39,4 +39,7 @@ void clone_actors();
 // uses A0 as actor heap pointer
 void restore_actors();
 
+void toggle_collision();
+void toggle_fog();
+
 #endif 
