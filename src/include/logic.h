@@ -29,6 +29,7 @@ void restore_glover_pos();
 //	at the end of the list the following helper values
 //	are stored:
 //		RNG - WORD
+//		Camera Values - CAMERA_ACTOR_SIZE
 // uses A1 as the pointer to the next free backup heap location
 // each actor is ACTOR_SIZE bytes
 // the backup heap is locates at the start of exp pack memory

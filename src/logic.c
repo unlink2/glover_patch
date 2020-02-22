@@ -4,6 +4,11 @@
 #include "include/debug.h"
 #include "include/menu.h"
 
+// x y and z coordinates
+WORD_T gpos_bac[3];
+// camera backup
+WORD_T gcam_bac[CAMERA_ACTOR_SIZE];
+
 void logic() {
     update_memwatch(&pmemwatch);
     update_menu(&pmenu);
@@ -124,28 +129,29 @@ void complete_file(WORD_T *pfile) {
 }
 
 void store_glover_pos() {
-    WORD_T *pxbac = X_BAC;
-    WORD_T *pybac = Y_BAC;
-    WORD_T *pzbac = Z_BAC;
     WORD_T *pgloverx = GLOVER_X;
     WORD_T *pglovery = GLOVER_Y;
     WORD_T *pgloverz = GLOVER_Z;
 
-    *pxbac = *pgloverx;
-    *pybac = *pglovery;
-    *pzbac = *pgloverz;
+    get_ptr(WORD_T, pcam, CAMERA_ACTOR, CAMERA_ACTOR_SIZE);
+
+
+    gpos_bac[0] = *pgloverx;
+    gpos_bac[1] = *pglovery;
+    gpos_bac[2] = *pgloverz;
+
+    gmemcpy((BYTE_T*)pcam, (BYTE_T*)gcam_bac, CAMERA_ACTOR_SIZE);
 }
 
 void restore_glover_pos() {
-    WORD_T *pxbac = X_BAC;
-    WORD_T *pybac = Y_BAC;
-    WORD_T *pzbac = Z_BAC;
     WORD_T *pgloverx = GLOVER_X;
     WORD_T *pglovery = GLOVER_Y;
     WORD_T *pgloverz = GLOVER_Z;
     WORD_T *pballx = BALL_X;
     WORD_T *pbally = BALL_Y;
     WORD_T *pballz = BALL_Z;
+
+    get_ptr(WORD_T, pcam, CAMERA_ACTOR, CAMERA_ACTOR_SIZE);
 
     // stop glover
     WORD_T *pglovervelx = GLOVER_VEL_X;
@@ -155,12 +161,14 @@ void restore_glover_pos() {
     *pglovervely = 0;
     *pglovervelz = 0;
 
-    *pgloverx = *pxbac;
-    *pballx = *pxbac;
-    *pglovery = *pybac;
-    *pbally = *pybac;
-    *pgloverz = *pzbac;
-    *pballz = *pzbac;
+    *pgloverx = gpos_bac[0];
+    *pballx = gpos_bac[0];
+    *pglovery = gpos_bac[1];
+    *pbally = gpos_bac[1];
+    *pgloverz = gpos_bac[2];
+    *pballz = gpos_bac[2];
+
+    gmemcpy((BYTE_T*)gcam_bac, (BYTE_T*)pcam, CAMERA_ACTOR_SIZE);
 }
 
 void clone_actors() {
@@ -183,8 +191,18 @@ void clone_actors() {
         pcloneptr += ACTOR_SIZE/4;
         pactor = (WORD_T*)(*pactor); // next value
     } while (pactor != ACTOR_HEAP_START);
-    // finish list with 00
+    // pcloneptr += 1;
+    // clone camera
+    get_ptr(WORD_T, pcam, CAMERA_ACTOR, CAMERA_ACTOR_SIZE);
+    *pcloneptr = (WORD_T)pcam;
+    pcloneptr += 1; // next word
+    *pcloneptr = CAMERA_ACTOR_SIZE;
     pcloneptr += 1;
+    gmemcpy((BYTE_T*)pcam, (BYTE_T*)pcloneptr, CAMERA_ACTOR_SIZE);
+    pcloneptr += CAMERA_ACTOR_SIZE/4;
+
+    // finish list with 00
+    // pcloneptr += 1;
     *pcloneptr = 0x00;
 
     get_ptr(WORD_T, prng, RNG_VALUE, 1)
@@ -205,7 +223,7 @@ void restore_actors() {
         pcloneptr += 1;
 
         gmemcpy((BYTE_T*)pcloneptr, (BYTE_T*)pactor, size);
-        pcloneptr += ACTOR_SIZE/4; // next value
+        pcloneptr += size/4; // next value
     } while (*pcloneptr != 0x00);
 
     get_ptr(WORD_T, prng, RNG_VALUE, 1);
