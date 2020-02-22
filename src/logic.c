@@ -9,9 +9,21 @@ WORD_T gpos_bac[3];
 // camera backup
 WORD_T gcam_bac[CAMERA_ACTOR_SIZE];
 
+gpatch_t gpatch;
+
 void logic() {
     update_memwatch(&pmemwatch);
     update_menu(&pmenu);
+
+    // test for infinites
+    if (gpatch.infinite_hp) {
+        get_ptr(WORD_T, hp, GLOVER_HP, 1);
+        *hp = 0xFF;
+    }
+    if (gpatch.infinite_lives) {
+        get_ptr(WORD_T, lives, GLOVER_LIVES, 1);
+        *lives = 0xFF;
+    }
 
     // only trigger this code if start is held
     if (read_button(START_INPUT, CONTROLLER_1)) {

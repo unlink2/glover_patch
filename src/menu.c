@@ -3,7 +3,6 @@
 #include "include/utility.h"
 #include "include/font8x8_basic.h"
 #include "include/inputs.h"
-#include "include/memwatch.h"
 #include "include/logic.h"
 
 menudef pmenu;
@@ -11,7 +10,7 @@ menudef pmenu;
 void init_default_menu(menudef *pmenu) {
     get_ptr(char, string_buffer, SCREEN_BUFFER, 0x20*0x10);
     pmenu->pstr = string_buffer;
-    pmenu->size = 9;
+    pmenu->size = 10;
     pmenu->cursor = 0;
     pmenu->strings[0] = "Memory Monitor";
     pmenu->strings[1] = "Save Position";
@@ -22,6 +21,7 @@ void init_default_menu(menudef *pmenu) {
     pmenu->strings[6] = "Level Select";
     pmenu->strings[7] = "Toggle Collision";
     pmenu->strings[8] = "Fog";
+    pmenu->strings[9] = "Glover...";
 
     pmenu->type[0] = MENU_BUTTON;
     pmenu->type[1] = MENU_BUTTON;
@@ -32,15 +32,29 @@ void init_default_menu(menudef *pmenu) {
     pmenu->type[6] = MENU_BUTTON;
     pmenu->type[7] = MENU_BUTTON;
     pmenu->type[8] = MENU_BUTTON;
+    pmenu->type[9] = MENU_BUTTON;
 
     pmenu->pactions = &main_menu_select;
     pmenu->pupdate = &main_menu_update;
 }
 
+void init_glover_menu(menudef *pmenu) {
+    pmenu->size = 2;
+    pmenu->cursor = 0;
+    pmenu->strings[0] = "Toggle Infinite Lives";
+    pmenu->strings[1] = "Toggle Infinite Health";
+
+    pmenu->type[0] = MENU_BUTTON;
+    pmenu->type[1] = MENU_BUTTON;
+
+    pmenu->pactions = &glover_menu_select;
+    pmenu->pupdate = &glover_menu_update;
+}
+
 void main_menu_select(menudef *pmenu) {
     switch(pmenu->cursor) {
         case 0:
-            pmemwatch.flags = pmemwatch.flags ^ 0x80;
+            pmenu->pmemwatch->flags = pmenu->pmemwatch->flags ^ 0x80;
             pmenu->flags = 0x00;
             break;
         case 1:
@@ -67,6 +81,9 @@ void main_menu_select(menudef *pmenu) {
         case 8:
             toggle_fog();
             break;
+        case 9:
+            init_glover_menu(pmenu);
+            break;
         default:
             pmenu->flags = 0x00;
             pmenu->cursor = 0;
@@ -74,7 +91,35 @@ void main_menu_select(menudef *pmenu) {
     }
 }
 
+
 void main_menu_update(menudef *pmenu) {
+}
+
+void glover_menu_select(menudef *pmenu) {
+    switch(pmenu->cursor) {
+        case 0:
+            pmenu->pgpatch->infinite_hp = !pmenu->pgpatch->infinite_hp;
+            break;
+        case 1:
+            pmenu->pgpatch->infinite_lives = !pmenu->pgpatch->infinite_lives;
+            break;
+        default:
+            init_default_menu(pmenu);
+            break;
+    }
+}
+
+void glover_menu_update(menudef *pmenu) {
+    if (pmenu->pgpatch->infinite_hp) {
+        pmenu->strings[0] = "Disable Infinite Health";
+    } else {
+        pmenu->strings[0] = "Enable Infinite Health";
+    }
+    if (pmenu->pgpatch->infinite_lives) {
+        pmenu->strings[1] = "Disable Infinite Lives";
+    } else {
+        pmenu->strings[1] = "Enable Infinite Lives";
+    }
 }
 
 void render_menu(menudef *pmenu) {
