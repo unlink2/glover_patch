@@ -67,7 +67,12 @@
 #define Y_BAC (WORD_T*)0x805002B4
 #define Z_BAC (WORD_T*)0x805002B8
 
+// TODO find better size
+#define CAMERA_ACTOR_SIZE ACTOR_SIZE*2
+#define CAMERA_ACTOR (WORD_T*)0x8028F8E0
+#define CAMERA_DATA (WORD_T*)0x80202248
 
+#define CAMERA_MATRIX (WORD_T *)0x80206300
 
 
 void init_mem();
