@@ -10,7 +10,11 @@ void init_mem() {
     get_ptr(BYTE_T, pframe_advance, FRAME_ADVANCE, 1);
     *pframe_advance = 0x00;
     init_memwatch(&pmemwatch);
+
     pmenu.flags = 0x00;
+    // pass pointers to global state objects
+    pmenu.pmemwatch = &pmemwatch;
+    pmenu.pgpatch = &gpatch;
     init_default_menu(&pmenu);
 
     // evd_init();

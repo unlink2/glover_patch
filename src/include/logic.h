@@ -2,7 +2,14 @@
 #define __LOGIC_H__
 
 #include "memory.h"
+#include "utility.h"
 
+typedef struct gpatch_t {
+    BOOLEAN infinite_hp;
+    BOOLEAN infinite_lives;
+} gpatch_t;
+
+extern gpatch_t gpatch;
 
 void logic();
 

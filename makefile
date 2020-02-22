@@ -10,7 +10,7 @@ BINDIR=./bin
 
 LIBS=
 CFLAGS=-Wall -nostdlib -nodefaultlibs -fno-builtin -EB -g -fno-pic -mabi=eabi\
-	   -ffunction-sections -fdata-sections -march=vr4300 -mtune=vr4300 -mgp32 -mlong32
+	   -ffunction-sections -fdata-sections -march=vr4300 -mtune=vr4300 -mgp32 -mlong32 -G 0
 # optional flags
 # CFLAGS+=-Os -flto -ffat-lto-objects  \
 #			-mno-extern-sdata -mgpopt -mfix4300 -mbranch-likely \

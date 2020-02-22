@@ -3,6 +3,8 @@
 
 #include "typedefs.h"
 #include "memory.h"
+#include "memwatch.h"
+#include "logic.h"
 
 #define BACK_ACTION 0xFF
 
@@ -28,13 +30,22 @@ typedef struct menudef {
     void (*pupdate)(struct menudef *);
     char *pstr; // string buffer
 
+    // usually pointers to global objects
+    memwatch *pmemwatch;
+    gpatch_t *pgpatch;
+
 } menudef;
 
 extern menudef pmenu;
 
 void init_default_menu(menudef *);
+void init_glover_menu(menudef *);
+
 void main_menu_select(menudef *);
 void main_menu_update(menudef *);
+
+void glover_menu_update(menudef *);
+void glover_menu_select(menudef *);
 
 void render_menu(menudef *);
 
