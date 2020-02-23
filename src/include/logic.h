@@ -23,6 +23,12 @@ void complete_file(WORD_T *);
 void store_glover_pos();
 void restore_glover_pos();
 
+/**
+ * Clones a pointer, adds size and original location to dest
+ * size must be divisible by 4
+ * returns new dest ptr
+ */
+WORD_T* clone_additional(WORD_T *, WORD_T *, WORD_T);
 
 // finds all actors
 // in the heap starting at glover
