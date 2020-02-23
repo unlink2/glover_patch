@@ -183,6 +183,22 @@ void restore_glover_pos() {
     gmemcpy((BYTE_T*)gcam_bac, (BYTE_T*)pcam, CAMERA_ACTOR_SIZE);
 }
 
+WORD_T* clone_additional(WORD_T *src, WORD_T *pcloneptr, WORD_T size) {
+    if (src == NULL) {
+        return pcloneptr;
+    }
+
+    // memcopy if not NULL
+    *pcloneptr = (WORD_T)src;
+    pcloneptr += 1;
+    *pcloneptr = size; // bytes
+    pcloneptr += 1;
+    gmemcpy((BYTE_T*)src, (BYTE_T*)pcloneptr, size);
+    pcloneptr += size/4;
+
+    return pcloneptr;
+}
+
 void clone_actors() {
     // actor value here is also the actor's next ptr
     // actor heap loops on itself
@@ -201,17 +217,30 @@ void clone_actors() {
 
         // + F0
         pcloneptr += ACTOR_SIZE/4;
+
+        // TODO clones crash often, may need more values
+        // clone actor support values if applicable
+        // 0x50 bytes ptr found at pactor + C8 (50 words)
+        // WORD_T *psupport = (WORD_T*)*(pactor + 0xC8/4);
+        // pcloneptr = clone_additional(psupport, pcloneptr, 0x50);
+
+        // clone animation state
+        // 0x50 bytes per actor if not NULL
+        // WORD_T *panimation = (WORD_T*)*(pactor + 0xDC/4);
+        // pcloneptr = clone_additional(panimation, pcloneptr, 0x50);
+
         pactor = (WORD_T*)(*pactor); // next value
     } while (pactor != ACTOR_HEAP_START);
     // pcloneptr += 1;
     // clone camera
     get_ptr(WORD_T, pcam, CAMERA_ACTOR, CAMERA_ACTOR_SIZE);
-    *pcloneptr = (WORD_T)pcam;
+    pcloneptr = clone_additional(pcam, pcloneptr, CAMERA_ACTOR_SIZE);
+    /**pcloneptr = (WORD_T)pcam;
     pcloneptr += 1; // next word
     *pcloneptr = CAMERA_ACTOR_SIZE;
     pcloneptr += 1;
     gmemcpy((BYTE_T*)pcam, (BYTE_T*)pcloneptr, CAMERA_ACTOR_SIZE);
-    pcloneptr += CAMERA_ACTOR_SIZE/4;
+    pcloneptr += CAMERA_ACTOR_SIZE/4;*/
 
     // finish list with 00
     // pcloneptr += 1;
