@@ -62,16 +62,19 @@ void render_memwatch(memwatch *pmw) {
 
     get_ptr(HWORD_T, pfont, FONT8X8, 0x4000);
 
+    unsigned short start_x = 0x24;
+    unsigned short start_y = 0x20;
+
     // render strings
     char *pstr = (char*)pmw->pstr;
-    gputsf(pstr, pframebuffer, 0x10, 0x10, pfont);
+    gputsf(pstr, pframebuffer, start_x, start_y-0x10, pfont);
     pstr += 0x10;
 
-
-    unsigned short start_x = 0x10;
-    unsigned short start_y = 0x20;
+    char index_buffer[4];
     // display 16 bytes on screen 1 word per line
     for (int i = 0; i < WORDS_PER_PAGE; i++, start_y += CHAR_H+1, pstr += 0x10) {
+        to_hexstr(i*4, index_buffer, 1);
+        gputsf(index_buffer, pframebuffer, start_x-0x18, start_y, pfont);
         gputsf(pstr, pframebuffer, start_x, start_y, pfont);
     }
 
@@ -85,9 +88,9 @@ void render_memwatch(memwatch *pmw) {
         y_offset = 0;
     }
     // render memwatch cursor
-    draw_char('_', pframebuffer, 0x10+x_offset, 0x10+y_offset,
+    draw_char('_', pframebuffer, start_x+x_offset, 0x10+y_offset,
             (WORD_T*)font8x8_basic, 0xF00F, 0x0000);
-    draw_char('_', pframebuffer, 0x18+x_offset, 0x10+y_offset,
+    draw_char('_', pframebuffer, start_x+8+x_offset, 0x10+y_offset,
             (WORD_T*)font8x8_basic, 0xF00F, 0x0000);
 }
 
@@ -123,7 +126,7 @@ void prepare_watchselect(memwatch *pmw) {
     if (pmw->cursor_pos > max_cursor) {
         pmw->cursor_pos = 0;
     }
-    
+
 
     pstr[0] = 'B'; pstr[1] = 'Y'; pstr[2] = 'T'; pstr[3] = 'E'; pstr[4] = '\0';
     pstr += 0x10;
@@ -148,7 +151,17 @@ void prepare_memwatch(memwatch *pmw) {
     // display 16 bytes on screen 1 word per line
     for (int i = 0; i < WORDS_PER_PAGE; i++, pstr += 0x10) {
         WORD_T *ptr = (WORD_T*)paddr+i;
-        to_hexstr(*ptr, pstr, sizeof(WORD_T));
+        // if not ascii mode
+        if (pmw->flags & 0b00100000) {
+            // append ascii representation to hex str
+            pstr[0] = ptr[0];
+            pstr[1] = ptr[1];
+            pstr[2] = ptr[2];
+            pstr[3] = ptr[4];
+            pstr[4] = '\0';
+        } else {
+            to_hexstr(*ptr, pstr, sizeof(WORD_T));
+        }
     }
 }
 

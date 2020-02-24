@@ -10,18 +10,19 @@ menudef pmenu;
 void init_default_menu(menudef *pmenu) {
     get_ptr(char, string_buffer, SCREEN_BUFFER, 0x20*0x10);
     pmenu->pstr = string_buffer;
-    pmenu->size = 10;
+    pmenu->size = 11;
     pmenu->cursor = 0;
     pmenu->strings[0] = "Memory Monitor";
-    pmenu->strings[1] = "Save Position";
-    pmenu->strings[2] = "Load Position";
-    pmenu->strings[3] = "Save Actors";
-    pmenu->strings[4] = "Load Actors";
-    pmenu->strings[5] = "Start Timer";
-    pmenu->strings[6] = "Level Select";
-    pmenu->strings[7] = "Toggle Collision";
-    pmenu->strings[8] = "Fog";
-    pmenu->strings[9] = "Glover...";
+    pmenu->strings[1] = "Memory Monitor ASCII";
+    pmenu->strings[2] = "Save Position";
+    pmenu->strings[3] = "Load Position";
+    pmenu->strings[4] = "Save Actors";
+    pmenu->strings[5] = "Load Actors";
+    pmenu->strings[6] = "Start Timer";
+    pmenu->strings[7] = "Level Select";
+    pmenu->strings[8] = "Toggle Collision";
+    pmenu->strings[9] = "Fog";
+    pmenu->strings[10] = "Glover...";
 
     pmenu->type[0] = MENU_BUTTON;
     pmenu->type[1] = MENU_BUTTON;
@@ -55,33 +56,40 @@ void main_menu_select(menudef *pmenu) {
     switch(pmenu->cursor) {
         case 0:
             pmenu->pmemwatch->flags = pmenu->pmemwatch->flags ^ 0x80;
+            // not ascii mode
+            pmenu->pmemwatch->flags = pmenu->pmemwatch->flags & 0b11011111;
             pmenu->flags = 0x00;
             break;
         case 1:
-            store_glover_pos();
+            // ascii mode
+            pmenu->pmemwatch->flags = pmenu->pmemwatch->flags ^ 0b00100000;
+            pmenu->flags = 0x00;
             break;
         case 2:
-            restore_glover_pos();
+            store_glover_pos();
             break;
         case 3:
-            clone_actors();
+            restore_glover_pos();
             break;
         case 4:
-            restore_actors();
+            clone_actors();
             break;
         case 5:
-            enable_timer();
+            restore_actors();
             break;
         case 6:
-            level_select();
+            enable_timer();
             break;
         case 7:
-            toggle_collision();
+            level_select();
             break;
         case 8:
-            toggle_fog();
+            toggle_collision();
             break;
         case 9:
+            toggle_fog();
+            break;
+        case 10:
             init_glover_menu(pmenu);
             break;
         default:

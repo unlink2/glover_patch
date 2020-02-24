@@ -18,6 +18,7 @@ typedef enum watch_type {
 typedef struct memwatch {
     //  7th bit == 1 -> Viewer enable flag
     //  6th bit == 1 -> Watch select flag (overrides viewer enable)
+    //  5th bit == 1 -> ascii mode
     BYTE_T flags; // this really only needs to be 1 byte, but it is word for padding
     BYTE_T frame_counter; // used for polling rate
     HWORD_T cursor_pos; // cursor position, if FFFF it will select the address value
