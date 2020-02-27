@@ -47,24 +47,30 @@
 
 
 // amount of available ram
-#define RD_RAM_SIZE (WORD_T*)0xA0000318
+#define RD_RAM_SIZE (WORD_T*)0x80000318
 
 #define CURRENT_MAP (BYTE_T*)0x801E7531
 
 #define DISABLE_INT 0x801C6F70
 #define RESTORE_INT 0x801C6F90
+#define OS_GET_COUNT 0x801C62B0 // counter that increments at 1/2 cpu speed
+#define FRAME_RENDERED (WORD_T*)0x80200980 // is set to 0x40 when frame is actually ready
 
 // variables
 
 // 0xFF bytes for display list stuff
-#define RDP_DL_BUFFER 0xA0529D40
+#define RDP_DL_BUFFER 0x80529D40
 // uncompressed location of font 0x4000 bytes
 // TODO make sure this is a good location
-#define FONT8X8 (WORD_T*)0xA0525C30
+#define FONT8X8 (WORD_T*)0x80525C30
 
 // 0x20 strings of 0x10 bytes each. will be rendered to the screen
 // every frame if needed
-#define SCREEN_BUFFER (BYTE_T*)0xA0500000
+#define SCREEN_BUFFER (BYTE_T*)0x80500000
+
+// 153600 bytes RGBA image 320x240
+// use as framebuffer for hack, render as texture
+#define FRAME_BUFFER_CUSTOM (BYTE_T*)80600000
 
 #define X_BAC (WORD_T*)0x805002B0
 #define Y_BAC (WORD_T*)0x805002B4

@@ -22,8 +22,12 @@ void rdp_send_dl(WORD_T *, WORD_T *);
  */
 int rdp_sync_full(WORD_T *);
 int rdp_sync_pipe(WORD_T *);
+int rdp_sync_tile(WORD_T *);
 int rdp_sync_load(WORD_T *);
 
+int rdp_test_texture(HWORD_T *, WORD_T *);
+
+int rdp_draw_primitives(WORD_T *);
 /**
  * Draws a rectangle from tx/ty to bx/by
  * the color is 2 16 bit colors in one word
