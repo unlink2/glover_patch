@@ -18,14 +18,20 @@ void render() {
     render_memwatch(&pmemwatch);
     render_menu(&pmenu);
 
-    // get_ptr(WORD_T, pbuffer, RDP_DL_BUFFER, 0xFF);
-    /*pbuffer += rdp_draw_rect(0xF00Ff00f, 0, 0, 30, 30, pbuffer);
-    pbuffer += rdp_draw_rect(0xFFFF00FF, 15, 15, 35, 35, pbuffer);*/
+    /* get_ptr(WORD_T, pbuffer, RDP_DL_BUFFER, 0xFF);
+    pbuffer += rdp_draw_primitives(pbuffer);
+    for (int i = 0; i < 1; i++) {
+        pbuffer += rdp_draw_rect(0xF00Ff00f, 0+i, 0+i, 30+i, 30+i, pbuffer);
+        pbuffer += rdp_draw_rect(0xFFFF00FF, 15+i, 15+i, 35+i, 35+i, pbuffer);
+        pbuffer += rdp_sync_pipe(pbuffer);
+    }*/
     // testing testing
     /*pbuffer += rdp_texture_mode(pbuffer);
-    pbuffer += rdp_sync_load(pbuffer);
+    pbuffer += rdp_sync_tile(pbuffer);
     pbuffer += rdp_load_char('a', (HWORD_T*)0x80526EC0, pbuffer);
     pbuffer += rdp_draw_char(pbuffer);*/
+    // pbuffer += rdp_sync_full(pbuffer);
+    // rdp_test_texture((HWORD_T*)0x80526F30, pbuffer);
 }
 
 

@@ -18,16 +18,14 @@ constant DMA_RAM($80400000)
 constant DMA_ROM($B0780000)
 constant DMA_SIZE($FFFF)
 
+constant RENDER_RA($8017FF1C)
 
 // mode is based on ra
 // inputs:
 //  ra == 8013E854 -> call render code
 section_code:
 scope {
-    la t0, $8017FF1C
-    // 8013E850 is old return address
-    // right after setup for rendering UI
-    // la t0, $8013E850 // rendering ra
+    la t0, RENDER_RA
     bne ra, t0, not_render_mode
     nop
     b render_inject
@@ -59,20 +57,6 @@ not_render_mode:
 // must be pretty fast, only do actual rendering here
 render_inject:
 scope {
-    // original call for 8013E850
-    // call original functions
-    // la t0, $8014AD0C
-    //jalr t0
-    //nop
-    //la t0, $80145EAC
-    //jalr t0
-    //nop
-
-    // jump to c code in rendering mode
-    la a0, $01
-    la ra, C_CODE_START
-    jalr ra
-    nop
 
     // call swap buffer function (new inject)
     lw  v0, $0014(s8)
@@ -81,11 +65,15 @@ scope {
     jalr ra
     nop
 
+    // jump to c code in rendering mode
+    la a0, $01
+    la ra, C_CODE_START
+    jalr ra
+    nop
+
+
     // load return address
-    la ra, $8017FF1C
-    // 8013E850 is old return address
-    // right after setup for rendering UI
-    // la ra, $8013E850
+    la ra, RENDER_RA
     jr ra
     nop
 

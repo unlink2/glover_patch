@@ -53,16 +53,60 @@ int rdp_sync_load(WORD_T *pbuffer) {
     return 8;
 }
 
-int rdp_draw_rect(WORD_T color, int tx, int ty, int bx, int by, WORD_T *pbuffer) {
+int rdp_sync_tile(WORD_T *pbuffer) {
+    pbuffer[0] = 0x28000000;
+    pbuffer[1] = 0x00000000;
+    rdp_send_dl(pbuffer, pbuffer+8);
+
+    return 8;
+}
+
+int rdp_test_texture(HWORD_T *pfont, WORD_T *pbuffer) {
+    // set texture mode
+    pbuffer[0] = 0x2F208000;
+    pbuffer[1] = 0x00404040;
+    pbuffer[2] = 0x3C0000C1;
+    pbuffer[3] = 0x0F2001FF;
+
+    // set texture image
+    pbuffer[4] = 0x3D100007;
+    pbuffer[5] = (WORD_T)pfont;
+
+    // set tile
+    pbuffer[6] = 0x35100400;
+    pbuffer[7] = 0x00000000;
+
+    // set texture rect
+    pbuffer[8] = 0x34000000;
+    pbuffer[9] = 0x0001C01C;
+    pbuffer[10] = 0x24140110;
+    pbuffer[11] = 0x001000D0;
+    pbuffer[12] = 0x00000000;
+    pbuffer[13] = 0x02000200;
+
+    // sync
+    pbuffer[14] = 0x29000000;
+    pbuffer[15] = 0x00000000;
+
+    rdp_send_dl(pbuffer, pbuffer+32);
+    return 32;
+}
+
+int rdp_draw_primitives(WORD_T *pbuffer) {
     // enable primitive mode
     pbuffer[0] = 0xEFB000FF;
     pbuffer[1] = 0x00004004;
-    // set color
-    pbuffer[2] = 0xF7000000;
-    pbuffer[3] = color;
+    rdp_send_dl(pbuffer, pbuffer+8);
+    return 8;
+}
 
-    pbuffer[4] = 0xF6000000 | ( bx << 14 ) | ( by << 2 );
-    pbuffer[5] = ( tx << 14 ) | ( ty << 2 );
+int rdp_draw_rect(WORD_T color, int tx, int ty, int bx, int by, WORD_T *pbuffer) {
+    // set color
+    pbuffer[0] = 0xF7000000;
+    pbuffer[1] = color;
+
+    pbuffer[2] = 0xF6000000 | ( bx << 14 ) | ( by << 2 );
+    pbuffer[3] = ( tx << 14 ) | ( ty << 2 );
     rdp_send_dl(pbuffer, pbuffer+8);
 
     return 8;
