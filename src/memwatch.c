@@ -211,14 +211,14 @@ void update_memwatch(memwatch *pmw) {
         pmw->offset += 0x100;
     } else if (read_button(R_INPUT, CONTROLLER_2)) {
         pmw->offset -= 0x100;
-    } else if (read_button(DPAD_LEFT, CONTROLLER_2)
-        && !read_button(DPAD_LEFT, LAST_INPUT_2)) {
+    } else if (read_button(DPAD_RIGHT, CONTROLLER_2)
+        && !read_button(DPAD_RIGHT, LAST_INPUT_2)) {
         pmw->cursor_pos++;
         if (pmw->cursor_pos >= WORDS_PER_PAGE*BYTES_PER_LINE) {
             pmw->cursor_pos = 0xFFFF;
         }
-    } else if (read_button(DPAD_RIGHT, CONTROLLER_2)
-        && !read_button(DPAD_RIGHT, LAST_INPUT_2)) {
+    } else if (read_button(DPAD_LEFT, CONTROLLER_2)
+        && !read_button(DPAD_LEFT, LAST_INPUT_2)) {
         pmw->cursor_pos--;
         if (pmw->cursor_pos >= WORDS_PER_PAGE*BYTES_PER_LINE
                 && pmw->cursor_pos != 0xFFFF) {

@@ -5,6 +5,8 @@ import sys
 import cksm
 from pathlib import Path
 
+VIRTUAL_TO_ROM = 0x800ff000
+
 if len(sys.argv) < 5:
     print("Usage: glovepatch.py <glover_rom> <binary to inject> <c code binary> <entry code> <output>")
     sys.exit(0)
@@ -19,7 +21,7 @@ jump = [0x3C, 0x1F, 0xB0, 0x78, 0x03, 0xE0, 0xF8, 0x09] # code that jumps to pay
 jump_ram = [0x3C, 0x1F, 0x80, 0x40, 0x03, 0xE0, 0xF8, 0x09]
 entry_inject = 0x1000
 jump_address = 0x40370
-render_inject = 0x80F10
+render_inject = 0x8017FF10-VIRTUAL_TO_ROM
 payload_address = 0x780000
 c_code_address = 0x780200
 force_easy_ball = 0x3A6D0 # nop this address to always make ball behave like easy mode
