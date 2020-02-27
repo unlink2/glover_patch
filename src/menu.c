@@ -10,7 +10,7 @@ menudef pmenu;
 void init_default_menu(menudef *pmenu) {
     get_ptr(char, string_buffer, SCREEN_BUFFER, 0x20*0x10);
     pmenu->pstr = string_buffer;
-    pmenu->size = 11;
+    pmenu->size = 12;
     pmenu->cursor = 0;
     pmenu->strings[0] = "Memory Monitor";
     pmenu->strings[1] = "Memory Monitor ASCII";
@@ -23,6 +23,7 @@ void init_default_menu(menudef *pmenu) {
     pmenu->strings[8] = "Toggle Collision";
     pmenu->strings[9] = "Fog";
     pmenu->strings[10] = "Glover...";
+    pmenu->strings[11] = "FPS:            ";
 
     pmenu->type[0] = MENU_BUTTON;
     pmenu->type[1] = MENU_BUTTON;
@@ -34,6 +35,10 @@ void init_default_menu(menudef *pmenu) {
     pmenu->type[7] = MENU_BUTTON;
     pmenu->type[8] = MENU_BUTTON;
     pmenu->type[9] = MENU_BUTTON;
+    pmenu->type[10] = MENU_BUTTON;
+    pmenu->type[11] = MENU_VALUE_HWORD;
+
+    pmenu->pvalue[11] = (void*)FRAME_RATE_1;
 
     pmenu->pactions = &main_menu_select;
     pmenu->pupdate = &main_menu_update;
@@ -101,6 +106,10 @@ void main_menu_select(menudef *pmenu) {
 
 
 void main_menu_update(menudef *pmenu) {
+    // put framerate number into framerate string
+    HWORD_T *ptr = (HWORD_T*)pmenu->pvalue[11];
+    char *str = pmenu->strings[11];
+    to_hexstr(*ptr, str+5, 2);
 }
 
 void glover_menu_select(menudef *pmenu) {
@@ -190,6 +199,39 @@ void update_menu(menudef *pmenu) {
         } else {
             pmenu->cursor++;
         }
+    } else if (read_button(DPAD_LEFT, CONTROLLER_2)
+            && !read_button(DPAD_LEFT, LAST_INPUT_2)) {
+        if (pmenu->type[pmenu->cursor] == MENU_VALUE_HWORD) {
+            HWORD_T *ptr = (HWORD_T*)pmenu->pvalue[pmenu->cursor];
+            *ptr = *ptr - 1;
+            // special case for framerate
+            if (ptr == FRAME_RATE_1) {
+                HWORD_T *ptr2 = (HWORD_T*)FRAME_RATE_2;
+                *ptr2 = *ptr;
+            }
+        } else if (pmenu->type[pmenu->cursor] == MENU_VALUE_WORD) {
+            WORD_T *ptr = (WORD_T*)pmenu->pvalue[pmenu->cursor];
+            *ptr = *ptr - 1;
+        } else if (pmenu->type[pmenu->cursor] == MENU_VALUE_BYTE) {
+            BYTE_T *ptr = (BYTE_T*)pmenu->pvalue[pmenu->cursor];
+            *ptr = *ptr - 1;
+        }
+    } else if (read_button(DPAD_RIGHT, CONTROLLER_2)
+        && !read_button(DPAD_RIGHT, LAST_INPUT_2)) {
+        if (pmenu->type[pmenu->cursor] == MENU_VALUE_HWORD) {
+            HWORD_T *ptr = (HWORD_T*)pmenu->pvalue[pmenu->cursor];
+            *ptr = *ptr + 1;
+            // special case for framerate
+            if (ptr == FRAME_RATE_1) {
+                HWORD_T *ptr2 = (HWORD_T*)FRAME_RATE_2;
+                *ptr2 = *ptr;
+            }
+        } else if (pmenu->type[pmenu->cursor] == MENU_VALUE_WORD) {
+            WORD_T *ptr = (WORD_T*)pmenu->pvalue[pmenu->cursor];
+            *ptr = *ptr + 1;
+        } else if (pmenu->type[pmenu->cursor] == MENU_VALUE_BYTE) {
+            BYTE_T *ptr = (BYTE_T*)pmenu->pvalue[pmenu->cursor];
+            *ptr = *ptr + 1;
+        }
     }
-
 }

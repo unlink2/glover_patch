@@ -9,7 +9,10 @@
 #define BACK_ACTION 0xFF
 
 typedef enum menu_entry_t {
-    MENU_BUTTON
+    MENU_BUTTON,
+    MENU_VALUE_BYTE,
+    MENU_VALUE_HWORD,
+    MENU_VALUE_WORD
 } menu_entry_t;
 
 typedef struct menudef {
@@ -23,6 +26,7 @@ typedef struct menudef {
     HWORD_T size; // size of menu strings (max is 0xF)
     char *strings[0xF]; // strings
     menu_entry_t type[0xF]; // type of item
+    void *pvalue[0xF]; // if menu type is value this is the pointer to the value
 
     // actions for each item
     // if cursor == 0xFFFF -> back action

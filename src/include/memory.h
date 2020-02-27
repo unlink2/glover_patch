@@ -51,6 +51,10 @@
 
 #define CURRENT_MAP (BYTE_T*)0x801E7531
 
+// both need to be modifed at once
+#define FRAME_RATE_1 (HWORD_T*)0x801F4702
+#define FRAME_RATE_2 (HWORD_T*)0x801F4732
+
 #define DISABLE_INT 0x801C6F70
 #define RESTORE_INT 0x801C6F90
 #define OS_GET_COUNT 0x801C62B0 // counter that increments at 1/2 cpu speed

@@ -57,6 +57,11 @@ not_render_mode:
 // must be pretty fast, only do actual rendering here
 render_inject:
 scope {
+    // jump to c code in rendering mode
+    la a0, $01
+    la ra, C_CODE_START
+    jalr ra
+    nop
 
     // call swap buffer function (new inject)
     lw  v0, $0014(s8)
@@ -64,13 +69,6 @@ scope {
     la ra, $801CF070
     jalr ra
     nop
-
-    // jump to c code in rendering mode
-    la a0, $01
-    la ra, C_CODE_START
-    jalr ra
-    nop
-
 
     // load return address
     la ra, RENDER_RA
