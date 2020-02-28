@@ -3,6 +3,7 @@
 
 #include "memory.h"
 #include "utility.h"
+#include "savefile.h"
 
 typedef struct gpatch_t {
     BOOLEAN infinite_hp;
@@ -18,7 +19,7 @@ void level_select();
 
 void frame_advance();
 
-void complete_file(WORD_T *);
+void complete_file(save_file *);
 
 void store_glover_pos();
 void restore_glover_pos();

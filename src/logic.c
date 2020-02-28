@@ -6,14 +6,13 @@
 #include "include/actor.h"
 
 // x y and z coordinates
-WORD_T gpos_bac[3];
+float gpos_bac[3];
 // camera backup
 WORD_T gcam_bac[CAMERA_ACTOR_SIZE];
 
 gpatch_t gpatch;
 
 void logic() {
-    int sizeact = sizeof(glover_actor);
     update_memwatch(&pmemwatch);
     update_menu(&pmenu);
 
@@ -70,7 +69,7 @@ void logic() {
 
     frame_advance();
 
-    get_ptr(WORD_T, file1, FILE1_START, 7);
+    get_ptr(save_file, file1, FILE1_START, 7);
     complete_file(file1);
 
     // store last input values
@@ -117,70 +116,68 @@ void frame_advance() {
     }
 }
 
-void complete_file(WORD_T *pfile) {
+void complete_file(save_file *pfile) {
     // read level completion
-    int completed = pfile[1];
+    int completed = pfile->levels_cleared[0];
     if (completed != 0xFFFFFFFF) {
         // write whole file
-        pfile[0] = 0x4B4C4D00; // Filename
+        pfile->filename[0] = 'K';
+        pfile->filename[1] = 'L';
+        pfile->filename[2] = 'M';
+        pfile->filename[3] = '\0'; // 0x4B4C4D00; // Filename
 
         // clearled levels
-        pfile[1] = 0xFFFFFFFF;
-        pfile[2] = 0xFFFFFFFF;
+        pfile->levels_cleared[0] = 0xFFFFFFFF;
+        pfile->levels_cleared[1] = 0xFFFFFFFF;
 
         // score
-        pfile[3] = 0x00000190;
+        pfile->score = 0x00000190;
 
         // difficulty and castle progress
-        pfile[4] = 0x0A000606;
+        pfile->unknown_1 = 0x0A;
+        pfile->difficulty = 0x00;
+        pfile->castle_progress = 0x0606;
+        // pfile[4] = 0x0A000606;
 
         // unknown
-        pfile[5] = 0x40000001;
+        pfile->unknown_2 = 0x40000001;
 
         // sound options etc
-        pfile[6] = 0x006E006E;
+        pfile->settings = 0x006E006E;
     }
 }
 
 void store_glover_pos() {
-    WORD_T *pgloverx = GLOVER_X;
-    WORD_T *pglovery = GLOVER_Y;
-    WORD_T *pgloverz = GLOVER_Z;
+    get_ptr(glover_actor, pglover, GLOVER_ACTOR, 1);
+
 
     get_ptr(WORD_T, pcam, CAMERA_ACTOR, CAMERA_ACTOR_SIZE);
 
 
-    gpos_bac[0] = *pgloverx;
-    gpos_bac[1] = *pglovery;
-    gpos_bac[2] = *pgloverz;
+    gpos_bac[0] = pglover->xpos;
+    gpos_bac[1] = pglover->ypos;
+    gpos_bac[2] = pglover->zpos;
 
     gmemcpy((BYTE_T*)pcam, (BYTE_T*)gcam_bac, CAMERA_ACTOR_SIZE);
 }
 
 void restore_glover_pos() {
-    WORD_T *pgloverx = GLOVER_X;
-    WORD_T *pglovery = GLOVER_Y;
-    WORD_T *pgloverz = GLOVER_Z;
-    WORD_T *pballx = BALL_X;
-    WORD_T *pbally = BALL_Y;
-    WORD_T *pballz = BALL_Z;
+    get_ptr(glover_actor, pglover, GLOVER_ACTOR, 1);
+    get_ptr(glover_actor, pball, BALL_ACTOR, 1);
 
     get_ptr(WORD_T, pcam, CAMERA_ACTOR, CAMERA_ACTOR_SIZE);
 
     // stop glover
-    WORD_T *pglovervelx = GLOVER_VEL_X;
-    WORD_T *pglovervely = GLOVER_VEL_Y;
-    WORD_T *pglovervelz = GLOVER_VEL_Z;
-    *pglovervelx = 0;
-    *pglovervely = 0;
-    *pglovervelz = 0;
+    pglover->velx = 0;
+    pglover->vely = 0;
+    pglover->velz = 0;
 
-    *pgloverx = gpos_bac[0];
-    *pballx = gpos_bac[0];
-    *pglovery = gpos_bac[1];
-    *pbally = gpos_bac[1];
-    *pgloverz = gpos_bac[2];
-    *pballz = gpos_bac[2];
+    pglover->xpos = gpos_bac[0];
+    pball->xpos = gpos_bac[0];
+    pglover->ypos = gpos_bac[1];
+    pball->ypos = gpos_bac[1];
+    pglover->zpos = gpos_bac[2];
+    pball->zpos = gpos_bac[2];
 
     gmemcpy((BYTE_T*)gcam_bac, (BYTE_T*)pcam, CAMERA_ACTOR_SIZE);
 }
@@ -205,13 +202,13 @@ void clone_actors() {
     // actor value here is also the actor's next ptr
     // actor heap loops on itself
     // if we're back at the start we are done
-    get_ptr(WORD_T, pactor, ACTOR_HEAP_START, 1);
+    get_ptr(glover_actor, pactor, ACTOR_HEAP_START, 1);
     get_ptr(WORD_T, pcloneptr, ACTOR_HEAP_CLONE, 1); // current clone address
 
     do {
         *pcloneptr = (WORD_T)pactor;
         pcloneptr += 1; // next word
-        *pcloneptr = ACTOR_SIZE;
+        *pcloneptr = sizeof(glover_actor); // ACTOR_SIZE;
         pcloneptr += 1;
 
         // clone here
@@ -223,17 +220,17 @@ void clone_actors() {
         // TODO identify and clone all pointers in actor
         // clone animation state
         // 0x60 bytes per actor if not NULL
-        WORD_T *panimation = (WORD_T*)*(pactor + 0xCC/4);
-        pcloneptr = clone_additional(panimation, pcloneptr, 0x60);
+        WORD_T *panimation = (WORD_T*)pactor->pproperties;
+        pcloneptr = clone_additional(panimation, pcloneptr, sizeof(actor_properties));
 
         // clone collision ptr
         // 7C bytes
-        WORD_T *pcollision = (WORD_T*)*(pactor + 0xD8/4);
-        pcloneptr = clone_additional(pcollision, pcloneptr, 0x7C);
+        WORD_T *pcollision = (WORD_T*)pactor->pcollision;
+        pcloneptr = clone_additional(pcollision, pcloneptr, sizeof(actor_collision));
 
 
-        pactor = (WORD_T*)(*pactor); // next value
-    } while (pactor != ACTOR_HEAP_START);
+        pactor = pactor->pnext; // next value
+    } while (pactor != (glover_actor*)ACTOR_HEAP_START);
     // pcloneptr += 1;
     // clone camera
     get_ptr(WORD_T, pcam, CAMERA_ACTOR, CAMERA_ACTOR_SIZE);

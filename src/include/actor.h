@@ -11,17 +11,17 @@
 
 
 typedef struct actor_properties {
-    u32 padding[0x60];
+    u8 padding[0x60];
 } actor_properties;
 
 typedef struct actor_collision {
-    u32 padding[0x74];
+    u8 padding[0x74];
     float hitbox_size;
     u32 unknown_1;
 } actor_collision;
 
 typedef struct model_properties {
-    u32 padding[0x50];
+    u8 padding[0x50];
 } model_properties;
 
 // size == F0
@@ -40,9 +40,11 @@ typedef struct glover_actor {
 
     u32 unknown_3[4];
     float gravity;
-    u32 unknown_4[7];
+    u32 unknown_4[6];
+    u32 velx;
     float angle_velocity;
-    u32 unknown_5[2];
+    u32 vely;
+    u32 velz;
     float angle;
     u32 unkown_6[12];
     u32 scalex;
