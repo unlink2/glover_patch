@@ -15,6 +15,9 @@
 
 #define EXP_RAM (WORD_T*)0x80400000 // freely available ram!
 
+#define GLOVER_ACTOR (WORD_T*)0x802902D8
+#define BALL_ACTOR (WORD_T*)0x8029F978
+
 #define GLOVER_X (WORD_T*)0x8029030C
 #define GLOVER_Y (WORD_T*)0x80290310
 #define GLOVER_Z (WORD_T*)0x80290314
