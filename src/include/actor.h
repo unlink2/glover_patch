@@ -38,13 +38,14 @@ typedef struct glover_actor {
     float prev_ypos;
     float prev_zpos;
 
-    u32 unknown_3[4];
+    u32 unknown_3[3];
+    float velx;
     float gravity;
-    u32 unknown_4[6];
-    u32 velx;
+    float vely;
+    float velz;
+    u32 unknown_4[5];
     float angle_velocity;
-    u32 vely;
-    u32 velz;
+    u32 unknown_5[2];
     float angle;
     u32 unkown_6[12];
     u32 scalex;
