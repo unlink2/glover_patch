@@ -16,7 +16,7 @@ typedef int s32;
 
 typedef BYTE_T u8;
 typedef HWORD_T u16;
-typedef WORD_T u32;
+typedef unsigned int u32;
 
 #ifndef NULL
 #define NULL ((void*)0)

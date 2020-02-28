@@ -3,6 +3,7 @@
 #include "include/memwatch.h"
 #include "include/debug.h"
 #include "include/menu.h"
+#include "include/actor.h"
 
 // x y and z coordinates
 WORD_T gpos_bac[3];
@@ -12,6 +13,7 @@ WORD_T gcam_bac[CAMERA_ACTOR_SIZE];
 gpatch_t gpatch;
 
 void logic() {
+    int sizeact = sizeof(glover_actor);
     update_memwatch(&pmemwatch);
     update_menu(&pmenu);
 
@@ -218,16 +220,17 @@ void clone_actors() {
         // + F0
         pcloneptr += ACTOR_SIZE/4;
 
-        // TODO clones crash often, may need more values
-        // clone actor support values if applicable
-        // 0x50 bytes ptr found at pactor + C8 (50 words)
-        // WORD_T *psupport = (WORD_T*)*(pactor + 0xC8/4);
-        // pcloneptr = clone_additional(psupport, pcloneptr, 0x50);
-
+        // TODO identify and clone all pointers in actor
         // clone animation state
-        // 0x50 bytes per actor if not NULL
-        // WORD_T *panimation = (WORD_T*)*(pactor + 0xDC/4);
-        // pcloneptr = clone_additional(panimation, pcloneptr, 0x50);
+        // 0x60 bytes per actor if not NULL
+        WORD_T *panimation = (WORD_T*)*(pactor + 0xCC/4);
+        pcloneptr = clone_additional(panimation, pcloneptr, 0x60);
+
+        // clone collision ptr
+        // 7C bytes
+        WORD_T *pcollision = (WORD_T*)*(pactor + 0xD8/4);
+        pcloneptr = clone_additional(pcollision, pcloneptr, 0x7C);
+
 
         pactor = (WORD_T*)(*pactor); // next value
     } while (pactor != ACTOR_HEAP_START);
