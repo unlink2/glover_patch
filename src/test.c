@@ -127,9 +127,10 @@ static void test_to_hexstr(void **state) {
 // size may vary due to pointer size differences
 static void test_struct_size(void **state) {
     assert_int_equal(sizeof(glover_actor), 0x118);
-    assert_int_equal(sizeof(actor_collision), 0x7C);
+    assert_int_equal(sizeof(actor_collision), 0x88);
     assert_int_equal(sizeof(actor_properties), 0x60);
     assert_int_equal(sizeof(save_file), 0x1C);
+    assert_int_equal(sizeof(collision_polygon), 0x78);
 }
 
 

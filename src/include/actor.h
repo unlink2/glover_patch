@@ -9,20 +9,49 @@
  * with lots of unknown data points
  */
 
+typedef struct vector3 {
+    float x;
+    float y;
+    float z;
+} vector3;
 
+// struct from colwav.py
+// TODO verify. This has not been verified to be correct yet
+// 78 bytes
+typedef struct collision_polygon {
+    u8 padding[16];
+    vector3 pos1; // tris of polygon
+    vector3 pos2;
+    vector3 pos3;
+    u8 unknown_1[68];
+} collision_polygon;
+
+// 60 bytes
 typedef struct actor_properties {
     u8 padding[0x60];
 } actor_properties;
 
+// 7C bytes
 typedef struct actor_collision {
-    u8 padding[0x74];
+    collision_polygon *pcollision_floor; // TODO make struct
+    collision_polygon *pcollision_wall;
+    u8 padding[0x68];
+    float hitbox_real; // hitbox real approaches hitbox_size slowly
     float hitbox_size;
     u32 unknown_1;
 } actor_collision;
 
+// 50 bytes
 typedef struct model_properties {
     u8 padding[0x50];
 } model_properties;
+
+// TODO needs better name
+// changes how animations play
+// 50 bytes 
+typedef struct model_other {
+    u8 padding[0x50];
+} model_other;
 
 // size == F0
 typedef struct glover_actor {
@@ -54,13 +83,13 @@ typedef struct glover_actor {
 
     u32 *pmodel_data; // TODO create struct for this
     actor_properties *pproperties; // TODO find better name
-    u32 *unknown_ptr_1;
+    model_other *pother;
     u32 *unknown_ptr_2;
     actor_collision *pcollision;
     model_properties *pmodelproperties;
 
     u32 unknown_7[2];
-    u32 *unknown_ptr_3;
+    u32 *unknown_ptr_3; // 40 bytes size?
     u32 *unknown_ptr_4;
 } glover_actor;
 
