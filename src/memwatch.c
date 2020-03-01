@@ -262,7 +262,12 @@ void update_memwatch(memwatch *pmw) {
         // get start of word
         paddr = (WORD_T*)((WORD_T)paddr & ~3);
         // read value and verify it is in range
-        WORD_T value = (WORD_T)*paddr;
+        WORD_T value;
+        if (pmw->cursor_pos == 0xFFFF) {
+            value = (WORD_T)GLOVER_ACTOR;
+        } else {
+            value = (WORD_T)*paddr;
+        }
 
         if ((WORD_T)value >= 0x80000000 && (WORD_T)value < 0x80400000) {
             // follow pointer if in bounds
