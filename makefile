@@ -9,7 +9,7 @@ ODIRLOC=./obj/local
 BINDIR=./bin
 
 LIBS=
-CFLAGS=-Wall -nostdlib -nodefaultlibs -fno-builtin -EB -g -fno-pic -mabi=eabi\
+CFLAGS=-Wall -nostdlib -nodefaultlibs -fno-builtin -EB -g -fno-pic -mabi=eabi -ffreestanding \
 	   -ffunction-sections -fdata-sections -march=vr4300 -mtune=vr4300 -mgp32 -mlong32 -G 0
 # optional flags
 # CFLAGS+=-Os -flto -ffat-lto-objects  \
@@ -17,7 +17,7 @@ CFLAGS=-Wall -nostdlib -nodefaultlibs -fno-builtin -EB -g -fno-pic -mabi=eabi\
 # 			-mno-check-zero-division -mxgot
 MAIN = main
 TEST_MAIN = test
-MODULES = utility inputs logic render memory memwatch font8x8_basic debug rdp menu
+MODULES = utility inputs logic render memory memwatch font8x8_basic debug rdp menu matrix
 
 .DEFAULT_GOAL := glover_patch
 

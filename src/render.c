@@ -5,6 +5,7 @@
 #include "include/debug.h"
 #include "include/rdp.h"
 #include "include/menu.h"
+#include "include/matrix.h"
 
 void render() {
     get_ptr(HWORD_T, pfont, FONT8X8, 0x4000);
@@ -18,13 +19,26 @@ void render() {
     render_memwatch(&pmemwatch);
     render_menu(&pmenu);
 
-    /* get_ptr(WORD_T, pbuffer, RDP_DL_BUFFER, 0xFF);
+    /*vector3 points[4];
+    vector3 result;
+    init_vector3(&points[0], 25, 25, 0);
+    init_vector3(&points[1], 50, 50, 0);
+    init_vector3(&points[2], 25, 50, 0);
+    init_vector3(&points[3], 50, 25, 0);
+
+    HWORD_T *pframebuffer = get_frame_buffer();
+    for (int i = 0; i < 4; i++) {
+        m3_mul_v3(&projection, &points[i], &result);
+        FB_WRITE_XY(pframebuffer, 0xF00F, (int)result.x, (int)result.y);
+    }*/
+
+    /*get_ptr(WORD_T, pbuffer, RDP_DL_BUFFER, 0x500);
     pbuffer += rdp_draw_primitives(pbuffer);
-    for (int i = 0; i < 1; i++) {
+    for (int i = 0; i < 80; i++) {
         pbuffer += rdp_draw_rect(0xF00Ff00f, 0+i, 0+i, 30+i, 30+i, pbuffer);
         pbuffer += rdp_draw_rect(0xFFFF00FF, 15+i, 15+i, 35+i, 35+i, pbuffer);
-        pbuffer += rdp_sync_pipe(pbuffer);
-    }*/
+    }
+    pbuffer += rdp_sync_tile(pbuffer);*/
     // testing testing
     /*pbuffer += rdp_texture_mode(pbuffer);
     pbuffer += rdp_sync_tile(pbuffer);

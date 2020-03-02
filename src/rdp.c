@@ -85,7 +85,7 @@ int rdp_test_texture(HWORD_T *pfont, WORD_T *pbuffer) {
     pbuffer[13] = 0x02000200;
 
     // sync
-    pbuffer[14] = 0x29000000;
+    pbuffer[14] = 0x28000000;
     pbuffer[15] = 0x00000000;
 
     rdp_send_dl(pbuffer, pbuffer+32);

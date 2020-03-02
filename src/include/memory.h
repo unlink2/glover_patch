@@ -65,7 +65,7 @@
 
 // variables
 
-// 0xFF bytes for display list stuff
+// 0x500 bytes for display list stuff
 #define RDP_DL_BUFFER 0x80529D40
 // uncompressed location of font 0x4000 bytes
 // TODO make sure this is a good location
