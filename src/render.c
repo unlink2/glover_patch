@@ -8,44 +8,27 @@
 #include "include/matrix.h"
 
 void render() {
+    // reset dl ptr
+    get_ptr(WORD_T, pbuffer, RDP_DL_BUFFER, RDP_DL_SIZE);
+    set_pbuffer(pbuffer+8); // TODO investiage: add +8 removes weird rendering issue in menu string "Save Position"
+
     get_ptr(HWORD_T, pfont, FONT8X8, 0x4000);
     // check if font is decompressed
     // test if pixel matches bg color
     // first char is NULL and therefore empty
     if (pfont[0] != 0xFFFF) {
         decompress_font((WORD_T*)font8x8_basic, pfont, 0x000F, 0xFFFF);
+        // clear rdp buffer
+        get_ptr(WORD_T, pbuffer, RDP_DL_BUFFER, 0x500);
+        gmemset((BYTE_T*)pbuffer, 0x00, RDP_DL_SIZE*sizeof(WORD_T));
     }
 
     render_memwatch(&pmemwatch);
     render_menu(&pmenu);
 
-    /*vector3 points[4];
-    vector3 result;
-    init_vector3(&points[0], 25, 25, 0);
-    init_vector3(&points[1], 50, 50, 0);
-    init_vector3(&points[2], 25, 50, 0);
-    init_vector3(&points[3], 50, 25, 0);
-
-    HWORD_T *pframebuffer = get_frame_buffer();
-    for (int i = 0; i < 4; i++) {
-        m3_mul_v3(&projection, &points[i], &result);
-        FB_WRITE_XY(pframebuffer, 0xF00F, (int)result.x, (int)result.y);
-    }*/
-
-    /*get_ptr(WORD_T, pbuffer, RDP_DL_BUFFER, 0x500);
-    pbuffer += rdp_draw_primitives(pbuffer);
-    for (int i = 0; i < 80; i++) {
-        pbuffer += rdp_draw_rect(0xF00Ff00f, 0+i, 0+i, 30+i, 30+i, pbuffer);
-        pbuffer += rdp_draw_rect(0xFFFF00FF, 15+i, 15+i, 35+i, 35+i, pbuffer);
-    }
-    pbuffer += rdp_sync_tile(pbuffer);*/
-    // testing testing
-    /*pbuffer += rdp_texture_mode(pbuffer);
-    pbuffer += rdp_sync_tile(pbuffer);
-    pbuffer += rdp_load_char('a', (HWORD_T*)0x80526EC0, pbuffer);
-    pbuffer += rdp_draw_char(pbuffer);*/
-    // pbuffer += rdp_sync_full(pbuffer);
-    // rdp_test_texture((HWORD_T*)0x80526F30, pbuffer);
+    // TODO send all rdp commands at once
+    // WORD_T *pend = get_pbuffer();
+    // rdp_send_dl(pbuffer, pend);
 }
 
 
@@ -122,6 +105,24 @@ void gputsf(char *str, HWORD_T *pframebuffer, WORD_T x, WORD_T y, HWORD_T *pfont
 
 void draw_charf(char c, HWORD_T *pframebuffer, WORD_T x, WORD_T y, HWORD_T *pfont) {
     INLINE_DRAW_CHARF(c, pframebuffer, x, y, pfont);
+}
+
+void gputsrdp(char *str, WORD_T x, WORD_T y, HWORD_T *pfont) {
+    WORD_T *pbuffer = get_pbuffer();
+    inc_pbuffer(rdp_texture_mode(pbuffer));
+    while (str[0] != '\0') {
+        draw_charrdp(str[0], x, y, pfont);
+        x += CHAR_W; // next
+        str++; // next char
+    }
+}
+
+void draw_charrdp(char c, WORD_T x, WORD_T y, HWORD_T *pfont) {
+    HWORD_T *pchar = pfont+(WORD_T)c*CHAR_W*CHAR_H;
+    WORD_T *pbuffer = get_pbuffer();
+    inc_pbuffer(rdp_load_tile(pchar, pbuffer));
+    pbuffer = get_pbuffer();
+    inc_pbuffer(rdp_draw_tile(x, y, 8, 8, pbuffer));
 }
 
 void write_to_framebuffer(HWORD_T *pframebuffer, HWORD_T color, WORD_T offset) {

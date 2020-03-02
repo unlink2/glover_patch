@@ -65,8 +65,10 @@
 
 // variables
 
+#define RDP_DL_BUFFER_PTR 0x80529D3C // points to dl pbuffer
 // 0x500 bytes for display list stuff
 #define RDP_DL_BUFFER 0x80529D40
+#define RDP_DL_SIZE 0x5000
 // uncompressed location of font 0x4000 bytes
 // TODO make sure this is a good location
 #define FONT8X8 (WORD_T*)0x80525C30

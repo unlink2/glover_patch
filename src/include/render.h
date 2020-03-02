@@ -52,6 +52,17 @@ void gputsf(char *, HWORD_T *, WORD_T, WORD_T, HWORD_T *);
 void draw_charf(char, HWORD_T *, WORD_T, WORD_T, HWORD_T *);
 
 /**
+ * Use rdp to print string
+ */
+void gputsrdp(char *, WORD_T, WORD_T, HWORD_T *);
+
+/**
+ * Draw a char using the rpd
+ * Way faster than software renderer
+ */
+void draw_charrdp(char, WORD_T, WORD_T, HWORD_T *);
+
+/**
  * Write to framebuffer, the value is 2 bytes per pixel
  * RGBA format
  */

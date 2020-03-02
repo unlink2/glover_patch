@@ -13,13 +13,11 @@ void init_memwatch(memwatch *pmw) {
 }
 
 void render_watchaddr(memwatch *pmw) {
-    HWORD_T *pframebuffer = get_frame_buffer();
-
     get_ptr(HWORD_T, pfont, FONT8X8, 0x4000);
 
     // render strings
     char *pstr = (char*)pmw->pstr;
-    gputsf(pstr, pframebuffer, 0x10, 0x10, pfont);
+    gputsrdp(pstr, 0x10, 0x10, pfont);
 }
 
 void render_watchselect(memwatch *pmw) {
@@ -30,13 +28,13 @@ void render_watchselect(memwatch *pmw) {
     // render strings
     char *pstr = (char*)pmw->pstr;
 
-    gputsf(pstr, pframebuffer, 0x10, 0x10, pfont);
+    gputsrdp(pstr, 0x10, 0x10, pfont);
     pstr += 0x10;
 
-    gputsf(pstr, pframebuffer, 0x10, 0x10+9, pfont);
+    gputsrdp(pstr, 0x10, 0x10+9, pfont);
     pstr += 0x10;
 
-    gputsf(pstr, pframebuffer, 0x10, 0x10+18, pfont);
+    gputsrdp(pstr, 0x10, 0x10+18, pfont);
 
     int y_offset = pmw->cursor_pos*9;
 
@@ -67,15 +65,15 @@ void render_memwatch(memwatch *pmw) {
 
     // render strings
     char *pstr = (char*)pmw->pstr;
-    gputsf(pstr, pframebuffer, start_x, start_y-0x10, pfont);
+    gputsrdp(pstr, start_x, start_y-0x10, pfont);
     pstr += 0x10;
 
     char index_buffer[4];
     // display 16 bytes on screen 1 word per line
     for (int i = 0; i < WORDS_PER_PAGE; i++, start_y += CHAR_H+1, pstr += 0x10) {
         to_hexstr(i*4, index_buffer, 1);
-        gputsf(index_buffer, pframebuffer, start_x-0x18, start_y, pfont);
-        gputsf(pstr, pframebuffer, start_x, start_y, pfont);
+        gputsrdp(index_buffer, start_x-0x18, start_y, pfont);
+        gputsrdp(pstr, start_x, start_y, pfont);
     }
 
     int x_offset = (pmw->cursor_pos%BYTES_PER_LINE)*CHAR_W*2;
@@ -199,7 +197,7 @@ void update_memwatch(memwatch *pmw) {
     }
 
     // normal update code
-    // don't go here during watchselect 
+    // don't go here during watchselect
 
     if ((pmw->frame_counter % MEMWATCH_POLLING_RATE) == 0) {
         // don't update every frame

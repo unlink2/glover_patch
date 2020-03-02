@@ -23,10 +23,6 @@ void init_mem() {
     init_vector3(&projection.y, 0, 1, 0);
     init_vector3(&projection.z, 1, 0, 1);
 
-    // clear rdp buffer
-    get_ptr(WORD_T, pbuffer, RDP_DL_BUFFER, 0x500);
-    gmemset((BYTE_T*)pbuffer, 0x00, 0x500*sizeof(WORD_T));
-
     // evd_init();
     // evd_write_msg(0x21);
 }
