@@ -36,10 +36,6 @@ int __start(enum START_MODE mode) {
         return 0;
     }
 
-    // reset dl ptr
-    get_ptr(WORD_T, pbuffer, RDP_DL_BUFFER, 0x500);
-    set_pbuffer(pbuffer);
-
     switch (mode) {
         case START_LOGIC:
             logic();
