@@ -129,4 +129,8 @@ void write_to_framebuffer(HWORD_T *pframebuffer, HWORD_T color, WORD_T offset) {
     FB_WRITE_HW(pframebuffer, color, offset);
 }
 
-
+void draw_rect(u32 x, u32 y, u32 w, u32 h, u32 color) {
+    WORD_T *pbuffer = get_pbuffer();
+    inc_pbuffer(rdp_draw_primitives(pbuffer));
+    inc_pbuffer(rdp_draw_rect(color, x, y, x+w, y+h, pbuffer));
+}
