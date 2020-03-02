@@ -10,7 +10,7 @@
 void render() {
     // reset dl ptr
     get_ptr(WORD_T, pbuffer, RDP_DL_BUFFER, RDP_DL_SIZE);
-    set_pbuffer(pbuffer+8); // TODO investiage: add +8 removes weird rendering issue in menu string "Save Position"
+    set_pbuffer(pbuffer); // TODO investiage: add +8 removes weird rendering issue in menu string "Save Position"
 
     get_ptr(HWORD_T, pfont, FONT8X8, 0x4000);
     // check if font is decompressed
@@ -18,8 +18,8 @@ void render() {
     // first char is NULL and therefore empty
     if (pfont[0] != 0xFFFF) {
         decompress_font((WORD_T*)font8x8_basic, pfont, 0x000F, 0xFFFF);
-        // clear rdp buffer
-        get_ptr(WORD_T, pbuffer, RDP_DL_BUFFER, 0x500);
+        // clear rdp buffer once as well
+        get_ptr(WORD_T, pbuffer, RDP_DL_BUFFER, RDP_DL_SIZE);
         gmemset((BYTE_T*)pbuffer, 0x00, RDP_DL_SIZE*sizeof(WORD_T));
     }
 
