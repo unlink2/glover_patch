@@ -3,17 +3,13 @@
 
 #include "typedefs.h"
 #include "memory.h"
+#include "matrix.h"
 
 /*
  * This file contains an incomplete actor struct
  * with lots of unknown data points
  */
 
-typedef struct vector3 {
-    float x;
-    float y;
-    float z;
-} vector3;
 
 // struct from colwav.py
 // TODO verify. This has not been verified to be correct yet

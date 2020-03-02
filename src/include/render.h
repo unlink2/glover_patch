@@ -61,6 +61,8 @@ void write_to_framebuffer(HWORD_T *, HWORD_T, WORD_T);
 #define FB_WRITE_HW(pframebuffer, color, offset) pframebuffer[offset] = color;
 #define FB_WRITE_W(pframebuffer, color, offset) *((WORD_T*)pframebuffer+offset) = color;
 
+#define FB_WRITE_XY(pframebuffer, color, x, y) FB_WRITE_HW(pframebuffer, color, SCREEN_W * y + x);
+
 // guaranteed inline rendering of a character. if speed is not an issue call the
 // function instead
 #define INLINE_DRAW_CHAR(c, pframebuffer, x, y, pcharset, fg, bg) /* initial character offset */\

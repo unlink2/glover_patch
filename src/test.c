@@ -16,6 +16,7 @@
 #include "include/font8x8_basic.h"
 #include "include/actor.h"
 #include "include/savefile.h"
+#include "include/matrix.h"
 
 /**
  * This is a somewhat incomplete unit test file
@@ -133,7 +134,50 @@ static void test_struct_size(void **state) {
     assert_int_equal(sizeof(collision_polygon), 0x78);
 }
 
+static void test_m3_mul_v3(void **state) {
+    vector3 expected;
+    expected.x = 15;
+    expected.y = 7;
+    expected.z = 23;
 
+    vector3 v3;
+    v3.x = 2;
+    v3.y = 6;
+    v3.z = 1;
+
+    matrix3 m3;
+    m3.x.x = 1;
+    m3.x.y = 2;
+    m3.x.z = 1;
+
+    m3.y.x = 0;
+    m3.y.y = 1;
+    m3.y.z = 1;
+
+    m3.z.x = 2;
+    m3.z.y = 3;
+    m3.z.z = 1;
+
+    vector3 result;
+    m3_mul_v3(&m3, &v3, &result);
+
+    assert_int_equal((int)expected.x, (int)result.x);
+    assert_int_equal((int)expected.y, (int)result.y);
+    assert_int_equal((int)expected.z, (int)result.z);
+
+    vector3 points[4];
+    init_vector3(&points[0], 25, 25, 0);
+    init_vector3(&points[1], 50, 50, 0);
+    init_vector3(&points[2], 25, 50, 0);
+    init_vector3(&points[3], 50, 25, 0);
+
+    for (int i = 0; i < 4; i++) {
+        m3_mul_v3(&projection, &points[i], &result);
+        assert_int_equal(result.x, points[i].x);
+        assert_int_equal(result.y, points[i].y);
+        assert_int_equal(result.z, points[i].z);
+    }
+}
 
 int main() {
     const struct CMUnitTest tests[] = {
@@ -143,7 +187,8 @@ int main() {
         cmocka_unit_test(test_decompress_font),
         cmocka_unit_test(test_gputs),
         cmocka_unit_test(test_to_hexstr),
-        cmocka_unit_test(test_struct_size)
+        cmocka_unit_test(test_struct_size),
+        cmocka_unit_test(test_m3_mul_v3)
     };
 
     return cmocka_run_group_tests(tests, NULL, NULL);
