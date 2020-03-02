@@ -151,7 +151,7 @@ void render_menu(menudef *pmenu) {
     unsigned short start_y = 0x20;
     // display 16 bytes on screen 1 word per line
     for (int i = 0; i < pmenu->size; i++, start_y += CHAR_H+1) {
-        gputsf(pmenu->strings[i], pframebuffer, start_x, start_y, pfont);
+        gputsrdp(pmenu->strings[i], start_x, start_y, pfont);
     }
 
 
