@@ -68,6 +68,14 @@ void draw_charrdp(char, WORD_T, WORD_T, HWORD_T *);
  */
 void write_to_framebuffer(HWORD_T *, HWORD_T, WORD_T);
 
+/**
+ * Draws a rectangle
+ * at x,y
+ * size: w, h
+ * color
+ */
+void draw_rect(u32, u32, u32, u32, u32);
+
 // guaranteed inline write to framebuffer
 #define FB_WRITE_HW(pframebuffer, color, offset) pframebuffer[offset] = color;
 #define FB_WRITE_W(pframebuffer, color, offset) *((WORD_T*)pframebuffer+offset) = color;
