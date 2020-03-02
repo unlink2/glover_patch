@@ -67,7 +67,7 @@ void main_menu_select(menudef *pmenu) {
             break;
         case 1:
             // ascii mode
-            pmenu->pmemwatch->flags = pmenu->pmemwatch->flags ^ 0b00100000;
+            pmenu->pmemwatch->flags = pmenu->pmemwatch->flags ^ 0b10100000;
             pmenu->flags = 0x00;
             break;
         case 2:
@@ -170,6 +170,7 @@ void update_menu(menudef *pmenu) {
     if (read_button(START_INPUT, CONTROLLER_2)
             && !read_button(START_INPUT, LAST_INPUT_2)) {
         pmenu->flags = pmenu->flags ^ 0x80;
+        pmenu->pmemwatch->flags = 0x00;
     }
 
     if ((pmenu->flags & 0x80) == 0) {
