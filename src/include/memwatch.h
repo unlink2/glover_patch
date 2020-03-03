@@ -12,7 +12,8 @@ typedef enum watch_type {
     NO_WATCH,
     BYTE_WATCH,
     HWORD_WATCH,
-    WORD_WATCH
+    WORD_WATCH,
+    FLOAT_WATCH
 } watch_type;
 
 typedef struct memwatch {

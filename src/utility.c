@@ -60,3 +60,80 @@ void to_hexstr(WORD_T value, char *pstr, WORD_T size) {
     }
     pstr[i] = '\0';
 }
+
+void str_reverse(char *pstr, int len) {
+    int i = 0, j = len-1, temp;
+    while (i < j) {
+        temp = pstr[i];
+        pstr[i] = pstr[j];
+        pstr[j] = temp;
+        i++;
+        j--;
+    }
+}
+
+int to_decstr(WORD_T value, char *pstr, WORD_T size) {
+    int i = 0;
+    while (value) {
+        pstr[i] = (value % 10) + '0';
+        i++;
+        value = value / 10;
+    }
+
+    while (i < size) {
+        pstr[i++] = '0';
+    }
+    str_reverse(pstr, i);
+    pstr[i] = '\0';
+    return i;
+}
+
+void to_floatstr(float n, char *pstr, WORD_T size) {
+    if ((u32)n == 0xFF800000) {
+        pstr[0] = '-';
+        pstr[1] = 'I';
+        pstr[2] = '\0';
+        return;
+    } else if ((u32)n == 0x7F800000) {
+        pstr[0] = 'I';
+        pstr[1] = '\0';
+        return;
+    } else if (n != n) {
+        pstr[0] = 'N';
+        pstr[1] = 'a';
+        pstr[2] = 'N';
+        pstr[3] = '\0';
+        return;
+    }
+
+    int i = 0;
+    if (n < 0) {
+        pstr[i] = '-';
+        n *= -1;
+        i++;
+    }
+
+
+    int in = (int)n; // get int part
+
+    i += to_decstr(in, pstr+i, 0);
+
+    float f = n - (float)in;
+
+    if (size != 0) {
+        pstr[i] = '.';
+        f = f * (float)gpow(10, size); // amount of numbers after point
+        to_decstr((int)f, pstr+i+1, 0);
+    }
+}
+
+int gpow(int n, int e) {
+    if (e == 0) {
+        return 1;
+    }
+    int res = n;
+    for (int i = 0; i < e-1; i++) {
+        res = res * n;
+    }
+    return res;
+}

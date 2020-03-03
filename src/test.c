@@ -179,6 +179,49 @@ static void test_m3_mul_v3(void **state) {
     }
 }
 
+static void test_gpow(void **state) {
+    assert_int_equal(gpow(5, 0), 1);
+    assert_int_equal(gpow(5, 5), 5*5*5*5*5);
+    assert_int_equal(gpow(6, 3), 6*6*6);
+}
+
+static void test_str_reverse(void **state) {
+    char *str = my_malloc(6);
+    strcpy(str, "olleH");
+    str_reverse(str, 5);
+    assert_string_equal(str, "Hello");
+    my_free(str);
+}
+
+static void test_to_decstr(void **state) {
+    char *str = my_malloc(6);
+    to_decstr(123, str, 0);
+    assert_string_equal(str, "123");
+    to_decstr(456, str, 5);
+    assert_string_equal(str, "00456");
+    my_free(str);
+}
+
+static void test_to_floatstr(void **state) {
+    char *str = my_malloc(64);
+    to_floatstr(3.1415f, str, 3);
+    assert_string_equal(str, "3.141");
+
+    to_floatstr(3.1415f, str, 0);
+    assert_string_equal(str, "3");
+
+    to_floatstr(-3.1415f, str, 3);
+    assert_string_equal(str, "-3.141");
+
+    to_floatstr((float)0xFF800000, str, 0);
+    assert_string_equal(str, "-I");
+
+    to_floatstr((float)0x7F800000, str, 0);
+    assert_string_equal(str, "I");
+
+    my_free(str);
+}
+
 int main() {
     const struct CMUnitTest tests[] = {
         cmocka_unit_test(test_gmemcpy),
@@ -188,7 +231,11 @@ int main() {
         cmocka_unit_test(test_gputs),
         cmocka_unit_test(test_to_hexstr),
         cmocka_unit_test(test_struct_size),
-        cmocka_unit_test(test_m3_mul_v3)
+        cmocka_unit_test(test_m3_mul_v3),
+        cmocka_unit_test(test_gpow),
+        cmocka_unit_test(test_str_reverse),
+        cmocka_unit_test(test_to_decstr),
+        cmocka_unit_test(test_to_floatstr)
     };
 
     return cmocka_run_group_tests(tests, NULL, NULL);
