@@ -47,4 +47,11 @@ void gassert(int);
  */
 void to_hexstr(WORD_T, char *, WORD_T);
 
+void str_reverse(char *, int);
+
+int to_decstr(WORD_T, char *, WORD_T);
+void to_floatstr(float, char *, WORD_T);
+
+int gpow(int, int);
+
 #endif

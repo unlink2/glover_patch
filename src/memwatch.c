@@ -35,6 +35,9 @@ void render_watchselect(memwatch *pmw) {
     pstr += 0x10;
 
     gputsrdp(pstr, 0x10, 0x10+18, pfont);
+    pstr += 0x10;
+
+    gputsrdp(pstr, 0x10, 0x10+27, pfont);
 
     int y_offset = pmw->cursor_pos*9;
 
@@ -102,6 +105,9 @@ void prepare_watchaddr(memwatch *pmw) {
         case HWORD_WATCH:
             to_hexstr((HWORD_T)*(HWORD_T*)(pmw->watch_addr), pstr, sizeof(HWORD_T));
             break;
+        case FLOAT_WATCH:
+            to_floatstr((float)*(float*)(pmw->watch_addr), pstr, 10);
+            break;
         default:
             to_hexstr((BYTE_T)*(BYTE_T*)(pmw->watch_addr), pstr, sizeof(BYTE_T));
             break;
@@ -112,9 +118,9 @@ void prepare_watchselect(memwatch *pmw) {
     // set strings
     char *pstr = (char*)pmw->pstr;
 
-    int max_cursor = WORD_WATCH;
+    int max_cursor = FLOAT_WATCH;
     if (((WORD_T)pmw->watch_addr % sizeof(WORD_T)) == 0) {
-        max_cursor = WORD_WATCH-1;
+        max_cursor = FLOAT_WATCH-1;
     } else if (((WORD_T)pmw->watch_addr % sizeof(HWORD_T)) == 0) {
         max_cursor = HWORD_WATCH-1;
     } else {
@@ -131,6 +137,8 @@ void prepare_watchselect(memwatch *pmw) {
     pstr[0] = 'H'; pstr[1] = 'W'; pstr[2] = 'O'; pstr[3] = 'R'; pstr[4] = 'D'; pstr[5] = '\0';
     pstr += 0x10;
     pstr[0] = 'W'; pstr[1] = 'O'; pstr[2] = 'R'; pstr[3] = 'D'; pstr[4] = '\0';
+    pstr += 0x10;
+    pstr[0] = 'F'; pstr[1] = 'l'; pstr[2] = 'o'; pstr[3] = 'a'; pstr[4] = 't'; pstr[5] = '\0';
 }
 
 void prepare_memwatch(memwatch *pmw) {
