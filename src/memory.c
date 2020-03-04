@@ -6,6 +6,7 @@
 #include "include/debug.h"
 #include "include/menu.h"
 #include "include/matrix.h"
+#include "include/keyboard.h"
 
 void init_mem() {
     get_ptr(BYTE_T, pframe_advance, FRAME_ADVANCE, 1);
@@ -16,12 +17,15 @@ void init_mem() {
     // pass pointers to global state objects
     pmenu.pmemwatch = &pmemwatch;
     pmenu.pgpatch = &gpatch;
+    pmenu.pkb = &pkb;
     init_default_menu(&pmenu);
 
     // init projection matrix
     init_vector3(&projection.x, 1, 0, 0);
     init_vector3(&projection.y, 0, 1, 0);
     init_vector3(&projection.z, 1, 0, 1);
+
+    init_keyboard(&pkb);
 
     // evd_init();
     // evd_write_msg(0x21);

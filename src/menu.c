@@ -171,6 +171,7 @@ void update_menu(menudef *pmenu) {
             && !read_button(START_INPUT, LAST_INPUT_2)) {
         pmenu->flags = pmenu->flags ^ 0x80;
         pmenu->pmemwatch->flags = 0x00;
+        pmenu->pkb->flags = 0x00;
     }
 
     if ((pmenu->flags & 0x80) == 0) {
