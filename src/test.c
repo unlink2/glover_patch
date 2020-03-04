@@ -222,6 +222,10 @@ static void test_to_floatstr(void **state) {
     my_free(str);
 }
 
+static void test_from_hexstr(void **state) {
+    assert_int_equal(from_hexstr("AaC2", 4), 0xAAC2);
+}
+
 int main() {
     const struct CMUnitTest tests[] = {
         cmocka_unit_test(test_gmemcpy),
@@ -235,7 +239,8 @@ int main() {
         cmocka_unit_test(test_gpow),
         cmocka_unit_test(test_str_reverse),
         cmocka_unit_test(test_to_decstr),
-        cmocka_unit_test(test_to_floatstr)
+        cmocka_unit_test(test_to_floatstr),
+        cmocka_unit_test(test_from_hexstr)
     };
 
     return cmocka_run_group_tests(tests, NULL, NULL);

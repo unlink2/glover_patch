@@ -4,6 +4,7 @@
 #include "include/font8x8_basic.h"
 
 memwatch pmemwatch;
+char pmeminput[10]; // input buffer
 
 void init_memwatch(memwatch *pmw) {
     get_ptr(BYTE_T, string_buffer, SCREEN_BUFFER, 0x20*0x10);
@@ -17,7 +18,7 @@ void render_watchaddr(memwatch *pmw) {
 
     // render strings
     char *pstr = (char*)pmw->pstr;
-    gputsrdp(pstr, 0x10, 0x10, pfont);
+    gputsrdp(pstr, 0x90, 0x10, pfont);
 }
 
 void render_watchselect(memwatch *pmw) {
@@ -293,9 +294,30 @@ void update_memwatch(memwatch *pmw) {
 
     } else if (read_button(Z_INPUT, CONTROLLER_2)) {
         // clear watch
-        pmw->watch_addr = NULL;
-        pmw->watch_type = NO_WATCH;
+        // pmw->watch_addr = NULL;
+        // pmw->watch_type = NO_WATCH;
+        BYTE_T *paddr = memwatch_current_addr(pmw)+pmw->cursor_pos;
+
+        if ((WORD_T)paddr < pmw->base_addr
+                || (WORD_T)paddr >= 0x80400000) {
+            pmw->offset = 0;
+            return;
+        }
+        pmw->flags = 0x00;
+        pmw->pinput_addr = paddr;
+        init_hex_keyboard(&pkb);
+        input_request(pmeminput, 3, &pkb, &memwatch_input_request, pmw);
     }
 
     pmw->frame_counter++;
+}
+
+void memwatch_input_request(keyboard *pkb, void *pmw) {
+    if (!pkb->success) {
+        return;
+    }
+
+    memwatch *pmemwatch = (memwatch*)pmw;
+
+    *pmemwatch->pinput_addr = from_hexstr(pkb->pinput, gstrlen(pkb->pinput));
 }

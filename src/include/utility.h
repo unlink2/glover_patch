@@ -54,4 +54,6 @@ void to_floatstr(float, char *, WORD_T);
 
 int gpow(int, int);
 
+int from_hexstr(char *, int);
+
 #endif

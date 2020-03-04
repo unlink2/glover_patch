@@ -5,6 +5,7 @@
 #include "memory.h"
 #include "memwatch.h"
 #include "logic.h"
+#include "keyboard.h"
 
 #define BACK_ACTION 0xFF
 
@@ -37,6 +38,7 @@ typedef struct menudef {
     // usually pointers to global objects
     memwatch *pmemwatch;
     gpatch_t *pgpatch;
+    keyboard *pkb;
 
 } menudef;
 

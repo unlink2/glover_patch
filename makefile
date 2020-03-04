@@ -17,7 +17,7 @@ CFLAGS=-Wall -nostdlib -nodefaultlibs -fno-builtin -EB -g -fno-pic -mabi=eabi -f
 # 			-mno-check-zero-division -mxgot
 MAIN = main
 TEST_MAIN = test
-MODULES = utility inputs logic render memory memwatch font8x8_basic debug rdp menu matrix
+MODULES = utility inputs logic render memory memwatch font8x8_basic debug rdp menu matrix keyboard
 
 .DEFAULT_GOAL := glover_patch
 

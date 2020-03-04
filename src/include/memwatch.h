@@ -3,6 +3,7 @@
 
 #include "utility.h"
 #include "memory.h"
+#include "keyboard.h"
 
 #define WORDS_PER_PAGE 16
 #define BYTES_PER_LINE 4
@@ -28,6 +29,8 @@ typedef struct memwatch {
     WORD_T base_addr; // start address of ram
     WORD_T *watch_addr; // memory watch address if NULL ignore
     watch_type watch_type;
+
+    BYTE_T *pinput_addr; // for input request
 } memwatch;
 
 extern memwatch pmemwatch;
@@ -56,6 +59,8 @@ void prepare_watchselect(memwatch *);
 void prepare_memwatch(memwatch *);
 
 void update_memwatch(memwatch *);
+
+void memwatch_input_request(keyboard *, void *);
 
 #define memwatch_current_addr(pmw) (BYTE_T*)pmw->base_addr+(pmw->offset*WORDS_PER_PAGE*sizeof(WORD_T))
 

@@ -137,3 +137,23 @@ int gpow(int n, int e) {
     }
     return res;
 }
+
+int from_hexstr(char *pstr, int len) {
+    int result = 0;
+    u32 index = (len-1) * 4;
+    for (int i = 0; i < len; i++) {
+        if (pstr[0] >= '0' && pstr[0] <= '9') {
+            result += (pstr[0]-'0') << index;
+        } else if (pstr[0] >= 'a' && pstr[0] <= 'f') {
+            result += (pstr[0]-'a'+10) << index;
+        } else if (pstr[0] >= 'A' && pstr[0] <= 'F') {
+            result += (pstr[0]-'A'+10) << index;
+        } else {
+            return result;
+        }
+
+        pstr++;
+        index -= 4;
+    }
+    return result;
+}

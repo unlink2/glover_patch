@@ -6,11 +6,13 @@
 #include "include/rdp.h"
 #include "include/menu.h"
 #include "include/matrix.h"
+#include "include/keyboard.h"
 
 void render() {
     // reset dl ptr
     get_ptr(WORD_T, pbuffer, RDP_DL_BUFFER, RDP_DL_SIZE);
-    set_pbuffer(pbuffer); // TODO investiage: add +8 removes weird rendering issue in menu string "Save Position"
+    get_ptr(WORD_T, pbuffer_memwatch, RDP_DL_BUFFER_MEMWATCH, RDP_DL_SIZE);
+    get_ptr(WORD_T, pbuffer_keyboard, RDP_DL_BUFFER_KEYBOARD, RDP_DL_SIZE);
 
     get_ptr(HWORD_T, pfont, FONT8X8, 0x4000);
     // check if font is decompressed
@@ -19,12 +21,19 @@ void render() {
     if (pfont[0] != 0xFFFF) {
         decompress_font((WORD_T*)font8x8_basic, pfont, 0x000F, 0xFFFF);
         // clear rdp buffer once as well
-        get_ptr(WORD_T, pbuffer, RDP_DL_BUFFER, RDP_DL_SIZE);
         gmemset((BYTE_T*)pbuffer, 0x00, RDP_DL_SIZE*sizeof(WORD_T));
+        gmemset((BYTE_T*)pbuffer_memwatch, 0x00, RDP_DL_SIZE*sizeof(WORD_T));
+        gmemset((BYTE_T*)pbuffer_keyboard, 0x00, RDP_DL_SIZE*sizeof(WORD_T));
     }
 
+    set_pbuffer(pbuffer_memwatch);
     render_memwatch(&pmemwatch);
+
+    set_pbuffer(pbuffer);
     render_menu(&pmenu);
+
+    set_pbuffer(pbuffer_keyboard);
+    render_keyboard(&pkb);
 
     // TODO send all rdp commands at once
     // WORD_T *pend = get_pbuffer();

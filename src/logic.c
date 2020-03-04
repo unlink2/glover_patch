@@ -15,6 +15,7 @@ gpatch_t gpatch;
 void logic() {
     update_memwatch(&pmemwatch);
     update_menu(&pmenu);
+    update_keyboard(&pkb);
 
     // test for infinites
     if (gpatch.infinite_hp) {
