@@ -26,6 +26,7 @@ void init_mem() {
 
     // zero all ram
 
+    gmemset((BYTE_T*)&gpatch, 0x00, sizeof(gpatch));
     gpatch.frame_advance = 0x00;
     // zero struct
     gmemset((BYTE_T*)&pmemwatch, 0x00, sizeof(memwatch));

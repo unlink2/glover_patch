@@ -17,6 +17,16 @@ void logic() {
     update_menu(&pmenu);
     update_keyboard(&pkb);
 
+    // TODO hacky way to prevent crash
+    // Toggle menu once
+    if (gpatch.menu_toggle == 0) {
+        pmenu.flags = 0x80;
+        gpatch.menu_toggle++;
+    } else if (gpatch.menu_toggle == 1) {
+        pmenu.flags = 0x00;
+        gpatch.menu_toggle++;
+    }
+
     // test for infinites
     if (gpatch.infinite_hp) {
         get_ptr(WORD_T, hp, GLOVER_HP, 1);
