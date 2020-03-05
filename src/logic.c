@@ -61,8 +61,7 @@ void logic() {
 
     if (read_button(CU_INPUT, CONTROLLER_2)
         && !read_button(CU_INPUT, LAST_INPUT_2)) {
-        get_ptr(BYTE_T, pframe_advance, FRAME_ADVANCE, 1);
-        *pframe_advance = 2; // set to 2 to prevent double input
+        gpatch.frame_advance = 2; // set to 2 to prevent double input
 
         // store last input values
         store_inputs(CONTROLLER_2, LAST_INPUT_2);
@@ -91,7 +90,7 @@ void level_select() {
 }
 
 void frame_advance() {
-    get_ptr(BYTE_T, pframe_advance, FRAME_ADVANCE, 1);
+    u32 *pframe_advance = &gpatch.frame_advance;
     // get_ptr(WORD_T, plast_z_write, 0x801349B4, 1);
 
     while (*pframe_advance) {

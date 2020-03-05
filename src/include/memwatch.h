@@ -7,7 +7,7 @@
 
 #define WORDS_PER_PAGE 16
 #define BYTES_PER_LINE 4
-#define MEMWATCH_POLLING_RATE 4 // every N frames
+#define MEMWATCH_POLLING_RATE 1 // every N frames
 
 typedef enum watch_type {
     NO_WATCH,
