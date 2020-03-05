@@ -19,6 +19,7 @@ void render() {
     // test if pixel matches bg color
     // first char is NULL and therefore empty
     if (pfont[0] != 0xFFFF) {
+        // safety init
         decompress_font((WORD_T*)font8x8_basic, pfont, 0x000F, 0xFFFF);
         // clear rdp buffer once as well
         gmemset((BYTE_T*)pbuffer, 0x00, RDP_DL_SIZE*sizeof(WORD_T));

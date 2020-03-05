@@ -8,6 +8,7 @@
 typedef struct gpatch_t {
     BOOLEAN infinite_hp;
     BOOLEAN infinite_lives;
+    u32 frame_advance;
 } gpatch_t;
 
 extern gpatch_t gpatch;

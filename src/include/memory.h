@@ -7,13 +7,16 @@
 #define GAME_MODE (BYTE_T*)0x801E7530 // byte 04 = gameplay 02 = level select
 #define PAUSE_FLAG (BYTE_T*)0x801EC7D3 // 01 = paused
 
-#define LAST_INPUT_1 (WORD_T*)0x800002C4
-#define LAST_INPUT_2 (WORD_T*)0x800002C8
-#define FRAME_ADVANCE (BYTE_T*)0x800002CC
+extern WORD_T *LAST_INPUT_1;
+extern WORD_T *LAST_INPUT_2;
+// #define LAST_INPUT_1 (WORD_T*)0x800002C4
+// #define LAST_INPUT_2 (WORD_T*)0x800002C8
+// #define FRAME_ADVANCE (BYTE_T*)0x800002CC
 
 #define FILE1_START (WORD_T*)0x801EAA44
 
 #define EXP_RAM (WORD_T*)0x80400000 // freely available ram!
+#define EXP_RAM_END (BYTE_T*)0x807FFFFF // last byte of ram
 
 #define GLOVER_ACTOR (WORD_T*)0x802902D8
 #define BALL_ACTOR (WORD_T*)0x8029F978
@@ -80,9 +83,6 @@
 // every frame if needed
 #define SCREEN_BUFFER (BYTE_T*)0x80500000
 
-// 153600 bytes RGBA image 320x240
-// use as framebuffer for hack, render as texture
-#define FRAME_BUFFER_CUSTOM (BYTE_T*)80600000
 
 #define X_BAC (WORD_T*)0x805002B0
 #define Y_BAC (WORD_T*)0x805002B4
