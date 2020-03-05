@@ -39,6 +39,9 @@ void render_watchselect(memwatch *pmw) {
     pstr += 0x10;
 
     gputsrdp(pstr, 0x10, 0x10+27, pfont);
+    pstr += 0x10;
+
+    gputsrdp(pstr, 0x10, 0x10+36, pfont);
 
     int y_offset = pmw->cursor_pos*9;
 
@@ -121,18 +124,19 @@ void prepare_watchselect(memwatch *pmw) {
 
     int max_cursor = FLOAT_WATCH;
     if (((WORD_T)pmw->watch_addr % sizeof(WORD_T)) == 0) {
-        max_cursor = FLOAT_WATCH-1;
+        max_cursor = FLOAT_WATCH;
     } else if (((WORD_T)pmw->watch_addr % sizeof(HWORD_T)) == 0) {
-        max_cursor = HWORD_WATCH-1;
+        max_cursor = HWORD_WATCH;
     } else {
-        max_cursor = BYTE_WATCH-1;
+        max_cursor = BYTE_WATCH;
     }
 
     if (pmw->cursor_pos > max_cursor) {
         pmw->cursor_pos = 0;
     }
 
-
+    pstr[0] = 'N'; pstr[1] = 'o'; pstr[2] = 'n'; pstr[3] = 'e'; pstr[4] = '\0';
+    pstr+= 0x10;
     pstr[0] = 'B'; pstr[1] = 'Y'; pstr[2] = 'T'; pstr[3] = 'E'; pstr[4] = '\0';
     pstr += 0x10;
     pstr[0] = 'H'; pstr[1] = 'W'; pstr[2] = 'O'; pstr[3] = 'R'; pstr[4] = 'D'; pstr[5] = '\0';
@@ -193,7 +197,7 @@ void update_memwatch(memwatch *pmw) {
         } else if (read_button(A_INPUT, CONTROLLER_2)
                 && read_button(A_INPUT, LAST_INPUT_2)) {
             // select type
-            pmw->watch_type = pmw->cursor_pos+1;
+            pmw->watch_type = pmw->cursor_pos;
             pmw->flags = 0x00;
             pmw->cursor_pos = 0x00;
         }
