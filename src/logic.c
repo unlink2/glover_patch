@@ -4,6 +4,7 @@
 #include "include/debug.h"
 #include "include/menu.h"
 #include "include/actor.h"
+#include "include/debug.h"
 
 // x y and z coordinates
 float gpos_bac[3];
@@ -16,6 +17,8 @@ void logic() {
     update_memwatch(&pmemwatch);
     update_menu(&pmenu);
     update_keyboard(&pkb);
+
+    evd_echo_terminal();
 
     // TODO hacky way to prevent crash
     // Toggle menu once
