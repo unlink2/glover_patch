@@ -2,6 +2,7 @@
 #include "include/inputs.h"
 #include "include/render.h"
 #include "include/font8x8_basic.h"
+#include "include/debug.h"
 
 memwatch pmemwatch;
 char pmeminput[10]; // input buffer
