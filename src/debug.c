@@ -4,6 +4,8 @@
 
 static volatile struct pi_regs* const pir = (struct pi_regs *)0xa4600000;
 
+char *pevd_msg;
+
 #ifndef __LP64__
 // libdragon cache_op helper
 #define cache_op(op) \
@@ -118,6 +120,7 @@ void evd_usb_init() {
 BOOLEAN evd_usb_can_read() {
     u32 status = evd_reg_read(REG_USB_CFG) & (USB_STA_PWR | USB_STA_RXF);
     if (status == USB_STA_PWR) {
+        pevd_msg = "USB_BUSY_READ";
         return 1;
     }
     return 0;
@@ -126,6 +129,7 @@ BOOLEAN evd_usb_can_read() {
 BOOLEAN evd_usb_can_write() {
     u32 status = evd_reg_read(REG_USB_CFG) & (USB_STA_PWR | USB_STA_TXE);
     if (status == USB_STA_PWR) {
+        pevd_msg = "USB_BUSY_WRITE";
         return 1;
     }
     return 0;
@@ -192,6 +196,7 @@ BOOLEAN evd_usb_busy() {
         if (tout++ != 8192) {
             continue;
         }
+        pevd_msg = "BI_ERR_USB_TOUT";
         evd_reg_write(REG_USB_CFG, USB_CMD_RD_NOP);
         return BI_ERR_USB_TOUT;
     }
@@ -212,11 +217,14 @@ void evd_echo_terminal() {
     u8 tout;
 
     if (!evd_usb_can_read()) {
+        pevd_msg = "CANT_READ";
         return;
     }
+    pevd_msg = "READ";
 
     tout = evd_usb_read(data, BI_MIN_USB_SIZE); // read from serial
     if (tout) {
+        pevd_msg = "BAD_READ";
         return;
     }
 

@@ -65,6 +65,7 @@ void init_mem() {
 
     // evd_init();
     // evd_write_msg(0x21);
+    pevd_msg = NULL;
 
     *plast = 0x00;
 }

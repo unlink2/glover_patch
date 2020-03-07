@@ -143,6 +143,8 @@
 #define IO_WRITE(addr, data) (*(volatile u32 *)PHYS_TO_K1(addr) = (u32)(data))
 #define IO_READ(addr) (*(volatile u32 *)PHYS_TO_K1(addr))
 
+extern char *pevd_msg;
+
 typedef struct pi_regs {
     void *ram_address;
     unsigned long pi_address;
