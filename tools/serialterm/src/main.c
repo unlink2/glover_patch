@@ -70,7 +70,7 @@ int main(int argc, char **argv) {
         ret_r = 0;
 
         printf(">> ");
-        // send cmt to OS to test usb communication
+        // send cmdt to OS to test usb communication
         fgets((char*)send_buff, BUFFER_SIZE, stdin);
         ftdi_write_data(ftdi, send_buff, BUFFER_SIZE);
 
