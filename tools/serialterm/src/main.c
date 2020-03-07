@@ -69,7 +69,7 @@ int main(int argc, char **argv) {
         memset(recv_buff, 0, BUFFER_SIZE);
         ret_r = 0;
 
-        printf(">> ");
+        fprintf(stderr, ">> ");
         // send cmdt to OS to test usb communication
         fgets((char*)send_buff, BUFFER_SIZE, stdin);
         ftdi_write_data(ftdi, send_buff, BUFFER_SIZE);
@@ -78,13 +78,15 @@ int main(int argc, char **argv) {
 
         if (ret_r > 0) {
             int chIdx;
-            printf("<< ");
+            fprintf(stderr, "<< ");
             for (chIdx = 0; chIdx < BUFFER_SIZE; ++chIdx) {
                 if (recv_buff[chIdx] == '\0') {
                     break;
                 }
-                printf("%c", recv_buff[chIdx]);
+                fprintf(stderr, "%c", recv_buff[chIdx]);
             }
+        } else {
+            fprintf(stderr, "no response\n");
         }
 
         usleep(500);
