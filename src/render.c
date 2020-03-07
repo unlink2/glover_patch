@@ -36,6 +36,11 @@ void render() {
     set_pbuffer(pbuffer_keyboard);
     render_keyboard(&pkb);
 
+    // print evd error message
+    if (pevd_msg) {
+        gputsrdp(pevd_msg, 50, 50, pfont);
+    }
+
     // TODO send all rdp commands at once
     // WORD_T *pend = get_pbuffer();
     // rdp_send_dl(pbuffer, pend);
