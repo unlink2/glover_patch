@@ -25,6 +25,24 @@ unsigned int gstrlen(char *pstr) {
     return i;
 }
 
+int gstrncmp(char *ps1, char *ps2, unsigned int max_len) {
+    int diff = 0;
+    unsigned int len1 = gstrlen(ps1);
+    unsigned int len2 = gstrlen(ps2);
+    int i;
+    for (i = 0; i < len1 && i < max_len; i++) {
+        if (ps1[i] != ps2[i]) {
+            diff++;
+        }
+    }
+
+    if (len1 != len2 && i < max_len) {
+        return len1-len2;
+    }
+
+    return diff;
+}
+
 void gmemcpy(BYTE_T *psrc, BYTE_T *pdest, unsigned int size) {
     for (int i = 0; i < size; i++) {
         pdest[i] = psrc[i];
@@ -138,10 +156,13 @@ int gpow(int n, int e) {
     return res;
 }
 
-int from_hexstr(char *pstr, int len) {
+WORD_T from_hexstr(char *pstr, int len) {
     int result = 0;
     u32 index = (len-1) * 4;
     for (int i = 0; i < len; i++) {
+        if (pstr[0] == '\0') {
+            break;
+        }
         if (pstr[0] >= '0' && pstr[0] <= '9') {
             result += (pstr[0]-'0') << index;
         } else if (pstr[0] >= 'a' && pstr[0] <= 'f') {
@@ -157,3 +178,42 @@ int from_hexstr(char *pstr, int len) {
     }
     return result;
 }
+
+void split_space(char *pstr, char **head, char **tail) {
+    unsigned int len = gstrlen(pstr);
+    *head = pstr;
+    *tail = NULL;
+    for (int i = 0; i < len; i++) {
+        if (pstr[i] == ' ') {
+            pstr[i] = '\0';
+            if (i+1 < len) {
+                *tail = pstr+i+1; // next string
+            } else {
+                *tail = NULL;
+            }
+            break;
+        }
+    }
+}
+
+arg parse_arg(char *parg, const char *pkey) {
+    arg a;
+
+    a.key = pkey; //first_part
+    // if it is arg then the size must fit
+    if (is_arg(parg, pkey)) {
+        a.value = parg+gstrlen((char*)pkey);
+    } else {
+        a.value = NULL;
+        a.key = NULL;
+    }
+
+    return a;
+}
+
+BOOLEAN is_arg(char *pa, const char *pkey) {
+    return gstrncmp(pa, (char*)pkey, gstrlen((char*)pkey)) == 0;
+}
+
+
+

@@ -83,18 +83,19 @@ void mainloop(struct ftdi_context *ftdi, unsigned char *send_buff, unsigned char
         fprintf(stderr, ">> ");
         // send cmdt to OS to test usb communication
         fgets((char*)send_buff, BUFFER_SIZE, stdin);
+        send_buff[strlen((char*)send_buff)-1] = '\0'; // remove new line char
         ftdi_write_data(ftdi, send_buff, BUFFER_SIZE);
 
         ret_r = ftdi_read_data(ftdi, recv_buff, BUFFER_SIZE);
 
         if (ret_r > 0) {
-            int chIdx;
+            int chidx;
             fprintf(stderr, "<< ");
-            for (chIdx = 0; chIdx < BUFFER_SIZE; ++chIdx) {
-                if (recv_buff[chIdx] == '\0') {
+            for (chidx = 0; chidx < BUFFER_SIZE; ++chidx) {
+                if (recv_buff[chidx] == '\0') {
                     break;
                 }
-                fprintf(stderr, "%c", recv_buff[chIdx]);
+                fprintf(stderr, "%c", recv_buff[chidx]);
             }
         } else {
             fprintf(stderr, "no response\n");

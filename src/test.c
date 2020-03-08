@@ -54,6 +54,33 @@ static void test_gstrlen(void **state) {
     assert_int_equal(gstrlen(str), 12);
 }
 
+static void test_gstrncmp(void **state) {
+    assert_int_equal(gstrncmp("Hello", "Hello", 16), 0);
+    assert_int_equal(gstrncmp("Hello,", "Hello", 16), 1);
+    assert_int_equal(gstrncmp("Hello", "Hello++", 16), -2);
+    assert_int_equal(gstrncmp("HeLLo", "Hello", 16), 2);
+    assert_int_equal(gstrncmp("heLLO", "hello", 2), 0);
+}
+
+static void test_split_space(void **state) {
+    char *str = my_malloc(16);
+    strcpy(str, "8029030C 22");
+    char *head;
+    char *tail;
+    split_space(str, &head, &tail);
+
+    assert_string_equal(head, "8029030C");
+    assert_non_null(tail);
+    assert_string_equal(tail, "22");
+
+    strcpy(str, "HelloWorld");
+    split_space(str, &head, &tail);
+    assert_string_equal(head, "HelloWorld");
+    assert_null(tail);
+
+    my_free(str);
+}
+
 static void test_decompress_font(void **state) {
     HWORD_T *pfont = my_malloc(0x2000*sizeof(HWORD_T));
     decompress_font((WORD_T*)font8x8_basic, pfont, 0x000F, 0xFFFF);
@@ -224,13 +251,47 @@ static void test_to_floatstr(void **state) {
 
 static void test_from_hexstr(void **state) {
     assert_int_equal(from_hexstr("AaC2", 4), 0xAAC2);
+    assert_int_equal(from_hexstr("Aa", 2), 0xAA);
+    assert_int_equal(from_hexstr("AaC2", 2), 0xAA);
 }
+
+static void test_is_arg(void **state) {
+    assert_true(is_arg("-htest", "-h"));
+    assert_true(is_arg("--h", "--h"));
+    assert_false(is_arg("-h", "--h"));
+    assert_false(is_arg("--otest", "-h"));
+}
+
+static void test_parse_arg(void **state) {
+    arg a1 = parse_arg("testargument", "test");
+
+    assert_string_equal(a1.key, "test");
+    assert_string_equal(a1.value, "argument");
+
+    arg a2 = parse_arg("--flag", "--flag");
+
+    assert_string_equal(a2.key, "--flag");
+    assert_int_equal(a2.value[0], '\0');
+
+    arg a3 = parse_arg("--flag", "--o");
+
+    assert_null(a3.key);
+    assert_null(a3.value);
+
+    arg a4 = parse_arg("-otest", "-o");
+    assert_string_equal(a4.key, "-o");
+    assert_string_equal(a4.value, "test");
+}
+
+
+
 
 int main() {
     const struct CMUnitTest tests[] = {
         cmocka_unit_test(test_gmemcpy),
         cmocka_unit_test(test_gmemset),
         cmocka_unit_test(test_gstrlen),
+        cmocka_unit_test(test_gstrncmp),
         cmocka_unit_test(test_decompress_font),
         cmocka_unit_test(test_gputs),
         cmocka_unit_test(test_to_hexstr),
@@ -240,7 +301,10 @@ int main() {
         cmocka_unit_test(test_str_reverse),
         cmocka_unit_test(test_to_decstr),
         cmocka_unit_test(test_to_floatstr),
-        cmocka_unit_test(test_from_hexstr)
+        cmocka_unit_test(test_from_hexstr),
+        cmocka_unit_test(test_is_arg),
+        cmocka_unit_test(test_parse_arg),
+        cmocka_unit_test(test_split_space)
     };
 
     return cmocka_run_group_tests(tests, NULL, NULL);
