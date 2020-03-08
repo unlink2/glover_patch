@@ -5,6 +5,7 @@
 static volatile struct pi_regs* const pir = (struct pi_regs *)0xa4600000;
 
 char *pevd_msg;
+char *pevd_msg_buffer[20];
 
 #ifndef __LP64__
 // libdragon cache_op helper
@@ -80,12 +81,15 @@ void pi_write(void *ram, unsigned long pi_address, unsigned long len) {
 }
 
 void evd_reg_write(u16 reg, u32 val) {
-    pi_write(&val, ED_REGS(reg), 4);
+    u32 *preg = (u32*)ED_REGS(reg);
+    *preg = val;
+    // pi_write(&val, ED_REGS(reg), 4);
 }
 
 u32 evd_reg_read(u16 reg) {
-    u32 val;
-    pi_read(&val, ED_REGS(reg), 4);
+    u32 *preg = (u32*)ED_REGS(reg);
+    u32 val = *preg;
+    // pi_read(&val, ED_REGS(reg), 4);
     return val;
 }
 
@@ -93,7 +97,8 @@ void evd_init() {
     IO_WRITE(PI_BSD_DOM1_LAT_REG, 0x04);
     IO_WRITE(PI_BSD_DOM1_PWD_REG, 0x0C);
 
-    evd_reg_write(REG_KEY, 0xAA55);
+    // evd_reg_write(REG_KEY, 0xAA55);
+    EVD_REG_WRITE(REG_KEY, 0xAA55);
     evd_reg_write(REG_SYS_CFG, 0);
 
     evd_usb_init();
@@ -120,18 +125,18 @@ void evd_usb_init() {
 BOOLEAN evd_usb_can_read() {
     u32 status = evd_reg_read(REG_USB_CFG) & (USB_STA_PWR | USB_STA_RXF);
     if (status == USB_STA_PWR) {
-        pevd_msg = "USB_BUSY_READ";
         return 1;
     }
+    // pevd_msg = "USB_BUSY_READ";
     return 0;
 }
 
 BOOLEAN evd_usb_can_write() {
     u32 status = evd_reg_read(REG_USB_CFG) & (USB_STA_PWR | USB_STA_TXE);
     if (status == USB_STA_PWR) {
-        pevd_msg = "USB_BUSY_WRITE";
         return 1;
     }
+    // pevd_msg = "USB_BUSY_WRITE";
     return 0;
 }
 
@@ -196,7 +201,7 @@ BOOLEAN evd_usb_busy() {
         if (tout++ != 8192) {
             continue;
         }
-        pevd_msg = "BI_ERR_USB_TOUT";
+        // pevd_msg = "BI_ERR_USB_TOUT";
         evd_reg_write(REG_USB_CFG, USB_CMD_RD_NOP);
         return BI_ERR_USB_TOUT;
     }
@@ -217,15 +222,17 @@ void evd_echo_terminal() {
     u8 tout;
 
     if (!evd_usb_can_read()) {
-        pevd_msg = "CANT_READ";
         return;
     }
-    pevd_msg = "READ";
 
     tout = evd_usb_read(data, BI_MIN_USB_SIZE); // read from serial
     if (tout) {
-        pevd_msg = "BAD_READ";
+        //pevd_msg = "BAD_READ";
         return;
+    }
+    if (data[0] == 'p') {
+        pevd_msg = (char*)pevd_msg_buffer;
+        gmemcpy(data, (BYTE_T*)pevd_msg, 16);
     }
 
     evd_usb_write(data, BI_MIN_USB_SIZE); // send back
