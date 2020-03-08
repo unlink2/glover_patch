@@ -98,6 +98,7 @@ void evd_init() {
     IO_WRITE(PI_BSD_DOM1_PWD_REG, 0x0C);
 
     // evd_reg_write(REG_KEY, 0xAA55);
+    // unlock everdrive with an inline write
     EVD_REG_WRITE(REG_KEY, 0xAA55);
     evd_reg_write(REG_SYS_CFG, 0);
 
