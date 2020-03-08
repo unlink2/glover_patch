@@ -28,6 +28,7 @@ void my_free(void *);
 #endif
 
 unsigned int gstrlen(char *);
+int gstrncmp(char *, char *, unsigned int);
 
 void gmemcpy(BYTE_T *, BYTE_T *, unsigned int);
 void gmemset(BYTE_T *, unsigned char, unsigned int);
@@ -54,6 +55,19 @@ void to_floatstr(float, char *, WORD_T);
 
 int gpow(int, int);
 
-int from_hexstr(char *, int);
+WORD_T from_hexstr(char *, int);
+
+void split_space(char *, char **, char **);
+
+// simple command parser
+
+typedef struct arg {
+    const char *key;
+    const char *value;
+} arg;
+
+arg parse_arg(char *, const char *);
+
+BOOLEAN is_arg(char *, const char *);
 
 #endif

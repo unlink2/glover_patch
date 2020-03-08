@@ -48,6 +48,7 @@
 #define SAVE_DD64       16
 
 #define REG_BASE        0x1F800000
+#define ED_BASE_REG     0xBF800000
 #define REG_FPG_CFG     0x0000
 #define REG_USB_CFG     0x0004
 #define REG_TIMER       0x000C
@@ -122,7 +123,17 @@
 #define ROM_LAT 0x40
 #define ROM_PWD 0x12
 
+// ifdef to stop warning in unit tests
+// unit tests cannot call ED functions anyway
+#ifdef __LP64__
+#define ED_REGS(reg) 0
+#else
 #define ED_REGS(reg) (KSEG1 | REG_BASE | (reg))
+#endif
+
+#define EVD_REG_WRITE(reg, val) {u32 *preg = (u32*)(ED_BASE_REG | (reg));*preg = val;}
+// TODO this read does not always work
+#define EVD_REG_READ(reg, val) {u32 *preg = (u32*)(ED_BASE_REG | (reg)); val = *preg;}
 
 #define PI_BASE_REG 0x04600000
 #define PI_BSD_DOM1_LAT_REG (PI_BASE_REG+0x14)
@@ -172,6 +183,6 @@ BOOLEAN evd_usb_busy();
 
 void evd_set_save_type(u8);
 
-void evd_echo_terminal();
+void evd_serial_terminal();
 
 #endif
