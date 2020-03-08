@@ -126,6 +126,7 @@
 #define ED_REGS(reg) (KSEG1 | REG_BASE | (reg))
 
 #define EVD_REG_WRITE(reg, val) {u32 *preg = (u32*)(ED_BASE_REG | (reg));*preg = val;}
+// TODO this read does not always work
 #define EVD_REG_READ(reg, val) {u32 *preg = (u32*)(ED_BASE_REG | (reg)); val = *preg;}
 
 #define PI_BASE_REG 0x04600000
