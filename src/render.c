@@ -38,7 +38,7 @@ void render() {
 
     // print evd error message
     if (pevd_msg) {
-        gputsrdp(pevd_msg, 50, 50, pfont);
+        gputsrdp(pevd_msg, 50, 200, pfont);
     }
 
     // TODO send all rdp commands at once
