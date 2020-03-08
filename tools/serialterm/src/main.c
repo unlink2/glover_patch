@@ -17,31 +17,29 @@
 int stop = 0;
 
 void inthand(int signum) {
-      stop = 1;
+    stop = 1;
 }
 
-int main(int argc, char **argv) {
-    signal(SIGINT, inthand);
+void clear_buffer(unsigned char *recv_buff, unsigned char *send_buff) {
+    // init buffer
+    memset(send_buff, 0, BUFFER_SIZE);
+    memset(recv_buff, 0, BUFFER_SIZE);
+}
 
-    // usb buffer
-    unsigned char send_buff[BUFFER_SIZE];
-    unsigned char recv_buff[BUFFER_SIZE];
-
+struct ftdi_context* init() {
     // int baudrate = 115200;
-
     int ret;
-    int ret_r;
     struct ftdi_context* ftdi;
     if ((ftdi = ftdi_new()) == 0) {
         fprintf(stderr, "ftdi_new failed\n");
-        return EXIT_FAILURE;
+        return NULL;
     }
 
     if ((ret = ftdi_usb_open(ftdi, USB_VENDOR, USB_DEVICE)) < 0) {
         fprintf(stderr, "unable to open ftdi device: %d (%s)\n", ret,
                 ftdi_get_error_string(ftdi));
         ftdi_free(ftdi);
-        return EXIT_FAILURE;
+        return NULL;
     } else {
         // read/write timeout e.g. 500ms
         ftdi->usb_read_timeout = USB_READ_TIMEOUT;
@@ -59,50 +57,72 @@ int main(int argc, char **argv) {
         printf("ftdi_read_chipid: %d\n", ftdi_read_chipid(ftdi, &chipid));
         printf("FTDI chipid: %X\n", chipid);
     }
+    return ftdi;
+}
 
-    // init buffer
-    memset(send_buff, 0, BUFFER_SIZE);
-    memset(recv_buff, 0, BUFFER_SIZE);
-
-    while (!stop) {
-        memset(send_buff, 0, BUFFER_SIZE);
-        memset(recv_buff, 0, BUFFER_SIZE);
-        ret_r = 0;
-
-        printf(">> ");
-        // send cmdt to OS to test usb communication
-        fgets((char*)send_buff, BUFFER_SIZE, stdin);
-        ftdi_write_data(ftdi, send_buff, BUFFER_SIZE);
-
-        ret_r = ftdi_read_data(ftdi, recv_buff, BUFFER_SIZE);
-
-        if (ret_r > 0) {
-            int chIdx;
-            printf("<< ");
-            for (chIdx = 0; chIdx < BUFFER_SIZE; ++chIdx) {
-                if (recv_buff[chIdx] == '\0') {
-                    break;
-                }
-                printf("%c", recv_buff[chIdx]);
-            }
-        }
-
-        usleep(500);
-    }
-
-    // clear buffer
-    memset(send_buff, 0, BUFFER_SIZE);
-    memset(recv_buff, 0, BUFFER_SIZE);
-    ret_r = 0;
+void cleanup(struct ftdi_context *ftdi) {
+    int ret;
 
     if ((ret = ftdi_usb_close(ftdi)) < 0) {
         fprintf(stderr, "unable to close ftdi device: %d (%s)\n", ret,
                 ftdi_get_error_string(ftdi));
         ftdi_free(ftdi);
-        return EXIT_FAILURE;
+        exit(EXIT_FAILURE);
+        return;
     }
 
     ftdi_free(ftdi);
+}
+
+void mainloop(struct ftdi_context *ftdi, unsigned char *send_buff, unsigned char *recv_buff) {
+    int ret_r;
+    while (!stop) {
+        clear_buffer(send_buff, recv_buff);
+        ret_r = 0;
+
+        fprintf(stderr, ">> ");
+        // send cmdt to OS to test usb communication
+        fgets((char*)send_buff, BUFFER_SIZE, stdin);
+        send_buff[strlen((char*)send_buff)-1] = '\0'; // remove new line char
+        ftdi_write_data(ftdi, send_buff, BUFFER_SIZE);
+
+        ret_r = ftdi_read_data(ftdi, recv_buff, BUFFER_SIZE);
+
+        if (ret_r > 0) {
+            int chidx;
+            fprintf(stderr, "<< ");
+            for (chidx = 0; chidx < BUFFER_SIZE; ++chidx) {
+                if (recv_buff[chidx] == '\0') {
+                    break;
+                }
+                fprintf(stderr, "%c", recv_buff[chidx]);
+            }
+        } else {
+            fprintf(stderr, "no response\n");
+        }
+
+        usleep(500);
+    }
+}
+
+int main(int argc, char **argv) {
+    signal(SIGINT, inthand);
+
+    // usb buffer
+    unsigned char send_buff[BUFFER_SIZE];
+    unsigned char recv_buff[BUFFER_SIZE];
+
+    struct ftdi_context *ftdi = init();
+    if (!ftdi) {
+        return EXIT_FAILURE;
+    }
+
+    clear_buffer(send_buff, recv_buff);
+
+    mainloop(ftdi, send_buff, recv_buff);
+
+    cleanup(ftdi);
+    clear_buffer(send_buff, recv_buff);
 
     return 0;
 }
