@@ -84,6 +84,13 @@ void mainloop(struct ftdi_context *ftdi, unsigned char *send_buff, unsigned char
         // send cmdt to OS to test usb communication
         fgets((char*)send_buff, BUFFER_SIZE, stdin);
         send_buff[strlen((char*)send_buff)-1] = '\0'; // remove new line char
+
+        // exit commnad
+        if (strcmp((char*)send_buff, "exit") == 0) {
+            stop = 1;
+            continue;
+        }
+
         ftdi_write_data(ftdi, send_buff, BUFFER_SIZE);
 
         ret_r = ftdi_read_data(ftdi, recv_buff, BUFFER_SIZE);
