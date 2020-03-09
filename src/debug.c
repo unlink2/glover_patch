@@ -1,6 +1,7 @@
 #include "include/debug.h"
 #include "include/render.h"
 #include "include/utility.h"
+#include "include/memwatch.h"
 
 static volatile struct pi_regs* const pir = (struct pi_regs *)0xa4600000;
 
@@ -216,6 +217,77 @@ void evd_set_save_type(u8 type) {
     evd_reg_write(REG_RAM_CFG, type);
 }
 
+void peek(arg a, char *response, watch_type watch) {
+    switch (watch) {
+        case BYTE_WATCH: {
+            u8 *paddr = (u8*)from_hexstr((char*)a.value, 8);
+            to_hexstr(*paddr, response, 1);
+            evd_usb_write(response, COMMAND_SIZE); // send back
+            break; }
+        case WORD_WATCH: {
+            u32 *paddr = (u32*)from_hexstr((char*)a.value, 8);
+            to_hexstr(*paddr, response, 4);
+            evd_usb_write(response, COMMAND_SIZE); // send back
+            break; }
+        case HWORD_WATCH: {
+            u16 *paddr = (u16*)from_hexstr((char*)a.value, 8);
+            to_hexstr(*paddr, response, 2);
+            evd_usb_write(response, COMMAND_SIZE); // send back
+            break; }
+        case FLOAT_WATCH: {
+            float *paddr = (float*)from_hexstr((char*)a.value, 8);
+            to_floatstr(*paddr, response, 10);
+            evd_usb_write(response, COMMAND_SIZE); // send back
+            break; }
+        default:
+            break;
+    }
+}
+
+void poke(arg a, char *response, watch_type watch) {
+    char *addrstr = NULL;
+    char *valstr = NULL;
+    split_space((char*)a.value, &addrstr, &valstr);
+
+    if (!addrstr || !valstr) {
+        response[0] = 'E';
+        response[1] = 'R';
+        response[2] = 'R';
+        response[3] = '\0';
+        evd_usb_write(response, COMMAND_SIZE); // send back
+        return;
+    }
+
+    switch (watch) {
+        case BYTE_WATCH: {
+            // get value and address
+            u8 *paddr = (u8*)from_hexstr((char*)addrstr, 8);
+            u8 val = from_hexstr((char*)valstr, gstrlen((char*)valstr));
+            *paddr = val;
+            break; }
+        case HWORD_WATCH: {
+            // get value and address
+            u16 *paddr = (u16*)from_hexstr((char*)addrstr, 8);
+            u16 val = from_hexstr((char*)valstr, gstrlen((char*)valstr));
+            *paddr = val;
+            break; }
+        case WORD_WATCH: {
+            // get value and address
+            u32 *paddr = (u32*)from_hexstr((char*)addrstr, 8);
+            u32 val = from_hexstr((char*)valstr, gstrlen((char*)valstr));
+            *paddr = val;
+            break; }
+        default:
+            break;
+    }
+
+    response[0] = 'O';
+    response[1] = 'K';
+    response[2] = '\0';
+    evd_usb_write(response, COMMAND_SIZE); // send back
+
+}
+
 void evd_serial_terminal() {
     if (ed_init_done != TRUE) {
         return;
@@ -240,8 +312,8 @@ void evd_serial_terminal() {
 
     // parse args
     arg a;
-    if (is_arg(data, "print")) {
-        a = parse_arg(data, "print");
+    if (is_arg(data, "print ")) {
+        a = parse_arg(data, "print ");
         pevd_msg = (char*)pevd_msg_buffer;
         gmemcpy((BYTE_T*)a.value, (BYTE_T*)pevd_msg_buffer, COMMAND_SIZE);
         pevd_msg_buffer[COMMAND_SIZE+1] = '\0';
@@ -252,99 +324,27 @@ void evd_serial_terminal() {
     } else if(is_arg(data, "peekb ")) {
         // convert value to address
         a = parse_arg(data, "peekb ");
-        u8 *paddr = (u8*)from_hexstr((char*)a.value, 8);
-        to_hexstr(*paddr, response, 1);
-        evd_usb_write(response, COMMAND_SIZE); // send back
+        peek(a, response, BYTE_WATCH);
     } else if(is_arg(data, "peekh ")) {
         // convert value to address
         a = parse_arg(data, "peekh ");
-        u16 *paddr = (u16*)from_hexstr((char*)a.value, 8);
-        to_hexstr(*paddr, response, 2);
-        evd_usb_write(response, COMMAND_SIZE); // send back
+        peek(a, response, HWORD_WATCH);
     } else if(is_arg(data, "peekw ")) {
         // convert value to address
         a = parse_arg(data, "peekw ");
-        u32 *paddr = (u32*)from_hexstr((char*)a.value, 8);
-        to_hexstr(*paddr, response, 4);
-        evd_usb_write(response, COMMAND_SIZE); // send back
+        peek(a, response, WORD_WATCH);
     } else if(is_arg(data, "peekf ")) {
         // convert value to address
         a = parse_arg(data, "peekf ");
-        float *paddr = (float*)from_hexstr((char*)a.value, 8);
-        to_floatstr(*paddr, response, 10);
-        evd_usb_write(response, COMMAND_SIZE); // send back
+        peek(a, response, FLOAT_WATCH);
     } else if (is_arg(data, "pokeb ")) {
         a = parse_arg(data, "pokeb ");
-
-        char *addrstr = NULL;
-        char *valstr = NULL;
-        split_space((char*)a.value, &addrstr, &valstr);
-
-        if (valstr) {
-            gmemcpy((BYTE_T*)valstr, (BYTE_T*)pevd_msg_buffer, 16);
-            // get value and address
-            u8 *paddr = (u8*)from_hexstr((char*)addrstr, 8);
-            u8 val = from_hexstr((char*)valstr, gstrlen((char*)valstr));
-            *paddr = val;
-
-            response[0] = 'O';
-            response[1] = 'K';
-            response[2] = '\0';
-            evd_usb_write(response, COMMAND_SIZE); // send back
-        } else {
-            response[0] = 'E';
-            response[1] = 'R';
-            response[2] = 'R';
-            response[3] = '\0';
-            evd_usb_write(response, COMMAND_SIZE); // send back
-        }
+        poke(a, response, BYTE_WATCH);
     } else if (is_arg(data, "pokeh ")) {
         a = parse_arg(data, "pokeh ");
-
-        char *addrstr = NULL;
-        char *valstr = NULL;
-        split_space((char*)a.value, &addrstr, &valstr);
-
-        if (valstr) {
-            // get value and address
-            u16 *paddr = (u16*)from_hexstr((char*)addrstr, 8);
-            u16 val = from_hexstr((char*)valstr, gstrlen((char*)valstr));
-            *paddr = val;
-
-            response[0] = 'O';
-            response[1] = 'K';
-            response[2] = '\0';
-            evd_usb_write(response, COMMAND_SIZE); // send back
-        } else {
-            response[0] = 'E';
-            response[1] = 'R';
-            response[2] = 'R';
-            response[3] = '\0';
-            evd_usb_write(response, COMMAND_SIZE); // send back
-        }
+        poke(a, response, HWORD_WATCH);
     } else if (is_arg(data, "pokew ")) {
         a = parse_arg(data, "pokew ");
-
-        char *addrstr = NULL;
-        char *valstr = NULL;
-        split_space((char*)a.value, &addrstr, &valstr);
-
-        if (valstr) {
-            // get value and address
-            u32 *paddr = (u32*)from_hexstr((char*)addrstr, 8);
-            u32 val = from_hexstr((char*)valstr, gstrlen((char*)valstr));
-            *paddr = val;
-
-            response[0] = 'O';
-            response[1] = 'K';
-            response[2] = '\0';
-            evd_usb_write(response, COMMAND_SIZE); // send back
-        } else {
-            response[0] = 'E';
-            response[1] = 'R';
-            response[2] = 'R';
-            response[3] = '\0';
-            evd_usb_write(response, COMMAND_SIZE); // send back
-        }
+        poke(a, response, WORD_WATCH);
     }
 }
