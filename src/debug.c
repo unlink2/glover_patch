@@ -313,14 +313,16 @@ void add_watch(arg a, char *response, watch_type watch, watch_addr *watch_addrs,
     if (len > 32) {
         len = 32;
     }
+    gmemset((BYTE_T*)addr->name, '\0', 32);
     gmemcpy((BYTE_T*)name, (BYTE_T*)addr->name, len);
+    addr->name[len] = '\0';
     addr->paddr = (void*)from_hexstr((char*)addrstr, 8);
     addr->enabled = TRUE;
+
+    to_hexstr(*watch_index, response, 2);
+
     *watch_index += 1;
 
-    response[0] = 'O';
-    response[1] = 'K';
-    response[2] = '\0';
     evd_usb_write(response, COMMAND_SIZE); // send back
 }
 

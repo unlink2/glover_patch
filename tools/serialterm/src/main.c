@@ -99,14 +99,18 @@ void send_batch(struct ftdi_context *ftdi, unsigned char *send_buff, unsigned ch
     char *line = NULL;
     while ((read = getline(&line, &len, pf)) != -1) {
         ret_r = 0;
+        clear_buffer(send_buff, recv_buff);
         line[strlen((char*)line)-1] = '\0'; // remove new line char
 
         fprintf(stderr, ">> %s\n", line);
+        strcpy((char*)send_buff, line);
 
-        ftdi_write_data(ftdi, (unsigned char*)line, BUFFER_SIZE);
+        ftdi_write_data(ftdi, send_buff, BUFFER_SIZE);
         ret_r = ftdi_read_data(ftdi, recv_buff, BUFFER_SIZE);
         if (ret_r == 0) {
             return;
+        } else {
+            fprintf(stderr, ">> %s\n", recv_buff);
         }
     }
     if (line) {
