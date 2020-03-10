@@ -4,6 +4,7 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <pthread.h>
 
 #define FILE_CHUNK 0x8000
 #define USB_VENDOR 0x0403
@@ -15,8 +16,14 @@
 #define BUFFER_SIZE 512
 
 int stop = 0;
+int listen = 0;
 
 void inthand(int signum) {
+    // first disable listening mode
+    if (listen) {
+        listen = 0;
+        return;
+    }
     stop = 1;
 }
 
@@ -74,21 +81,63 @@ void cleanup(struct ftdi_context *ftdi) {
     ftdi_free(ftdi);
 }
 
+void clear_screen() {
+    fprintf(stderr, "\e[1;1H\e[2J");
+}
+
+void send_batch(struct ftdi_context *ftdi, unsigned char *send_buff, unsigned char *recv_buff, char *file) {
+    int ret_r;
+
+    FILE *pf;
+    pf = fopen(file, "r");
+    if (!pf) {
+        return;
+    }
+
+    size_t read;
+    size_t len;
+    char *line = NULL;
+    while ((read = getline(&line, &len, pf)) != -1) {
+        ret_r = 0;
+        line[strlen((char*)line)-1] = '\0'; // remove new line char
+
+        fprintf(stderr, ">> %s\n", line);
+
+        ftdi_write_data(ftdi, (unsigned char*)line, BUFFER_SIZE);
+        ret_r = ftdi_read_data(ftdi, recv_buff, BUFFER_SIZE);
+        if (ret_r == 0) {
+            return;
+        }
+    }
+    if (line) {
+        free(line);
+    }
+}
+
 void mainloop(struct ftdi_context *ftdi, unsigned char *send_buff, unsigned char *recv_buff) {
     int ret_r;
     while (!stop) {
         clear_buffer(send_buff, recv_buff);
         ret_r = 0;
 
-        fprintf(stderr, ">> ");
-        // send cmdt to OS to test usb communication
-        fgets((char*)send_buff, BUFFER_SIZE, stdin);
-        send_buff[strlen((char*)send_buff)-1] = '\0'; // remove new line char
+        // if in listening mode do not allow input, just receive
+        // CTRL+C will first exit listen mode before exiting the loop
+        if (!listen) {
+            fprintf(stderr, ">> ");
+            // send cmdt to OS to test usb communication
+            fgets((char*)send_buff, BUFFER_SIZE, stdin);
+            send_buff[strlen((char*)send_buff)-1] = '\0'; // remove new line char
+        } else {
+            strcpy((char*)send_buff, "listen");
+            // clear_screen();
+        }
 
         // exit commnad
         if (strcmp((char*)send_buff, "exit") == 0) {
             stop = 1;
             continue;
+        } else if (strcmp((char*)send_buff, "listen") == 0) {
+            listen = 1;
         }
 
         ftdi_write_data(ftdi, send_buff, BUFFER_SIZE);
@@ -104,6 +153,7 @@ void mainloop(struct ftdi_context *ftdi, unsigned char *send_buff, unsigned char
                 }
                 fprintf(stderr, "%c", recv_buff[chidx]);
             }
+            fprintf(stderr, "\n");
         } else {
             fprintf(stderr, "no response\n");
         }
@@ -125,6 +175,11 @@ int main(int argc, char **argv) {
     }
 
     clear_buffer(send_buff, recv_buff);
+
+    // send batch commands
+    for (int i = 1; i < argc; i++) {
+        send_batch(ftdi, send_buff, recv_buff, argv[i]);
+    }
 
     mainloop(ftdi, send_buff, recv_buff);
 

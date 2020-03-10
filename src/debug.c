@@ -1,7 +1,6 @@
 #include "include/debug.h"
 #include "include/render.h"
 #include "include/utility.h"
-#include "include/memwatch.h"
 
 static volatile struct pi_regs* const pir = (struct pi_regs *)0xa4600000;
 
@@ -9,6 +8,9 @@ static volatile struct pi_regs* const pir = (struct pi_regs *)0xa4600000;
 
 char *pevd_msg;
 char *pevd_msg_buffer[COMMAND_SIZE+1];
+
+watch_addr watch_addrs[MAX_WATCH];
+u32 watch_index = 0; // current index in permanent watches loops at MAX_WATCH
 
 #ifndef __LP64__
 // libdragon cache_op helper
@@ -97,6 +99,9 @@ u32 evd_reg_read(u16 reg) {
 }
 
 void evd_init() {
+    gmemset((BYTE_T*)watch_addrs, 0x00, MAX_WATCH*sizeof(watch_addr));
+    watch_index = 0;
+
     IO_WRITE(PI_BSD_DOM1_LAT_REG, 0x04);
     IO_WRITE(PI_BSD_DOM1_PWD_REG, 0x0C);
 
@@ -288,9 +293,90 @@ void poke(arg a, char *response, watch_type watch) {
 
 }
 
+void add_watch(arg a, char *response, watch_type watch, watch_addr *watch_addrs, u32 *watch_index) {
+    watch_addr *addr = &watch_addrs[*watch_index];
+    // parse input
+    char *name;
+    char *addrstr;
+    split_space((char*)a.value, &name, &addrstr);
+
+    if (!addrstr || !name) {
+        response[0] = 'E';
+        response[1] = 'R';
+        response[2] = 'R';
+        response[3] = '\0';
+        evd_usb_write(response, COMMAND_SIZE); // send back
+        return;
+    }
+    addr->type = watch;
+    int len = gstrlen(name);
+    if (len > 32) {
+        len = 32;
+    }
+    gmemcpy((BYTE_T*)name, (BYTE_T*)addr->name, len);
+    addr->paddr = (void*)from_hexstr((char*)addrstr, 8);
+    addr->enabled = TRUE;
+    *watch_index += 1;
+
+    response[0] = 'O';
+    response[1] = 'K';
+    response[2] = '\0';
+    evd_usb_write(response, COMMAND_SIZE); // send back
+}
+
+void listen(char *response, watch_addr *watch_addrs, u32 watch_index) {
+    char data[COMMAND_SIZE*MAX_WATCH];
+    gmemset((BYTE_T*)data, ' ', COMMAND_SIZE*MAX_WATCH);
+    data[COMMAND_SIZE*MAX_WATCH-1] = '\0';
+
+    char *pnext = data;
+
+    // send all watches to terminal
+    for (int i = 0; i < MAX_WATCH; i++) {
+        if (!watch_addrs[i].enabled) {
+            continue;
+        }
+
+        char *name = pnext;
+        gmemcpy((BYTE_T*)watch_addrs[i].name, (BYTE_T*)name, 32);
+        char *value = pnext+33;
+
+        switch (watch_addrs[i].type) {
+            case BYTE_WATCH:
+                to_hexstr(*(u8*)watch_addrs[i].paddr, value, 1);
+                break;
+            case HWORD_WATCH:
+                to_hexstr(*(u16*)watch_addrs[i].paddr, value, 2);
+                break;
+            case WORD_WATCH:
+                to_hexstr(*(u32*)watch_addrs[i].paddr, value, 4);
+                break;
+            case FLOAT_WATCH:
+                to_floatstr(*(float*)watch_addrs[i].paddr, value, 10);
+                break;
+            default:
+                break;
+        }
+        for (int j = 0; j < COMMAND_SIZE; j++) {
+            if (pnext[j] == '\0') {
+                pnext[j] = ' ';
+            }
+        }
+        pnext[COMMAND_SIZE-1] = '\n';
+        pnext += COMMAND_SIZE;
+    }
+    data[COMMAND_SIZE*MAX_WATCH-1] = '\0';
+    evd_usb_write(data, COMMAND_SIZE*MAX_WATCH); // send back
+}
+
 void evd_serial_terminal() {
     if (ed_init_done != TRUE) {
         return;
+    }
+
+    // rollover
+    if (watch_index >= MAX_WATCH) {
+        watch_index = 0;
     }
 
     char data[COMMAND_SIZE + 1];
@@ -346,5 +432,19 @@ void evd_serial_terminal() {
     } else if (is_arg(data, "pokew ")) {
         a = parse_arg(data, "pokew ");
         poke(a, response, WORD_WATCH);
+    } else if (is_arg(data, "watchw ")) {
+        a = parse_arg(data, "watchw ");
+        add_watch(a, response, WORD_WATCH, watch_addrs, &watch_index);
+    } else if (is_arg(data, "watchh ")) {
+        a = parse_arg(data, "watchh ");
+        add_watch(a, response, HWORD_WATCH, watch_addrs, &watch_index);
+    } else if (is_arg(data, "watchb ")) {
+        a = parse_arg(data, "watchb ");
+        add_watch(a, response, BYTE_WATCH, watch_addrs, &watch_index);
+    } else if (is_arg(data, "watchf ")) {
+        a = parse_arg(data, "watchf ");
+        add_watch(a, response, FLOAT_WATCH, watch_addrs, &watch_index);
+    } else if (is_arg(data, "listen")) {
+        listen(response, watch_addrs, watch_index);
     }
 }
