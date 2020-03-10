@@ -7,6 +7,7 @@
 
 #include "typedefs.h"
 #include "utility.h"
+#include "memwatch.h"
 
 #define KSEG1 0xA0000000
 
@@ -163,6 +164,15 @@ typedef struct pi_regs {
     unsigned long write_length;
     unsigned long status;
 } pi_regs;
+
+#define MAX_WATCH 4
+
+typedef struct watch_addr {
+    void *paddr;
+    watch_type type;
+    char name[33];
+    BOOLEAN enabled;
+} watch_addr;
 
 BOOLEAN dma_busy();
 void pi_write(void *, unsigned long, unsigned long);
