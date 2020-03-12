@@ -326,6 +326,17 @@ void add_watch(arg a, char *response, watch_type watch, watch_addr *watch_addrs,
     evd_usb_write(response, COMMAND_SIZE); // send back
 }
 
+void clear_watch(char *response, watch_addr *watch_addrs, u32 *watch_index) {
+    for (int i = 0; i < MAX_WATCH; i++) {
+        watch_addrs[i].enabled = FALSE;
+    }
+    *watch_index = 0;
+    response[0] = 'O';
+    response[1] = 'K';
+    response[2] = '\0';
+    evd_usb_write(response, COMMAND_SIZE); // send back
+}
+
 void listen(char *response, watch_addr *watch_addrs, u32 watch_index) {
     char data[COMMAND_SIZE*MAX_WATCH];
     gmemset((BYTE_T*)data, ' ', COMMAND_SIZE*MAX_WATCH);
@@ -448,5 +459,7 @@ void evd_serial_terminal() {
         add_watch(a, response, FLOAT_WATCH, watch_addrs, &watch_index);
     } else if (is_arg(data, "listen")) {
         listen(response, watch_addrs, watch_index);
+    } else if (is_arg(data, "clearwatch")) {
+        clear_watch(response, watch_addrs, &watch_index);
     }
 }
