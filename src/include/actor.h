@@ -31,7 +31,15 @@ typedef struct actor_properties {
 typedef struct actor_collision {
     collision_polygon *pcollision_floor; // TODO make struct
     collision_polygon *pcollision_wall;
-    u8 padding[0x68];
+    u32 unknown1;
+    u32 unknown2;
+    u32 floor_collision_x;
+    u32 floor_collision_y;
+    u32 floor_collision_z;
+    u32 wall_collision_x;
+    u32 wall_collision_y;
+    u32 wall_collision_z;
+    u8 padding[0x48];
     float hitbox_real; // hitbox real approaches hitbox_size slowly
     float hitbox_size;
     u32 unknown_1;
