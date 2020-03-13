@@ -8,6 +8,9 @@ memwatch pmemwatch;
 char pmeminput[10]; // input buffer
 
 void init_memwatch(memwatch *pmw) {
+    gmemset((BYTE_T*)pmw->watch_addrs, 0x00, MAX_WATCH*sizeof(watch_addr));
+    pmw->watch_index = 0;
+
     get_ptr(BYTE_T, string_buffer, SCREEN_BUFFER, 0x20*0x10);
     pmw->pstr = string_buffer;
     pmw->base_addr = 0x80000000;
@@ -17,9 +20,17 @@ void init_memwatch(memwatch *pmw) {
 void render_watchaddr(memwatch *pmw) {
     get_ptr(HWORD_T, pfont, FONT8X8, 0x4000);
 
-    // render strings
     char *pstr = (char*)pmw->pstr;
-    gputsrdp(pstr, 0x90, 0x10, pfont);
+    u32 start_y = 0x10;
+    for (int i = 0; i < MAX_WATCH; i++) {
+        if (!pmw->watch_addrs[i].enabled) {
+            continue;
+        }
+        // render strings
+        gputsrdp(pstr, 0x90, start_y, pfont);
+        pstr += 0x10;
+        start_y += 0x9;
+    }
 }
 
 void render_watchselect(memwatch *pmw) {
@@ -55,9 +66,7 @@ void render_watchselect(memwatch *pmw) {
 
 void render_memwatch(memwatch *pmw) {
     if (pmw->flags == 0) {
-        if (pmw->watch_addr != NULL && pmw->watch_type != NO_WATCH) {
-            render_watchaddr(pmw);
-        }
+        render_watchaddr(pmw);
         return;
     } else if (pmw->flags & 0x40) {
         render_watchselect(pmw);
@@ -103,19 +112,25 @@ void render_memwatch(memwatch *pmw) {
 void prepare_watchaddr(memwatch *pmw) {
     // string buffer
     char *pstr = (char*)pmw->pstr;
-    switch(pmw->watch_type) {
-        case WORD_WATCH:
-            to_hexstr((WORD_T)*pmw->watch_addr, pstr, sizeof(WORD_T));
-            break;
-        case HWORD_WATCH:
-            to_hexstr((HWORD_T)*(HWORD_T*)(pmw->watch_addr), pstr, sizeof(HWORD_T));
-            break;
-        case FLOAT_WATCH:
-            to_floatstr((float)*(float*)(pmw->watch_addr), pstr, 10);
-            break;
-        default:
-            to_hexstr((BYTE_T)*(BYTE_T*)(pmw->watch_addr), pstr, sizeof(BYTE_T));
-            break;
+    for (int i = 0; i < MAX_WATCH; i++) {
+        if (!pmw->watch_addrs[i].enabled) {
+            continue;
+        }
+        switch(pmw->watch_addrs[i].type) {
+            case WORD_WATCH:
+                to_hexstr((WORD_T)*(WORD_T*)(pmw->watch_addrs[i].paddr), pstr, sizeof(WORD_T));
+                break;
+            case HWORD_WATCH:
+                to_hexstr((HWORD_T)*(HWORD_T*)(pmw->watch_addrs[i].paddr), pstr, sizeof(HWORD_T));
+                break;
+            case FLOAT_WATCH:
+                to_floatstr((float)*(float*)(pmw->watch_addrs[i].paddr), pstr, 10);
+                break;
+            default:
+                to_hexstr((BYTE_T)*(BYTE_T*)(pmw->watch_addrs[i].paddr), pstr, sizeof(BYTE_T));
+                break;
+        }
+        pstr += 0x10;
     }
 }
 
@@ -124,9 +139,9 @@ void prepare_watchselect(memwatch *pmw) {
     char *pstr = (char*)pmw->pstr;
 
     int max_cursor = FLOAT_WATCH;
-    if (((WORD_T)pmw->watch_addr % sizeof(WORD_T)) == 0) {
+    if (((WORD_T)pmw->watch_addrs[pmw->watch_index].paddr % sizeof(WORD_T)) == 0) {
         max_cursor = FLOAT_WATCH;
-    } else if (((WORD_T)pmw->watch_addr % sizeof(HWORD_T)) == 0) {
+    } else if (((WORD_T)pmw->watch_addrs[pmw->watch_index].paddr % sizeof(HWORD_T)) == 0) {
         max_cursor = HWORD_WATCH;
     } else {
         max_cursor = BYTE_WATCH;
@@ -178,6 +193,11 @@ void prepare_memwatch(memwatch *pmw) {
 }
 
 void update_memwatch(memwatch *pmw) {
+    // rollover
+    if (pmw->watch_index >= MAX_WATCH) {
+        pmw->watch_index = 0;
+    }
+
     // don't test these if memwatch is off
     if ((pmw->flags & 0x40) != 0) {
         // toggle memwatch on start p2
@@ -198,15 +218,19 @@ void update_memwatch(memwatch *pmw) {
         } else if (read_button(A_INPUT, CONTROLLER_2)
                 && read_button(A_INPUT, LAST_INPUT_2)) {
             // select type
-            pmw->watch_type = pmw->cursor_pos;
+            pmw->watch_addrs[pmw->watch_index].type = pmw->cursor_pos;
+            if (pmw->cursor_pos == NO_WATCH) {
+                pmw->watch_addrs[pmw->watch_index].enabled = FALSE;
+            } else {
+                pmw->watch_addrs[pmw->watch_index].enabled = TRUE;
+            }
             pmw->flags = 0x00;
             pmw->cursor_pos = 0x00;
+            pmw->watch_index++;
         }
         return;
     } else if ((pmw->flags & 0x80) == 0) {
-        if (pmw->watch_addr != NULL && pmw->watch_type != NO_WATCH) {
-            prepare_watchaddr(pmw);
-        }
+        prepare_watchaddr(pmw);
         return;
     }
 
@@ -291,7 +315,7 @@ void update_memwatch(memwatch *pmw) {
         if (pmw->cursor_pos != 0xFFFF) {
             // enable watch for 1 value
             WORD_T *paddr = (WORD_T*)(memwatch_current_addr(pmw)+pmw->cursor_pos);
-            pmw->watch_addr = paddr;
+            pmw->watch_addrs[pmw->watch_index].paddr = paddr;
             // pmw->watch_type = WORD_WATCH;
             pmw->cursor_pos = 0; // set cursor to 0
             pmw->flags = 0x40;
@@ -325,4 +349,11 @@ void memwatch_input_request(keyboard *pkb, void *pmw) {
     memwatch *pmemwatch = (memwatch*)pmw;
 
     *pmemwatch->pinput_addr = from_hexstr(pkb->pinput, gstrlen(pkb->pinput));
+}
+
+void clear_all_watch(memwatch *pmw) {
+    for (int i = 0; i < MAX_WATCH; i++) {
+        pmw->watch_addrs[i].enabled = FALSE;
+    }
+    pmw->watch_index = 0;
 }

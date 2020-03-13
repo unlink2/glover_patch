@@ -165,15 +165,6 @@ typedef struct pi_regs {
     unsigned long status;
 } pi_regs;
 
-#define MAX_WATCH 4
-
-typedef struct watch_addr {
-    void *paddr;
-    watch_type type;
-    char name[33];
-    BOOLEAN enabled;
-} watch_addr;
-
 BOOLEAN dma_busy();
 void pi_write(void *, unsigned long, unsigned long);
 void pi_write(void *, unsigned long, unsigned long);

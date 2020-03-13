@@ -9,8 +9,6 @@ static volatile struct pi_regs* const pir = (struct pi_regs *)0xa4600000;
 char *pevd_msg;
 char *pevd_msg_buffer[COMMAND_SIZE+1];
 
-watch_addr watch_addrs[MAX_WATCH];
-u32 watch_index = 0; // current index in permanent watches loops at MAX_WATCH
 
 #ifndef __LP64__
 // libdragon cache_op helper
@@ -99,9 +97,6 @@ u32 evd_reg_read(u16 reg) {
 }
 
 void evd_init() {
-    gmemset((BYTE_T*)watch_addrs, 0x00, MAX_WATCH*sizeof(watch_addr));
-    watch_index = 0;
-
     IO_WRITE(PI_BSD_DOM1_LAT_REG, 0x04);
     IO_WRITE(PI_BSD_DOM1_PWD_REG, 0x0C);
 
@@ -327,10 +322,7 @@ void add_watch(arg a, char *response, watch_type watch, watch_addr *watch_addrs,
 }
 
 void clear_watch(char *response, watch_addr *watch_addrs, u32 *watch_index) {
-    for (int i = 0; i < MAX_WATCH; i++) {
-        watch_addrs[i].enabled = FALSE;
-    }
-    *watch_index = 0;
+    clear_all_watch(&pmemwatch);
     response[0] = 'O';
     response[1] = 'K';
     response[2] = '\0';
@@ -397,8 +389,8 @@ void evd_serial_terminal() {
     }
 
     // rollover
-    if (watch_index >= MAX_WATCH) {
-        watch_index = 0;
+    if (pmemwatch.watch_index >= MAX_WATCH) {
+        pmemwatch.watch_index = 0;
     }
 
     char data[COMMAND_SIZE + 1];
@@ -456,20 +448,20 @@ void evd_serial_terminal() {
         poke(a, response, WORD_WATCH);
     } else if (is_arg(data, "watchw ")) {
         a = parse_arg(data, "watchw ");
-        add_watch(a, response, WORD_WATCH, watch_addrs, &watch_index);
+        add_watch(a, response, WORD_WATCH, pmemwatch.watch_addrs, &pmemwatch.watch_index);
     } else if (is_arg(data, "watchh ")) {
         a = parse_arg(data, "watchh ");
-        add_watch(a, response, HWORD_WATCH, watch_addrs, &watch_index);
+        add_watch(a, response, HWORD_WATCH, pmemwatch.watch_addrs, &pmemwatch.watch_index);
     } else if (is_arg(data, "watchb ")) {
         a = parse_arg(data, "watchb ");
-        add_watch(a, response, BYTE_WATCH, watch_addrs, &watch_index);
+        add_watch(a, response, BYTE_WATCH, pmemwatch.watch_addrs, &pmemwatch.watch_index);
     } else if (is_arg(data, "watchf ")) {
         a = parse_arg(data, "watchf ");
-        add_watch(a, response, FLOAT_WATCH, watch_addrs, &watch_index);
+        add_watch(a, response, FLOAT_WATCH, pmemwatch.watch_addrs, &pmemwatch.watch_index);
     } else if (is_arg(data, "listen")) {
-        listen(response, watch_addrs, watch_index);
+        listen(response, pmemwatch.watch_addrs, pmemwatch.watch_index);
     } else if (is_arg(data, "clearwatch")) {
-        clear_watch(response, watch_addrs, &watch_index);
+        clear_watch(response, pmemwatch.watch_addrs, &pmemwatch.watch_index);
     } else if (is_arg(data, "dump ")) {
         a = parse_arg(data, "dump ");
         dump(a, response);

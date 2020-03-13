@@ -11,7 +11,7 @@ menudef pmenu;
 void init_default_menu(menudef *pmenu) {
     get_ptr(char, string_buffer, SCREEN_BUFFER, 0x20*0x10);
     pmenu->pstr = string_buffer;
-    pmenu->size = 13;
+    pmenu->size = 14;
     pmenu->cursor = 0;
     pmenu->strings[0] = "Memory Monitor";
     pmenu->strings[1] = "Memory Monitor ASCII";
@@ -26,6 +26,7 @@ void init_default_menu(menudef *pmenu) {
     pmenu->strings[10] = "Glover...";
     pmenu->strings[11] = "FPS:            ";
     pmenu->strings[12] = "Init ED...";
+    pmenu->strings[13] = "Clear watch...";
 
     pmenu->type[0] = MENU_BUTTON;
     pmenu->type[1] = MENU_BUTTON;
@@ -40,6 +41,7 @@ void init_default_menu(menudef *pmenu) {
     pmenu->type[10] = MENU_BUTTON;
     pmenu->type[11] = MENU_VALUE_HWORD;
     pmenu->type[12] = MENU_BUTTON;
+    pmenu->type[13] = MENU_BUTTON;
 
     pmenu->pvalue[11] = (void*)FRAME_RATE_1;
 
@@ -102,6 +104,9 @@ void main_menu_select(menudef *pmenu) {
             break;
         case 12:
             evd_init();
+            break;
+        case 13:
+            clear_all_watch(pmenu->pmemwatch);
             break;
         default:
             pmenu->flags = 0x00;
