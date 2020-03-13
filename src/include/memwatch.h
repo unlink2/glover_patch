@@ -17,6 +17,17 @@ typedef enum watch_type {
     FLOAT_WATCH
 } watch_type;
 
+#define MAX_WATCH 4
+
+typedef struct watch_addr {
+    void *paddr;
+    watch_type type;
+    char name[33];
+    BOOLEAN enabled;
+} watch_addr;
+
+
+
 typedef struct memwatch {
     //  7th bit == 1 -> Viewer enable flag
     //  6th bit == 1 -> Watch select flag (overrides viewer enable)
@@ -27,10 +38,13 @@ typedef struct memwatch {
     WORD_T offset;
     BYTE_T *pstr; // string buffer, should have at least 18 bytes
     WORD_T base_addr; // start address of ram
-    WORD_T *watch_addr; // memory watch address if NULL ignore
-    watch_type watch_type;
+    // WORD_T *watch_addr; // memory watch address if NULL ignore
+    // watch_type watch_type;
 
     BYTE_T *pinput_addr; // for input request
+
+    watch_addr watch_addrs[MAX_WATCH];
+    u32 watch_index; // current index in permanent watches loops at MAX_WATCH
 } memwatch;
 
 extern memwatch pmemwatch;
@@ -61,6 +75,8 @@ void prepare_memwatch(memwatch *);
 void update_memwatch(memwatch *);
 
 void memwatch_input_request(keyboard *, void *);
+
+void clear_all_watch(memwatch *);
 
 #define memwatch_current_addr(pmw) (BYTE_T*)pmw->base_addr+(pmw->offset*WORDS_PER_PAGE*sizeof(WORD_T))
 
