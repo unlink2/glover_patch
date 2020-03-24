@@ -18,6 +18,9 @@ void init_memwatch(memwatch *pmw) {
 }
 
 void render_watchaddr(memwatch *pmw) {
+    if ((pkb.flags & 0x80)) {
+        return;
+    }
     get_ptr(HWORD_T, pfont, FONT8X8, 0x4000);
 
     char *pstr = (char*)pmw->pstr;
@@ -27,7 +30,8 @@ void render_watchaddr(memwatch *pmw) {
             continue;
         }
         // render strings
-        gputsrdp(pstr, 0x90, start_y, pfont);
+        gputsrdp(pmw->watch_addrs[i].name, 0x90, start_y, pfont);
+        gputsrdp(pstr, 0x91+gstrlen(pmw->watch_addrs[i].name)*8, start_y, pfont);
         pstr += 0x10;
         start_y += 0x9;
     }
@@ -41,19 +45,11 @@ void render_watchselect(memwatch *pmw) {
     // render strings
     char *pstr = (char*)pmw->pstr;
 
-    gputsrdp(pstr, 0x10, 0x10, pfont);
-    pstr += 0x10;
+    for (int i = 0; i < 5; i++) {
+        gputsrdp(pstr, 0x10, 0x10+9*i, pfont);
+        pstr += 0x10;
+    }
 
-    gputsrdp(pstr, 0x10, 0x10+9, pfont);
-    pstr += 0x10;
-
-    gputsrdp(pstr, 0x10, 0x10+18, pfont);
-    pstr += 0x10;
-
-    gputsrdp(pstr, 0x10, 0x10+27, pfont);
-    pstr += 0x10;
-
-    gputsrdp(pstr, 0x10, 0x10+36, pfont);
 
     int y_offset = pmw->cursor_pos*9;
 
@@ -221,12 +217,17 @@ void update_memwatch(memwatch *pmw) {
             pmw->watch_addrs[pmw->watch_index].type = pmw->cursor_pos;
             if (pmw->cursor_pos == NO_WATCH) {
                 pmw->watch_addrs[pmw->watch_index].enabled = FALSE;
+                pmw->flags = 0x00;
+                pmw->cursor_pos = 0x00;
+                return;
             } else {
                 pmw->watch_addrs[pmw->watch_index].enabled = TRUE;
             }
             pmw->flags = 0x00;
             pmw->cursor_pos = 0x00;
-            pmw->watch_index++;
+            // pmw->watch_index++;
+            init_keyboard(&pkb);
+            input_request(pmw->watch_addrs[pmw->watch_index].name, 5, &pkb, &watchselect_input_request, pmw);
         }
         return;
     } else if ((pmw->flags & 0x80) == 0) {
@@ -349,6 +350,16 @@ void memwatch_input_request(keyboard *pkb, void *pmw) {
     memwatch *pmemwatch = (memwatch*)pmw;
 
     *pmemwatch->pinput_addr = from_hexstr(pkb->pinput, gstrlen(pkb->pinput));
+}
+
+void watchselect_input_request(keyboard *pkb, void *pmw) {
+    memwatch *pmemwatch = (memwatch*)pmw;
+    if (!pkb->success) {
+        pmemwatch->watch_addrs[pmemwatch->watch_index].name[0] = '\0';
+        pmemwatch->watch_index++;
+        return;
+    }
+    pmemwatch->watch_index++;
 }
 
 void clear_all_watch(memwatch *pmw) {
