@@ -74,6 +74,7 @@ void prepare_memwatch(memwatch *);
 
 void update_memwatch(memwatch *);
 
+void watchselect_input_request(keyboard *, void *);
 void memwatch_input_request(keyboard *, void *);
 
 void clear_all_watch(memwatch *);
