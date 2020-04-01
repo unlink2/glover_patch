@@ -227,7 +227,7 @@ void update_memwatch(memwatch *pmw) {
             pmw->cursor_pos = 0x00;
             // pmw->watch_index++;
             init_keyboard(&pkb);
-            input_request(pmw->watch_addrs[pmw->watch_index].name, 5, &pkb, &watchselect_input_request, pmw);
+            input_request(pmw->watch_addrs[pmw->watch_index].name, 16, &pkb, &watchselect_input_request, pmw);
         }
         return;
     } else if ((pmw->flags & 0x80) == 0) {

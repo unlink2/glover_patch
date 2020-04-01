@@ -151,6 +151,8 @@ void render_keyboard(keyboard *pkb) {
     unsigned short start_x = 0x18;
     unsigned short start_y = 0x20;
 
+    // TODO this fixed input disply issues for some reason?
+    gputsrdp("                ", 0x0, 0x0, pfont);
     // render input buffer
     if (pkb->pinput) {
         gputsrdp(pkb->pinput, 0x18, 0x10, pfont);
@@ -168,9 +170,9 @@ void render_keyboard(keyboard *pkb) {
 
     // render some UI elements
     start_y += CHAR_H*2;
-    gputsrdp("A: Select  B: Backspace", start_x, start_y, pfont);
+    gputsrdp("A: Sel  B: <-", start_x, start_y, pfont);
     start_y += CHAR_H+1;
-    gputsrdp("Z: Enter   L: Shift", start_x, start_y, pfont);
+    gputsrdp("Z: Ret   L: Shift", start_x, start_y, pfont);
 
     unsigned int x_offset = (pkb->cursor)*(CHAR_W)+0x18;
     unsigned int y_offset = (pkb->row)*(CHAR_H+1)+0x20;
