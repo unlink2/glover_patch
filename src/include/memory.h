@@ -13,6 +13,8 @@ extern WORD_T *LAST_INPUT_2;
 // #define LAST_INPUT_2 (WORD_T*)0x800002C8
 // #define FRAME_ADVANCE (BYTE_T*)0x800002CC
 
+#define GAME_MODE (BYTE_T*)0x801E7530 // 01 == main menu; 03 == freeze; 04 == in-game
+
 #define FILE1_START (WORD_T*)0x801EAA44
 
 #define EXP_RAM (WORD_T*)0x80400000 // freely available ram!

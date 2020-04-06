@@ -5,6 +5,7 @@
 #include "include/inputs.h"
 #include "include/logic.h"
 #include "include/debug.h"
+#include "include/utility.h"
 
 menudef pmenu;
 
@@ -50,13 +51,15 @@ void init_default_menu(menudef *pmenu) {
 }
 
 void init_glover_menu(menudef *pmenu) {
-    pmenu->size = 2;
+    pmenu->size = 3;
     pmenu->cursor = 0;
     pmenu->strings[0] = "Toggle Infinite Lives";
     pmenu->strings[1] = "Toggle Infinite Health";
+    pmenu->strings[2] = "Trigger Afterlife";
 
     pmenu->type[0] = MENU_BUTTON;
     pmenu->type[1] = MENU_BUTTON;
+    pmenu->type[2] = MENU_BUTTON;
 
     pmenu->pactions = &glover_menu_select;
     pmenu->pupdate = &glover_menu_update;
@@ -123,6 +126,23 @@ void main_menu_update(menudef *pmenu) {
     to_hexstr(*ptr, str+5, 2);
 }
 
+void trigger_al(menudef *pmenu) {
+    get_ptr(WORD_T, al_inst, 0x801256FC, 1);
+    if (*al_inst == 0x1040001D) {
+        *al_inst = 0x1000001D; // branch always
+        get_ptr(BYTE_T, al_value, 0x801E7541, 1);
+        *al_value = 0x13;
+        get_ptr(BYTE_T, game_over, 0x801E7473, 1);
+        *game_over = 1;
+        pmenu->strings[2] = "Restore Game Over Code";
+        get_ptr(WORD_T, lives, 0x80290190, 1);
+        *lives = 0x00-1;
+    } else {
+        pmenu->strings[2] = "Trigger Afterlife";
+        *al_inst = 0x1040001D; // regulat instruction
+    }
+}
+
 void glover_menu_select(menudef *pmenu) {
     switch(pmenu->cursor) {
         case 0:
@@ -130,6 +150,9 @@ void glover_menu_select(menudef *pmenu) {
             break;
         case 1:
             pmenu->pgpatch->infinite_lives = !pmenu->pgpatch->infinite_lives;
+            break;
+        case 2:
+            trigger_al(pmenu);
             break;
         default:
             init_default_menu(pmenu);
