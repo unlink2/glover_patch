@@ -130,8 +130,11 @@ void trigger_al(menudef *pmenu) {
     get_ptr(WORD_T, al_inst, 0x801256FC, 1);
     if (*al_inst == 0x1040001D) {
         *al_inst = 0x1000001D; // branch always
+        // TODO find out what this byte does
+        // seems to be deterministic at map load
+        // last entrance taken?
         get_ptr(BYTE_T, al_value, 0x801E7541, 1);
-        *al_value = 0x13;
+        *al_value = 0x13; // it appears the 4th bit needs to be 1
         get_ptr(BYTE_T, game_over, 0x801E7473, 1);
         *game_over = 1;
         pmenu->strings[2] = "Restore Game Over Code";
