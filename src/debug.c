@@ -355,21 +355,40 @@ void listen(char *response, watch_addr *watch_addrs, u32 watch_index) {
         gmemcpy((BYTE_T*)watch_addrs[i].name, (BYTE_T*)name, 32);
         char *value = pnext+33;
 
-        switch (watch_addrs[i].type) {
-            case BYTE_WATCH:
-                to_hexstr(*(u8*)watch_addrs[i].paddr, value, 1);
-                break;
-            case HWORD_WATCH:
-                to_hexstr(*(u16*)watch_addrs[i].paddr, value, 2);
-                break;
-            case WORD_WATCH:
-                to_hexstr(*(u32*)watch_addrs[i].paddr, value, 4);
-                break;
-            case FLOAT_WATCH:
-                to_floatstr(*(float*)watch_addrs[i].paddr, value, 10);
-                break;
-            default:
-                break;
+        if (watch_addrs[i].sign) {
+            switch (watch_addrs[i].type) {
+                case BYTE_WATCH:
+                    to_hexstr_signed(*(u8*)watch_addrs[i].paddr, value, 1);
+                    break;
+                case HWORD_WATCH:
+                    to_hexstr_signed(*(u16*)watch_addrs[i].paddr, value, 2);
+                    break;
+                case WORD_WATCH:
+                    to_hexstr_signed(*(u32*)watch_addrs[i].paddr, value, 4);
+                    break;
+                case FLOAT_WATCH:
+                    to_floatstr(*(float*)watch_addrs[i].paddr, value, 10);
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            switch (watch_addrs[i].type) {
+                case BYTE_WATCH:
+                    to_hexstr(*(u8*)watch_addrs[i].paddr, value, 1);
+                    break;
+                case HWORD_WATCH:
+                    to_hexstr(*(u16*)watch_addrs[i].paddr, value, 2);
+                    break;
+                case WORD_WATCH:
+                    to_hexstr(*(u32*)watch_addrs[i].paddr, value, 4);
+                    break;
+                case FLOAT_WATCH:
+                    to_floatstr(*(float*)watch_addrs[i].paddr, value, 10);
+                    break;
+                default:
+                    break;
+            }
         }
         for (int j = 0; j < COMMAND_SIZE; j++) {
             if (pnext[j] == '\0') {
