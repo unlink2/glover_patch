@@ -24,6 +24,7 @@ typedef struct watch_addr {
     watch_type type;
     char name[33];
     BOOLEAN enabled;
+    BOOLEAN sign;
 } watch_addr;
 
 

@@ -45,11 +45,17 @@ void render_watchselect(memwatch *pmw) {
     // render strings
     char *pstr = (char*)pmw->pstr;
 
-    for (int i = 0; i < 5; i++) {
+    int i = 0;
+    for (i = 0; i < 5; i++) {
         gputsrdp(pstr, 0x10, 0x10+9*i, pfont);
         pstr += 0x10;
     }
 
+    if (pmw->watch_addrs[pmw->watch_index].sign) {
+        gputsrdp("Z: Signed", 0x10, 0x10+9*i+1, pfont);
+    } else {
+        gputsrdp("Z: Unsigned", 0x10, 0x10+9*i+1, pfont);
+    }
 
     int y_offset = pmw->cursor_pos*9;
 
@@ -112,19 +118,36 @@ void prepare_watchaddr(memwatch *pmw) {
         if (!pmw->watch_addrs[i].enabled) {
             continue;
         }
-        switch(pmw->watch_addrs[i].type) {
-            case WORD_WATCH:
-                to_hexstr((WORD_T)*(WORD_T*)(pmw->watch_addrs[i].paddr), pstr, sizeof(WORD_T));
-                break;
-            case HWORD_WATCH:
-                to_hexstr((HWORD_T)*(HWORD_T*)(pmw->watch_addrs[i].paddr), pstr, sizeof(HWORD_T));
-                break;
-            case FLOAT_WATCH:
-                to_floatstr((float)*(float*)(pmw->watch_addrs[i].paddr), pstr, 10);
-                break;
-            default:
-                to_hexstr((BYTE_T)*(BYTE_T*)(pmw->watch_addrs[i].paddr), pstr, sizeof(BYTE_T));
-                break;
+        if (pmw->watch_addrs[i].sign) {
+            switch(pmw->watch_addrs[i].type) {
+                case WORD_WATCH:
+                    to_hexstr_signed((WORD_T)*(WORD_T*)(pmw->watch_addrs[i].paddr), pstr, sizeof(WORD_T));
+                    break;
+                case HWORD_WATCH:
+                    to_hexstr_signed((HWORD_T)*(HWORD_T*)(pmw->watch_addrs[i].paddr), pstr, sizeof(HWORD_T));
+                    break;
+                case FLOAT_WATCH:
+                    to_floatstr((float)*(float*)(pmw->watch_addrs[i].paddr), pstr, 10);
+                    break;
+                default:
+                    to_hexstr_signed((BYTE_T)*(BYTE_T*)(pmw->watch_addrs[i].paddr), pstr, sizeof(BYTE_T));
+                    break;
+            }
+        } else {
+            switch(pmw->watch_addrs[i].type) {
+                case WORD_WATCH:
+                    to_hexstr((WORD_T)*(WORD_T*)(pmw->watch_addrs[i].paddr), pstr, sizeof(WORD_T));
+                    break;
+                case HWORD_WATCH:
+                    to_hexstr((HWORD_T)*(HWORD_T*)(pmw->watch_addrs[i].paddr), pstr, sizeof(HWORD_T));
+                    break;
+                case FLOAT_WATCH:
+                    to_floatstr((float)*(float*)(pmw->watch_addrs[i].paddr), pstr, 10);
+                    break;
+                default:
+                    to_hexstr((BYTE_T)*(BYTE_T*)(pmw->watch_addrs[i].paddr), pstr, sizeof(BYTE_T));
+                    break;
+            }
         }
         pstr += 0x10;
     }
@@ -228,6 +251,9 @@ void update_memwatch(memwatch *pmw) {
             // pmw->watch_index++;
             init_keyboard(&pkb);
             input_request(pmw->watch_addrs[pmw->watch_index].name, 16, &pkb, &watchselect_input_request, pmw);
+        } else if (read_button(Z_INPUT, CONTROLLER_2)
+                && !read_button(Z_INPUT, LAST_INPUT_2)) {
+            pmw->watch_addrs[pmw->watch_index].sign = !pmw->watch_addrs[pmw->watch_index].sign;
         }
         return;
     } else if ((pmw->flags & 0x80) == 0) {
