@@ -79,6 +79,34 @@ void to_hexstr(WORD_T value, char *pstr, WORD_T size) {
     pstr[i] = '\0';
 }
 
+void to_hexstr_signed(WORD_T value, char *pstr, WORD_T size) {
+    unsigned char shift = size*8-4; // bits to shift
+    int i = 0;
+    int str_index = 0;
+    for (i = 0; i < 2*size; i++, str_index++, shift -= 4) {
+        char c = (value >> shift) & 0x0F;
+        // check sign if 0
+        if (i == 0) {
+            if (c & 0x8) {
+                pstr[str_index] = '-';
+                // adjust value 2s complement
+                value = (~value) + 1;;
+                c = (value >> shift) & 0x0F;
+                str_index++;
+            }
+        }
+
+         // to ascii
+         if (c < 0xA) {
+            c += 0x30;
+         } else {
+             c += 55;
+         }
+         pstr[str_index] = c;
+    }
+    pstr[str_index] = '\0';
+}
+
 void str_reverse(char *pstr, int len) {
     int i = 0, j = len-1, temp;
     while (i < j) {

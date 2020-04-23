@@ -145,8 +145,14 @@ static void test_to_hexstr(void **state) {
     char *pstr = my_malloc(20);
 
     to_hexstr(0x80106901, pstr, sizeof(unsigned int));
-
     assert_string_equal(pstr, "80106901");
+
+    to_hexstr_signed(0x14, pstr, sizeof(unsigned char));
+    assert_string_equal(pstr, "14");
+
+    to_hexstr_signed(0xEC, pstr, sizeof(unsigned char));
+    assert_string_equal(pstr, "-14");
+
 
     my_free(pstr);
 }

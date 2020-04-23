@@ -47,6 +47,7 @@ void gassert(int);
  * fit a hex string for 4 bytes + \00
  */
 void to_hexstr(WORD_T, char *, WORD_T);
+void to_hexstr_signed(WORD_T, char *, WORD_T);
 
 void str_reverse(char *, int);
 
