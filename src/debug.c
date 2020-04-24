@@ -244,6 +244,33 @@ void peek(arg a, char *response, watch_type watch) {
     }
 }
 
+void speek(arg a, char *response, watch_type watch) {
+    switch (watch) {
+        case BYTE_WATCH: {
+            u8 *paddr = (u8*)from_hexstr((char*)a.value, 8);
+            to_hexstr_signed(*paddr, response, 1);
+            evd_usb_write(response, COMMAND_SIZE); // send back
+            break; }
+        case WORD_WATCH: {
+            u32 *paddr = (u32*)from_hexstr((char*)a.value, 8);
+            to_hexstr_signed(*paddr, response, 4);
+            evd_usb_write(response, COMMAND_SIZE); // send back
+            break; }
+        case HWORD_WATCH: {
+            u16 *paddr = (u16*)from_hexstr((char*)a.value, 8);
+            to_hexstr_signed(*paddr, response, 2);
+            evd_usb_write(response, COMMAND_SIZE); // send back
+            break; }
+        case FLOAT_WATCH: {
+            float *paddr = (float*)from_hexstr((char*)a.value, 8);
+            to_floatstr(*paddr, response, 10);
+            evd_usb_write(response, COMMAND_SIZE); // send back
+            break; }
+        default:
+            break;
+    }
+}
+
 void poke(arg a, char *response, watch_type watch) {
     char *addrstr = NULL;
     char *valstr = NULL;
@@ -326,6 +353,23 @@ void clear_watch(char *response, watch_addr *watch_addrs, u32 *watch_index) {
     response[0] = 'O';
     response[1] = 'K';
     response[2] = '\0';
+    evd_usb_write(response, COMMAND_SIZE); // send back
+}
+
+void invert_sign(char *response, watch_addr *watch_addrs, arg a) {
+    if (!a.value) {
+        response[0] = 'E';
+        response[1] = 'R';
+        response[2] = 'R';
+        response[3] = '\0';
+    } else {
+        // set sign of selected watch
+        u32 index = a.value[0]-48; // ascii to index
+        watch_addrs[index].sign = !watch_addrs[index].sign;
+        response[0] = 'O';
+        response[1] = 'K';
+        response[2] = '\0';
+    }
     evd_usb_write(response, COMMAND_SIZE); // send back
 }
 
@@ -452,6 +496,18 @@ void evd_serial_terminal() {
         // convert value to address
         a = parse_arg(data, "peekw ");
         peek(a, response, WORD_WATCH);
+    }  else if(is_arg(data, "speekb ")) {
+        // convert value to address
+        a = parse_arg(data, "speekb ");
+        speek(a, response, BYTE_WATCH);
+    } else if(is_arg(data, "speekh ")) {
+        // convert value to address
+        a = parse_arg(data, "speekh ");
+        speek(a, response, HWORD_WATCH);
+    } else if(is_arg(data, "speekw ")) {
+        // convert value to address
+        a = parse_arg(data, "speekw ");
+        speek(a, response, WORD_WATCH);
     } else if(is_arg(data, "peekf ")) {
         // convert value to address
         a = parse_arg(data, "peekf ");
@@ -481,6 +537,9 @@ void evd_serial_terminal() {
         listen(response, pmemwatch.watch_addrs, pmemwatch.watch_index);
     } else if (is_arg(data, "clearwatch")) {
         clear_watch(response, pmemwatch.watch_addrs, &pmemwatch.watch_index);
+    } else if (is_arg(data, "sign ")) {
+        a = parse_arg(data, "sign ");
+        invert_sign(response, pmemwatch.watch_addrs, a);
     } else if (is_arg(data, "dump ")) {
         a = parse_arg(data, "dump ");
         dump(a, response);
