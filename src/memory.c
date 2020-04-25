@@ -28,6 +28,9 @@ void init_mem() {
 
     gmemset((BYTE_T*)&gpatch, 0x00, sizeof(gpatch));
     gpatch.frame_advance = 0x00;
+    gpatch.infinite_hp = FALSE;
+    gpatch.infinite_lives = FALSE;
+    gpatch.lock_pos = FALSE;
     // zero struct
     gmemset((BYTE_T*)&pmemwatch, 0x00, sizeof(memwatch));
     init_memwatch(&pmemwatch);
