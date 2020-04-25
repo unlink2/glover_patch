@@ -39,6 +39,9 @@ void logic() {
         get_ptr(WORD_T, lives, GLOVER_LIVES, 1);
         *lives = 0xFF;
     }
+    if (gpatch.lock_pos) {
+        restore_glover_pos();
+    }
 
     // only trigger this code if start is held
     if (read_button(START_INPUT, CONTROLLER_1)) {
