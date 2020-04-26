@@ -51,6 +51,8 @@ extern WORD_T *LAST_INPUT_2;
 #define COLLISION_DISABLE (WORD_T*)0x8015D728
 #define FOG (BYTE_T*)0x801ED403
 
+#define DISABLE_INPUT_TIMER (HWORD_T*)0x8028FBF4
+
 #define __OS_DISABLE_INT (WORD_T*)0x801C6F70 // function ptr void ()
 #define __OS_RESTORE_INT (WORD_T*)0x801C6F90 // function ptr void ()
 #define __OS_GET_CURRENT_FRAMEBUFFER (WORD_T*)0x801CE910 // function ptr WORDL_T *()
