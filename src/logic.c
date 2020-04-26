@@ -42,6 +42,10 @@ void logic() {
     if (gpatch.lock_pos) {
         restore_glover_pos();
     }
+    if (gpatch.infinite_jump) {
+        get_ptr(BYTE_T, infjump, INFINITE_DOUBLE_JUMP, 1);
+        *infjump = 0;
+    }
 
     // only trigger this code if start is held
     if (read_button(START_INPUT, CONTROLLER_1)) {
