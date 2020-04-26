@@ -103,10 +103,12 @@ void enable_timer() {
 }
 
 void level_select() {
+    get_ptr(HWORD_T, disable_inputs, DISABLE_INPUT_TIMER, 1);
     get_ptr(BYTE_T, pgamemode_ptr, GAME_MODE, 1);
     get_ptr(BYTE_T, ppause_ptr, PAUSE_FLAG, 1);
     *pgamemode_ptr = 0x02; // enable level select
     *ppause_ptr = 0x00; // disable pause
+    *disable_inputs = 0x00;
 }
 
 void frame_advance() {
