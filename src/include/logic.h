@@ -9,6 +9,7 @@ typedef struct gpatch_t {
     BOOLEAN infinite_hp;
     BOOLEAN infinite_lives;
     BOOLEAN lock_pos;
+    BOOLEAN infinite_jump;
     u32 frame_advance;
     u8 menu_toggle; // TODO this is a hack to prevent a crash
 } gpatch_t;
