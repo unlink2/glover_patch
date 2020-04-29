@@ -349,20 +349,26 @@ void update_memwatch(memwatch *pmw) {
         }
 
     } else if (read_button(Z_INPUT, CONTROLLER_2)) {
-        // clear watch
-        // pmw->watch_addr = NULL;
-        // pmw->watch_type = NO_WATCH;
-        BYTE_T *paddr = memwatch_current_addr(pmw)+pmw->cursor_pos;
+        if (pmw->cursor_pos != 0xFFFF) {
+            // clear watch
+            // pmw->watch_addr = NULL;
+            // pmw->watch_type = NO_WATCH;
+            BYTE_T *paddr = memwatch_current_addr(pmw)+pmw->cursor_pos;
 
-        if ((WORD_T)paddr < pmw->base_addr
-                || (WORD_T)paddr >= 0x80400000) {
-            pmw->offset = 0;
-            return;
+            if ((WORD_T)paddr < pmw->base_addr
+                    || (WORD_T)paddr >= 0x80400000) {
+                pmw->offset = 0;
+                return;
+            }
+            pmw->flags = 0x00;
+            pmw->pinput_addr = paddr;
+            init_hex_keyboard(&pkb);
+            input_request(pmeminput, 3, &pkb, &memwatch_input_request, pmw);
+        } else {
+            pmw->flags = 0x00;
+            init_hex_keyboard(&pkb);
+            input_request(pmeminput, 9, &pkb, &address_input_request, pmw);
         }
-        pmw->flags = 0x00;
-        pmw->pinput_addr = paddr;
-        init_hex_keyboard(&pkb);
-        input_request(pmeminput, 3, &pkb, &memwatch_input_request, pmw);
     }
 
     pmw->frame_counter++;
@@ -376,6 +382,20 @@ void memwatch_input_request(keyboard *pkb, void *pmw) {
     memwatch *pmemwatch = (memwatch*)pmw;
 
     *pmemwatch->pinput_addr = from_hexstr(pkb->pinput, gstrlen(pkb->pinput));
+}
+
+void address_input_request(keyboard *pkb, void *pmw) {
+    if (!pkb->success) {
+        return;
+    }
+
+    memwatch *pmemwatch = (memwatch*)pmw;
+    WORD_T value = from_hexstr(pkb->pinput, gstrlen(pkb->pinput));
+    if ((WORD_T)value >= 0x80000000 && (WORD_T)value < 0x80400000) {
+        // follow pointer if in bounds
+        pmemwatch->offset = (value-pmemwatch->base_addr)/WORDS_PER_PAGE/sizeof(WORD_T);
+        pmemwatch->cursor_pos = 0;
+    }
 }
 
 void watchselect_input_request(keyboard *pkb, void *pmw) {
