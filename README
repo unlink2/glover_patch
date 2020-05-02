@@ -1,6 +1,19 @@
 This is a glover romhack project intended to become a practice tool for speedrunning.
 
-How to build?
+Easy Install:
+
+To install the pre-built binaires and patch a rom simply download and install python from
+
+https://www.python.org/
+
+After the installation is complete simply drag and drop a glover NTSC rom (in z64 format!)
+onto the patchui.py file.
+Your patched rom will be in the "rom" folder
+
+
+==============================================================
+
+How to build from source?
 
 I recommend using the Windows Subsystem for Linux if you are on Windows. 
 A lot of tools used are related to Linux so this is the easiest way of building it for now and I primarily developed 
