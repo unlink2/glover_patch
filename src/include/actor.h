@@ -63,7 +63,8 @@ typedef struct glover_actor {
     struct glover_actor *pprev;
     u32 unknown_1[7]; // padding
     u32 visible_flag; // actor will render if nonzero. usually set to 64 or FF
-    u32 unknown_2[3];
+    u32 actor_flags; // some flags for actors, e.g. for glover the 0th byte == 05 is on ball
+    u32 unknown_2[2];
     float xpos;
     float ypos;
     float zpos;
@@ -80,7 +81,11 @@ typedef struct glover_actor {
     float angle_velocity;
     u32 unknown_5[2];
     float angle;
-    u32 unkown_6[12];
+    u32 unkown_6[5];
+    float model_rotatex;
+    float model_rotatey;
+    float model_rotatez;
+    u32 unknown_8[4];
     u32 scalex;
     u32 scaley;
     u32 scalez;

@@ -56,9 +56,9 @@ test: build_test
 .PHONY: clean
 clean:
 	@echo Cleaning stuff. This make file officially is doing better than you irl.
-	rm $(ODIR)/*.o
-	rm $(ODIRLOC)/*.o
-	rm $(BINDIR)/*
+	rm -f $(ODIR)/*.o
+	rm -f $(ODIRLOC)/*.o
+	rm -f $(BINDIR)/*
 
 
 .PHONY: setup
