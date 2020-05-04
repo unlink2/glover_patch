@@ -6,6 +6,22 @@ import struct
 
 # takes a file exported using steps in bitmap_format.txt
 
+# in-game bmp header
+# read-path ptr 80139CA0 (a0 is filename)
+# 9B7E1E61 -> filename checksum of some sort, when glover loads a path it calculates this to locate the file 
+# 00000002
+# 00000000
+# 0140 00F0
+# ^     ^
+# |     |
+# |     ----- Lines
+# ----------- Width
+# 00050005
+# 00025828
+# 00000002
+# 803D95B0 <- Ptr to image data
+# Width * Lines * 2 = Size in bytes
+
 width = 320
 height = 240
 bpp = 16
