@@ -27,7 +27,7 @@ height = 240
 bpp = 16
 
 if len(sys.argv) < 3:
-    print("Usage ./addbmpheader.py <source> <dest> [width] [height] [bpp] [rotate right] [true/false flip]")
+    print("Usage ./addbmpheader.py <source> <dest> [width] [height] [bpp default=16] [rotate colors right default=9] [true/false flip]")
     sys.exit(1)
 
 if len(sys.argv) >= 4:
@@ -35,7 +35,7 @@ if len(sys.argv) >= 4:
 if len(sys.argv) >= 5:
     height = int(sys.argv[4])
 
-rotate_by = 1
+rotate_by = 9
 flip = True
 if len(sys.argv) >= 7:
     rotate_by = int(sys.argv[6])
@@ -119,7 +119,7 @@ header.append(00)
 header.append(00)
 
 # pixel data offset is always 55
-header.append(55)
+header.append(HEADER_SIZE)
 header.append(00)
 header.append(00)
 header.append(00)
@@ -147,10 +147,7 @@ header.append(00)
 header.append(00)
 
 # imagesize after compression
-header.append(00)
-header.append(00)
-header.append(00)
-header.append(00)
+append_int(len(raw)+HEADER_SIZE, header)
 
 # x pixels per meter
 header.append(00)
@@ -165,10 +162,11 @@ header.append(00)
 header.append(00)
 
 # total colors
-header.append(00)
-header.append(00)
-header.append(00)
-header.append(00)
+append_int(pow(2, bpp), header)
+#header.append(00)
+#header.append(00)
+#header.append(00)
+#header.append(00)
 
 # important colors
 header.append(00)
