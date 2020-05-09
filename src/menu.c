@@ -51,7 +51,7 @@ void init_default_menu(menudef *pmenu) {
 }
 
 void init_glover_menu(menudef *pmenu) {
-    pmenu->size = 6;
+    pmenu->size = 7;
     pmenu->cursor = 0;
     pmenu->strings[0] = "Toggle Infinite Lives";
     pmenu->strings[1] = "Toggle Infinite Health";
@@ -59,6 +59,7 @@ void init_glover_menu(menudef *pmenu) {
     pmenu->strings[3] = "Lock Position";
     pmenu->strings[4] = "Summon Ball";
     pmenu->strings[5] = "Toggle Infinite Jump";
+    pmenu->strings[6] = "Toggle Space CS Skip";
 
     pmenu->type[0] = MENU_BUTTON;
     pmenu->type[1] = MENU_BUTTON;
@@ -66,6 +67,7 @@ void init_glover_menu(menudef *pmenu) {
     pmenu->type[3] = MENU_BUTTON;
     pmenu->type[4] = MENU_BUTTON;
     pmenu->type[5] = MENU_BUTTON;
+    pmenu->type[6] = MENU_BUTTON;
 
     pmenu->pactions = &glover_menu_select;
     pmenu->pupdate = &glover_menu_update;
@@ -176,6 +178,9 @@ void glover_menu_select(menudef *pmenu) {
             break;
         case 5:
             pmenu->pgpatch->infinite_jump = !pmenu->pgpatch->infinite_jump;
+            break;
+        case 6:
+            pmenu->pgpatch->cutscene_skip = !pmenu->pgpatch->cutscene_skip;
             break;
         default:
             init_default_menu(pmenu);

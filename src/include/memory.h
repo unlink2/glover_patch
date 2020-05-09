@@ -5,6 +5,7 @@
 
 #define TIMER_HW (HWORD_T*)0x801FA754
 #define GAME_MODE (BYTE_T*)0x801E7530 // byte 04 = gameplay 02 = level select
+#define GAME_STATE (BYTE_T*)0x801EC7F0 // 02 == demo
 #define PAUSE_FLAG (BYTE_T*)0x801EC7D3 // 01 = paused
 
 extern WORD_T *LAST_INPUT_1;
@@ -43,6 +44,8 @@ extern WORD_T *LAST_INPUT_2;
 #define ACTOR_HEAP_CLONE (WORD_T*)0x80600000
 #define ACTOR_SIZE 0xF0
 #define RNG_VALUE (WORD_T*)0x801ED3F0
+
+#define DEMO_END_TIMER (BYTE_T*)0x801EC775
 
 #define PUTS_XY (WORD_T*)0x8014666C // puts function ptr
 #define PUTS_X_POS (WORD_T*)0x801ED394

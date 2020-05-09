@@ -46,6 +46,13 @@ void logic() {
         get_ptr(BYTE_T, infjump, INFINITE_DOUBLE_JUMP, 1);
         *infjump = 0;
     }
+    if (gpatch.cutscene_skip) {
+        get_ptr(BYTE_T, css, DEMO_END_TIMER, 1);
+        get_ptr(BYTE_T, gm, GAME_STATE, 1);
+        if (*gm != 2) {
+            *css = 1; // always set to 1
+        }
+    }
 
     // only trigger this code if start is held
     if (read_button(START_INPUT, CONTROLLER_1)) {
