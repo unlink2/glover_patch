@@ -6,13 +6,14 @@
 #include "include/logic.h"
 #include "include/debug.h"
 #include "include/utility.h"
+#include "include/actor.h"
 
 menudef pmenu;
 
 void init_default_menu(menudef *pmenu) {
     get_ptr(char, string_buffer, SCREEN_BUFFER, 0x20*0x10);
     pmenu->pstr = string_buffer;
-    pmenu->size = 14;
+    pmenu->size = 15;
     pmenu->cursor = 0;
     pmenu->strings[0] = "Memory Monitor";
     pmenu->strings[1] = "Memory Monitor ASCII";
@@ -28,6 +29,7 @@ void init_default_menu(menudef *pmenu) {
     pmenu->strings[11] = "FPS:            ";
     pmenu->strings[12] = "Init ED...";
     pmenu->strings[13] = "Clear watch...";
+    pmenu->strings[14] = "Move Object...";
 
     pmenu->type[0] = MENU_BUTTON;
     pmenu->type[1] = MENU_BUTTON;
@@ -43,6 +45,7 @@ void init_default_menu(menudef *pmenu) {
     pmenu->type[11] = MENU_VALUE_HWORD;
     pmenu->type[12] = MENU_BUTTON;
     pmenu->type[13] = MENU_BUTTON;
+    pmenu->type[14] = MENU_BUTTON;
 
     pmenu->pvalue[11] = (void*)FRAME_RATE_1;
 
@@ -71,6 +74,42 @@ void init_glover_menu(menudef *pmenu) {
 
     pmenu->pactions = &glover_menu_select;
     pmenu->pupdate = &glover_menu_update;
+}
+
+BYTE_T move_value;
+
+void init_move_menu(menudef *pmenu) {
+    pmenu->size = 10;
+    pmenu->cursor = 0;
+    pmenu->strings[0] = "Next Object";
+    pmenu->strings[1] = "Prev Object";
+    pmenu->strings[2] = "X+";
+    pmenu->strings[3] = "X-";
+    pmenu->strings[4] = "Y+";
+    pmenu->strings[5] = "Y-";
+    pmenu->strings[6] = "Z+";
+    pmenu->strings[7] = "Z-";
+    pmenu->strings[8] = "FFFFFFFF"; // is button but use as label only
+    pmenu->strings[9] = "+/- Delta    "; // increase delta to move by
+
+    pmenu->type[0] = MENU_BUTTON;
+    pmenu->type[1] = MENU_BUTTON;
+    pmenu->type[2] = MENU_BUTTON;
+    pmenu->type[3] = MENU_BUTTON;
+    pmenu->type[4] = MENU_BUTTON;
+    pmenu->type[5] = MENU_BUTTON;
+    pmenu->type[6] = MENU_BUTTON;
+    pmenu->type[7] = MENU_BUTTON;
+    pmenu->type[8] = MENU_BUTTON;
+    pmenu->type[9] = MENU_VALUE_BYTE;
+
+    // set pvalue 0 to glover pointer
+    pmenu->pvalue[0] = GLOVER_ACTOR;
+    pmenu->pvalue[9] = &move_value;
+    move_value = 1;
+
+    pmenu->pactions = &move_object_select;
+    pmenu->pupdate = &move_object_update;
 }
 
 void main_menu_select(menudef *pmenu) {
@@ -118,6 +157,9 @@ void main_menu_select(menudef *pmenu) {
             break;
         case 13:
             clear_all_watch(pmenu->pmemwatch);
+            break;
+        case 14:
+            init_move_menu(pmenu);
             break;
         default:
             pmenu->flags = 0x00;
@@ -199,6 +241,51 @@ void glover_menu_update(menudef *pmenu) {
     } else {
         pmenu->strings[1] = "Enable Infinite Lives";
     }
+}
+
+void move_object_select(menudef *pmenu) {
+    // get actor
+    glover_actor *pactor = (glover_actor*)pmenu->pvalue[0];
+    BYTE_T *delta = (BYTE_T*)pmenu->pvalue[9];
+
+    switch (pmenu->cursor) {
+        case 0:
+            pmenu->pvalue[0] = pactor->pnext;
+            break;
+        case 1:
+            pmenu->pvalue[0] = pactor->pprev;
+            break;
+        case 2:
+            pactor->xpos += *delta;
+            break;
+        case 3:
+            pactor->xpos -= *delta;
+            break;
+        case 4:
+            pactor->ypos += *delta;
+            break;
+        case 5:
+            pactor->ypos -= *delta;
+            break;
+        case 6:
+            pactor->zpos += *delta;
+            break;
+        case 7:
+            pactor->zpos -= *delta;
+            break;
+        case 8:
+            break;
+        default:
+            init_default_menu(pmenu);
+            break;
+    }
+}
+
+void move_object_update(menudef *pmenu) {
+    // update label
+    to_hexstr((WORD_T)pmenu->pvalue[0], pmenu->strings[8], 4);
+    BYTE_T *delta = (BYTE_T*)pmenu->pvalue[9];
+    to_hexstr((WORD_T)*delta, pmenu->strings[9]+gstrlen("+/- Delta "), 1);
 }
 
 void render_menu(menudef *pmenu) {
