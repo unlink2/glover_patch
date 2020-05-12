@@ -79,7 +79,7 @@ void init_glover_menu(menudef *pmenu) {
 BYTE_T move_value;
 
 void init_move_menu(menudef *pmenu) {
-    pmenu->size = 10;
+    pmenu->size = 11;
     pmenu->cursor = 0;
     pmenu->strings[0] = "Next Object";
     pmenu->strings[1] = "Prev Object";
@@ -91,6 +91,7 @@ void init_move_menu(menudef *pmenu) {
     pmenu->strings[7] = "Z-";
     pmenu->strings[8] = "FFFFFFFF"; // is button but use as label only
     pmenu->strings[9] = "+/- Delta    "; // increase delta to move by
+    pmenu->strings[10] = "Show/Hide";
 
     pmenu->type[0] = MENU_BUTTON;
     pmenu->type[1] = MENU_BUTTON;
@@ -102,6 +103,7 @@ void init_move_menu(menudef *pmenu) {
     pmenu->type[7] = MENU_BUTTON;
     pmenu->type[8] = MENU_BUTTON;
     pmenu->type[9] = MENU_VALUE_BYTE;
+    pmenu->type[10] = MENU_BUTTON;
 
     // set pvalue 0 to glover pointer
     pmenu->pvalue[0] = GLOVER_ACTOR;
@@ -247,6 +249,8 @@ void move_object_select(menudef *pmenu) {
     // get actor
     glover_actor *pactor = (glover_actor*)pmenu->pvalue[0];
     BYTE_T *delta = (BYTE_T*)pmenu->pvalue[9];
+    get_ptr(glover_actor, pglover, GLOVER_ACTOR, 1);
+    get_ptr(camera_t, pcamera, CAMERA_ACTOR, 1);
 
     switch (pmenu->cursor) {
         case 0:
@@ -274,7 +278,22 @@ void move_object_select(menudef *pmenu) {
             pactor->zpos -= *delta;
             break;
         case 8:
+            // move glover to object
+            pglover->xpos = pactor->xpos;
+            pglover->ypos = pactor->ypos - 10.0f; // so we dont clip
+            pglover->zpos = pactor->zpos;
+            pcamera->xpos = pactor->xpos;
+            pcamera->ypos = pactor->ypos;
+            pcamera->zpos = pactor->zpos;
             break;
+        case 10: {
+            // toggle rendering
+            if (pactor->visible_flag) {
+                pactor->visible_flag = 0;
+            } else {
+                pactor->visible_flag = 64;
+            }
+            break; }
         default:
             init_default_menu(pmenu);
             break;
