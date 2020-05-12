@@ -102,5 +102,12 @@ typedef struct glover_actor {
     u32 *unknown_ptr_4;
 } glover_actor;
 
+typedef struct camera_t {
+    BYTE_T buffer1[52];
+    float xpos;
+    float ypos;
+    float zpos;
+    BYTE_T buffer2[416];
+} camera_t;
 
 #endif
