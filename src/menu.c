@@ -53,8 +53,10 @@ void init_default_menu(menudef *pmenu) {
     pmenu->pupdate = &main_menu_update;
 }
 
+u8 cheat_num = 0;
+
 void init_glover_menu(menudef *pmenu) {
-    pmenu->size = 7;
+    pmenu->size = 8;
     pmenu->cursor = 0;
     pmenu->strings[0] = "Toggle Infinite Lives";
     pmenu->strings[1] = "Toggle Infinite Health";
@@ -63,6 +65,7 @@ void init_glover_menu(menudef *pmenu) {
     pmenu->strings[4] = "Summon Ball";
     pmenu->strings[5] = "Toggle Infinite Jump";
     pmenu->strings[6] = "Toggle Space CS Skip";
+    pmenu->strings[7] = "Activate cheat:      ";
 
     pmenu->type[0] = MENU_BUTTON;
     pmenu->type[1] = MENU_BUTTON;
@@ -71,6 +74,9 @@ void init_glover_menu(menudef *pmenu) {
     pmenu->type[4] = MENU_BUTTON;
     pmenu->type[5] = MENU_BUTTON;
     pmenu->type[6] = MENU_BUTTON;
+    pmenu->type[7] = MENU_VALUE_BYTE;
+
+    pmenu->pvalue[7] = &cheat_num;
 
     pmenu->pactions = &glover_menu_select;
     pmenu->pupdate = &glover_menu_update;
@@ -226,6 +232,11 @@ void glover_menu_select(menudef *pmenu) {
         case 6:
             pmenu->pgpatch->cutscene_skip = !pmenu->pgpatch->cutscene_skip;
             break;
+        case 7: {
+            void (*trigger_cheat)(int, int, int) = TRIGGER_CHEAT;
+            trigger_cheat((int)(*(u8*)(pmenu->pvalue[7])), 1, 8); // TODO what do other inputs do?
+            break;
+                }
         default:
             init_default_menu(pmenu);
             break;
@@ -243,6 +254,9 @@ void glover_menu_update(menudef *pmenu) {
     } else {
         pmenu->strings[1] = "Enable Infinite Lives";
     }
+    // cheat select menu
+    BYTE_T *cheatnum = (BYTE_T*)pmenu->pvalue[7];
+    to_hexstr((WORD_T)*cheatnum, pmenu->strings[7]+gstrlen("Activate Cheat: "), 1);
 }
 
 void move_object_select(menudef *pmenu) {
