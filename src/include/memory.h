@@ -104,6 +104,7 @@ extern WORD_T *LAST_INPUT_2;
 
 #define CAMERA_MATRIX (WORD_T *)0x80206300
 
+#define TRIGGER_CHEAT (void (*)(int, int, int))0x801BB9AC // function(cheat_number, 1, 8) ??
 
 void init_mem();
 
