@@ -13,6 +13,7 @@ typedef struct gpatch_t {
     u32 frame_advance;
     u8 menu_toggle; // TODO this is a hack to prevent a crash
     BOOLEAN cutscene_skip;
+    BOOLEAN lockrng;
 } gpatch_t;
 
 extern gpatch_t gpatch;

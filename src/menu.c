@@ -25,7 +25,7 @@ void init_default_menu(menudef *pmenu) {
     pmenu->strings[7] = "Level Select";
     pmenu->strings[8] = "Toggle Collision";
     pmenu->strings[9] = "Fog";
-    pmenu->strings[10] = "Glover...";
+    pmenu->strings[10] = "Other...";
     pmenu->strings[11] = "FPS:            ";
     pmenu->strings[12] = "Init ED...";
     pmenu->strings[13] = "Clear watch...";
@@ -56,7 +56,7 @@ void init_default_menu(menudef *pmenu) {
 u8 cheat_num = 0;
 
 void init_glover_menu(menudef *pmenu) {
-    pmenu->size = 8;
+    pmenu->size = 9;
     pmenu->cursor = 0;
     pmenu->strings[0] = "Toggle Infinite Lives";
     pmenu->strings[1] = "Toggle Infinite Health";
@@ -66,6 +66,7 @@ void init_glover_menu(menudef *pmenu) {
     pmenu->strings[5] = "Toggle Infinite Jump";
     pmenu->strings[6] = "Toggle Space CS Skip";
     pmenu->strings[7] = "Activate cheat:      ";
+    pmenu->strings[8] = "Lock RNG (may crash)";
 
     pmenu->type[0] = MENU_BUTTON;
     pmenu->type[1] = MENU_BUTTON;
@@ -75,6 +76,7 @@ void init_glover_menu(menudef *pmenu) {
     pmenu->type[5] = MENU_BUTTON;
     pmenu->type[6] = MENU_BUTTON;
     pmenu->type[7] = MENU_VALUE_BYTE;
+    pmenu->type[8] = MENU_BUTTON;
 
     pmenu->pvalue[7] = &cheat_num;
 
@@ -235,8 +237,22 @@ void glover_menu_select(menudef *pmenu) {
         case 7: {
             void (*trigger_cheat)(int, int, int) = TRIGGER_CHEAT;
             trigger_cheat((int)(*(u8*)(pmenu->pvalue[7])), 1, 8); // TODO what do other inputs do?
-            break;
-                }
+            break; }
+        case 8: {
+            pmenu->pgpatch->lockrng = !pmenu->pgpatch->lockrng;
+
+            // start of rng function
+            get_ptr(u32, rngval, RNG_FUNC, 1);
+            if (pmenu->pgpatch->lockrng) {
+                pmenu->strings[8] = "Unlock RNG";
+                rngval[0] = 0x03E00008; // jr ra nop
+                rngval[1] = 0x00;
+            } else {
+                pmenu->strings[8] = "Lock RNG";
+                rngval[0] = 0x14800003; // original code
+                rngval[1] = 0x27BDFFF8;
+            }
+            break; }
         default:
             init_default_menu(pmenu);
             break;

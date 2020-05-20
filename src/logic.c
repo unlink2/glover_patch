@@ -54,6 +54,7 @@ void logic() {
         }
     }
 
+
     // only trigger this code if start is held
     if (read_button(START_INPUT, CONTROLLER_1)) {
         if (read_button(A_INPUT, CONTROLLER_1)) {
