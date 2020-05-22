@@ -55,6 +55,15 @@ void gmemset(BYTE_T *ptr, unsigned char value, unsigned int size) {
     }
 }
 
+void gstrcpy(char *dst, char *src) {
+    int i = 0;
+    while (src[i] != '\0') {
+        dst[i] = src[i];
+        i++;
+    }
+    dst[i] = '\0';
+}
+
 void gassert(int expression) {
 #ifndef NDEBUG
     if (!expression) {
