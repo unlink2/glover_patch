@@ -8,6 +8,10 @@
 #include "include/utility.h"
 #include "include/actor.h"
 
+
+#define CHEATS_LEN 26
+char *cheat_names[CHEATS_LEN];
+
 menudef pmenu;
 
 void init_default_menu(menudef *pmenu) {
@@ -65,7 +69,7 @@ void init_glover_menu(menudef *pmenu) {
     pmenu->strings[4] = "Summon Ball";
     pmenu->strings[5] = "Toggle Infinite Jump";
     pmenu->strings[6] = "Toggle Space CS Skip";
-    pmenu->strings[7] = "Activate cheat:      ";
+    pmenu->strings[7] = "Cheat                  ";
     pmenu->strings[8] = "Lock RNG (may crash)";
 
     pmenu->type[0] = MENU_BUTTON;
@@ -82,6 +86,35 @@ void init_glover_menu(menudef *pmenu) {
 
     pmenu->pactions = &glover_menu_select;
     pmenu->pupdate = &glover_menu_update;
+
+    // init cheat names
+    cheat_names[0] = "Locate Garibs";
+    cheat_names[1] = "Call Ball";
+    cheat_names[2] = "Checkpoints";
+    cheat_names[3] = "Infinite Lives";
+    cheat_names[4] = "Powerball";
+    cheat_names[5] = "05";
+    cheat_names[6] = "Infinite Energy";
+    cheat_names[7] = "Enemy Ball";
+    cheat_names[8] = "Low Gravity";
+    cheat_names[9] = "Big Ball";
+    cheat_names[10] = "Fish Eye";
+    cheat_names[11] = "Rotate R";
+    cheat_names[12] = "Rotate L";
+    cheat_names[13] = "Mad";
+    cheat_names[14] = "Death";
+    cheat_names[15] = "Frog";
+    cheat_names[16] = "Hercules";
+    cheat_names[17] = "Speedup";
+    cheat_names[18] = "12";
+    cheat_names[19] = "13";
+    cheat_names[20] = "Froggy";
+    cheat_names[21] = "Secret";
+    cheat_names[22] = "All Cheats";
+    cheat_names[23] = "Level Select";
+    cheat_names[24] = "Open Portals";
+    cheat_names[25] = "Open Levels";
+
 }
 
 BYTE_T move_value;
@@ -271,8 +304,15 @@ void glover_menu_update(menudef *pmenu) {
         pmenu->strings[1] = "Enable Infinite Lives";
     }
     // cheat select menu
+
     BYTE_T *cheatnum = (BYTE_T*)pmenu->pvalue[7];
-    to_hexstr((WORD_T)*cheatnum, pmenu->strings[7]+gstrlen("Activate Cheat: "), 1);
+    // if it has a name add the name otherwise just add the number
+    if (*cheatnum < CHEATS_LEN) {
+        // to_hexstr((WORD_T)cheat_names, pmenu->strings[7]+gstrlen("Cheat "), 4);
+        gstrcpy(pmenu->strings[7]+gstrlen("Cheat "), cheat_names[*cheatnum]);
+    } else {
+        to_hexstr((WORD_T)*cheatnum, pmenu->strings[7]+gstrlen("Cheat "), 1);
+    }
 }
 
 void move_object_select(menudef *pmenu) {

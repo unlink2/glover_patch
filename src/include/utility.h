@@ -30,6 +30,8 @@ void my_free(void *);
 unsigned int gstrlen(char *);
 int gstrncmp(char *, char *, unsigned int);
 
+void gstrcpy(char *, char *);
+
 void gmemcpy(BYTE_T *, BYTE_T *, unsigned int);
 void gmemset(BYTE_T *, unsigned char, unsigned int);
 

@@ -24,6 +24,14 @@
  * in a limited capacity
  */
 
+static void test_gstrcpy(void **state) {
+    char dest[24] = "Not same";
+    char *src = "Hello World!";
+    assert_string_not_equal(dest, src);
+    gstrcpy(dest, src);
+    assert_string_equal(dest, src);
+}
+
 static void test_gmemcpy(void **state) {
     BYTE_T *t1 = my_malloc(15);
     BYTE_T *t2 = my_malloc(15);
@@ -295,6 +303,7 @@ static void test_parse_arg(void **state) {
 
 int main() {
     const struct CMUnitTest tests[] = {
+        cmocka_unit_test(test_gstrcpy),
         cmocka_unit_test(test_gmemcpy),
         cmocka_unit_test(test_gmemset),
         cmocka_unit_test(test_gstrlen),
