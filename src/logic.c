@@ -282,6 +282,39 @@ void clone_actors() {
     *pcloneptr = *prng;
 }
 
+void clone_obj_bank() {
+    // actor value here is also the actor's next ptr
+    // actor heap loops on itself
+    // if we're back at the start we are done
+    get_ptr(obj_bank_t, pobj, OBJ_BANK, 1);
+    get_ptr(WORD_T, pcloneptr, ACTOR_HEAP_CLONE, 1); // current clone address
+
+    do {
+        pcloneptr = clone_additional((WORD_T*)pobj->pdata, pcloneptr, pobj->size);
+
+        pobj++; // next value
+    } while (pobj->name[0] != '\0');
+    // pcloneptr += 1;
+    // clone camera
+    get_ptr(WORD_T, pcam, CAMERA_ACTOR, CAMERA_ACTOR_SIZE);
+    pcloneptr = clone_additional(pcam, pcloneptr, CAMERA_ACTOR_SIZE);
+    /**pcloneptr = (WORD_T)pcam;
+    pcloneptr += 1; // next word
+    *pcloneptr = CAMERA_ACTOR_SIZE;
+    pcloneptr += 1;
+    gmemcpy((BYTE_T*)pcam, (BYTE_T*)pcloneptr, CAMERA_ACTOR_SIZE);
+    pcloneptr += CAMERA_ACTOR_SIZE/4;*/
+
+    // finish list with 00
+    // pcloneptr += 1;
+    *pcloneptr = 0x00;
+
+    get_ptr(WORD_T, prng, RNG_VALUE, 1)
+    // store rng value
+    pcloneptr += 1;
+    *pcloneptr = *prng;
+}
+
 void restore_actors() {
     WORD_T *pactor = NULL;
     get_ptr(WORD_T, pcloneptr, ACTOR_HEAP_CLONE, 1);  // current clone address

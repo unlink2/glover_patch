@@ -54,7 +54,8 @@ WORD_T* clone_additional(WORD_T *, WORD_T *, WORD_T);
 // each actor is ACTOR_SIZE bytes
 // the backup heap is locates at the start of exp pack memory
 void clone_actors();
-
+// same as clone_actors but just dumps everything in obj_bank
+void clone_obj_bank();
 
 // reverses actor backup
 // uses A0 as actor heap pointer
