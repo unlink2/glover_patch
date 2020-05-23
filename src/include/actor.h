@@ -11,6 +11,12 @@
  */
 
 
+typedef struct obj_bank_t {
+    char name[12]; // name of object in bank, if first byte is 0 end of bank
+    BYTE_T *pdata; // ptr to data of object
+    u32 size; // size of data
+} obj_bank_t;
+
 // struct from colwav.py
 // TODO verify. This has not been verified to be correct yet
 // 78 bytes

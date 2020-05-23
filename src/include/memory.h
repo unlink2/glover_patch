@@ -107,6 +107,8 @@ extern WORD_T *LAST_INPUT_2;
 
 #define TRIGGER_CHEAT (void (*)(int, int, int))0x801BB9AC // function(cheat_number, 1, 8) ??
 
+#define OBJ_BANK (WORD_T*)0x8025D698
+
 void init_mem();
 
 #endif
