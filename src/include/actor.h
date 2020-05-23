@@ -23,11 +23,13 @@ typedef struct collision_polygon {
 } collision_polygon;
 
 // 60 bytes
+// PAct_Anim.t
 typedef struct actor_properties {
     u8 padding[0x60];
 } actor_properties;
 
-// 7C bytes
+// 190 bytes
+// PActBeh18.p
 typedef struct actor_collision {
     collision_polygon *pcollision_floor; // TODO make struct
     collision_polygon *pcollision_wall;
@@ -43,21 +45,25 @@ typedef struct actor_collision {
     float hitbox_real; // hitbox real approaches hitbox_size slowly
     float hitbox_size;
     u32 unknown_1;
+    u8 unknown_2[0x114];
 } actor_collision;
 
-// 50 bytes
+// 50 bytes (Verified in Object Bank)
+// ACTOR_COL
 typedef struct model_properties {
     u8 padding[0x50];
 } model_properties;
 
 // TODO needs better name
 // changes how animations play
-// 50 bytes 
+// 50 bytes
+// ObjBank.mp
 typedef struct model_other {
     u8 padding[0x50];
 } model_other;
 
 // size == F0
+// LAND_ACTOR
 typedef struct glover_actor {
     struct glover_actor *pnext;
     struct glover_actor *pprev;
@@ -91,11 +97,11 @@ typedef struct glover_actor {
     u32 scalez;
 
     u32 *pmodel_data; // TODO create struct for this
-    actor_properties *pproperties; // TODO find better name
-    model_other *pother;
-    u32 *unknown_ptr_2;
-    actor_collision *pcollision;
-    model_properties *pmodelproperties;
+    actor_properties *pproperties; // PAct_Anim.t
+    model_other *pother; // ObjBank.mp
+    u32 *unknown_ptr_2; // Act_Shad.t (40 bytes)
+    actor_collision *pcollision; // PActBeh18.p
+    model_properties *pmodelproperties; // ACTOR_COL
 
     u32 unknown_7[2];
     u32 *unknown_ptr_3; // 40 bytes size?
