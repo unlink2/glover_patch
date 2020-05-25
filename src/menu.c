@@ -390,6 +390,13 @@ void move_object_update(menudef *pmenu) {
     to_hexstr((WORD_T)pmenu->pvalue[0], pmenu->strings[8], 4);
     BYTE_T *delta = (BYTE_T*)pmenu->pvalue[9];
     to_hexstr((WORD_T)*delta, pmenu->strings[9]+gstrlen("+/- Delta "), 1);
+    // get current actor
+    glover_actor *pactor = (glover_actor*)pmenu->pvalue[0];
+    if (pactor->visible_flag) {
+        pmenu->strings[10] = "Hide Actor";
+    } else {
+        pmenu->strings[10] = "Show Actor";
+    }
 }
 
 void render_menu(menudef *pmenu) {
