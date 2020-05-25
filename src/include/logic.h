@@ -64,4 +64,6 @@ void restore_actors();
 void toggle_collision();
 void toggle_fog();
 
+void toggle_show_objects();
+
 #endif 

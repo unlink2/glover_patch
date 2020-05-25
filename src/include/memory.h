@@ -109,6 +109,8 @@ extern WORD_T *LAST_INPUT_2;
 
 #define OBJ_BANK (WORD_T*)0x8025D698
 
+#define LEVEL_SELECT (BYTE_T*)0x8011E653
+
 void init_mem();
 
 #endif

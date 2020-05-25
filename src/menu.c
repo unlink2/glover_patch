@@ -120,7 +120,7 @@ void init_glover_menu(menudef *pmenu) {
 BYTE_T move_value;
 
 void init_move_menu(menudef *pmenu) {
-    pmenu->size = 13;
+    pmenu->size = 14;
     pmenu->cursor = 0;
     pmenu->strings[0] = "Next Object";
     pmenu->strings[1] = "Prev Object";
@@ -135,6 +135,7 @@ void init_move_menu(menudef *pmenu) {
     pmenu->strings[10] = "Show/Hide";
     pmenu->strings[11] = "Save Object Bank";
     pmenu->strings[12] = "Load Object Bank";
+    pmenu->strings[13] = "Show/Hide all objects";
 
     pmenu->type[0] = MENU_BUTTON;
     pmenu->type[1] = MENU_BUTTON;
@@ -149,6 +150,7 @@ void init_move_menu(menudef *pmenu) {
     pmenu->type[10] = MENU_BUTTON;
     pmenu->type[11] = MENU_BUTTON;
     pmenu->type[12] = MENU_BUTTON;
+    pmenu->type[13] = MENU_BUTTON;
 
     // set pvalue 0 to glover pointer
     pmenu->pvalue[0] = GLOVER_ACTOR;
@@ -373,6 +375,9 @@ void move_object_select(menudef *pmenu) {
             break;
         case 12:
             restore_actors();
+            break;
+        case 13:
+            toggle_show_objects();
             break;
         default:
             init_default_menu(pmenu);
