@@ -54,6 +54,10 @@ void init_mem() {
     gmemset((BYTE_T*)&pkb, 0x00, sizeof(keyboard));
     init_keyboard(&pkb);
 
+    // extend level select
+    get_ptr(BYTE_T, ext_level, LEVEL_SELECT, 1);
+    *ext_level = 0x30;
+
     // init some data
     // TODO
     /*get_ptr(HWORD_T, pfont, FONT8X8, 0x4000);
