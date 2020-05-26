@@ -106,6 +106,9 @@ extern WORD_T *LAST_INPUT_2;
 #define CAMERA_MATRIX (WORD_T *)0x80206300
 
 #define TRIGGER_CHEAT (void (*)(int, int, int))0x801BB9AC // function(cheat_number, 1, 8) ??
+#define LOAD_MAP (void (*)(int))0x8011FF40 // function(map_id)
+#define FADE (void (*))0x8014D4D0 // function()
+#define INIT_LOAD (void (*)(int))0x8011CD50 // function(1) ??
 
 #define OBJ_BANK (WORD_T*)0x8025D698
 

@@ -58,9 +58,10 @@ void init_default_menu(menudef *pmenu) {
 }
 
 u8 cheat_num = 0;
+u8 map_id = 0;
 
 void init_glover_menu(menudef *pmenu) {
-    pmenu->size = 9;
+    pmenu->size = 10;
     pmenu->cursor = 0;
     pmenu->strings[0] = "Toggle Infinite Lives";
     pmenu->strings[1] = "Toggle Infinite Health";
@@ -71,6 +72,7 @@ void init_glover_menu(menudef *pmenu) {
     pmenu->strings[6] = "Toggle Space CS Skip";
     pmenu->strings[7] = "Cheat                  ";
     pmenu->strings[8] = "Lock RNG (may crash)";
+    pmenu->strings[9] = "Load Map         ";
 
     pmenu->type[0] = MENU_BUTTON;
     pmenu->type[1] = MENU_BUTTON;
@@ -81,8 +83,10 @@ void init_glover_menu(menudef *pmenu) {
     pmenu->type[6] = MENU_BUTTON;
     pmenu->type[7] = MENU_VALUE_BYTE;
     pmenu->type[8] = MENU_BUTTON;
+    pmenu->type[9] = MENU_VALUE_BYTE;
 
     pmenu->pvalue[7] = &cheat_num;
+    pmenu->pvalue[9] = &map_id;
 
     pmenu->pactions = &glover_menu_select;
     pmenu->pupdate = &glover_menu_update;
@@ -292,6 +296,14 @@ void glover_menu_select(menudef *pmenu) {
                 rngval[1] = 0x27BDFFF8;
             }
             break; }
+        case 9: {
+            void (*load_map)(int) = LOAD_MAP;
+            // void (*fade)() = FADE;
+            void (*init_load)(int) = INIT_LOAD;
+            //fade();
+            init_load(1);
+            load_map((int)(*(u8*)(pmenu->pvalue[9])));
+            break; }
         default:
             init_default_menu(pmenu);
             break;
@@ -319,6 +331,9 @@ void glover_menu_update(menudef *pmenu) {
     } else {
         to_hexstr((WORD_T)*cheatnum, pmenu->strings[7]+gstrlen("Cheat "), 1);
     }
+
+    // map id to string
+    to_hexstr((WORD_T)map_id, pmenu->strings[9]+gstrlen("Load Map "), 1);
 }
 
 void move_object_select(menudef *pmenu) {
