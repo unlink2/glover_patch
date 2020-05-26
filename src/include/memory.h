@@ -114,6 +114,8 @@ extern WORD_T *LAST_INPUT_2;
 
 #define LEVEL_SELECT (BYTE_T*)0x8011E653
 
+#define FADE_TIMER (HWORD_T*)0x801E753C
+
 void init_mem();
 
 #endif
