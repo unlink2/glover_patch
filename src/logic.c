@@ -353,12 +353,12 @@ void toggle_fog() {
  void toggle_show_objects() {
     get_ptr(glover_actor, pactor, GLOVER_ACTOR, 1);
     BOOLEAN was_shown = pactor->visible_flag;
-    while (pactor->pnext != (glover_actor*)GLOVER_ACTOR) {
+    do {
         if (was_shown) {
             pactor->visible_flag = 0x00;
         } else {
             pactor->visible_flag = 0x64;
         }
         pactor = pactor->pnext;
-    }
+    } while (pactor != (glover_actor*)GLOVER_ACTOR);
  }
