@@ -397,6 +397,15 @@ void move_object_update(menudef *pmenu) {
     } else {
         pmenu->strings[10] = "Show Actor";
     }
+
+    // easy show/hide
+    if (read_button(R_INPUT, CONTROLLER_2)
+            && !read_button(R_INPUT, LAST_INPUT_2)) {
+        u32 select = pmenu->cursor; // store old cursor
+        pmenu->cursor = 10; // toggle rendering
+        move_object_select(pmenu);
+        pmenu->cursor = select; // restore
+    }
 }
 
 void render_menu(menudef *pmenu) {
