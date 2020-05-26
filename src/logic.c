@@ -10,6 +10,8 @@
 float gpos_bac[3];
 // camera backup
 WORD_T gcam_bac[CAMERA_ACTOR_SIZE];
+// map stored
+u8 lastmap;
 
 gpatch_t gpatch;
 
@@ -51,6 +53,18 @@ void logic() {
         get_ptr(BYTE_T, gm, GAME_STATE, 1);
         if (*gm != 2) {
             *css = 1; // always set to 1
+        }
+    }
+
+    // see if restore was interrupted
+    if (gpatch.resume_restore) {
+        get_ptr(u8, current_map, CURRENT_MAP, 1);
+        get_ptr(u16, fade_timer, FADE_TIMER, 1);
+        if (lastmap == *current_map && *fade_timer == 0) {
+            if (gpatch.resume_timer++ > 60) {
+                restore_actors();
+                gpatch.resume_restore = FALSE;
+            }
         }
     }
 
@@ -229,6 +243,10 @@ WORD_T* clone_additional(WORD_T *src, WORD_T *pcloneptr, WORD_T size) {
 }
 
 void clone_actors() {
+    // load current map and store it
+    get_ptr(u8, current_map, CURRENT_MAP, 1);
+    lastmap = *current_map;
+
     // actor value here is also the actor's next ptr
     // actor heap loops on itself
     // if we're back at the start we are done
@@ -283,6 +301,10 @@ void clone_actors() {
 }
 
 void clone_obj_bank() {
+    // load current map and store it
+    get_ptr(u8, current_map, CURRENT_MAP, 1);
+    lastmap = *current_map;
+
     // actor value here is also the actor's next ptr
     // actor heap loops on itself
     // if we're back at the start we are done
@@ -316,6 +338,22 @@ void clone_obj_bank() {
 }
 
 void restore_actors() {
+    // load current map and store it
+    get_ptr(u8, current_map, CURRENT_MAP, 1);
+    if (lastmap != *current_map) {
+        gpatch.resume_restore = TRUE;
+        gpatch.resume_timer = 0;
+        // force load
+        void (*load_map)(int) = LOAD_MAP;
+        // void (*fade)() = FADE;
+        void (*init_load)(int) = INIT_LOAD;
+        //fade();
+        init_load(1);
+        load_map(lastmap);
+        return;
+    }
+    gpatch.resume_restore = FALSE;
+
     WORD_T *pactor = NULL;
     get_ptr(WORD_T, pcloneptr, ACTOR_HEAP_CLONE, 1);  // current clone address
 
