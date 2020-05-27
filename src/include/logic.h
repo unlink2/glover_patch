@@ -5,6 +5,7 @@
 #include "utility.h"
 #include "savefile.h"
 
+// max slots should have all bits set for &ing
 #define MAX_RESTORE_SLOTS 3
 
 typedef struct gpatch_t {

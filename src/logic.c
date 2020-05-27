@@ -10,8 +10,8 @@
 float gpos_bac[3];
 // camera backup
 WORD_T gcam_bac[CAMERA_ACTOR_SIZE];
-// map stored
-u8 lastmap[MAX_RESTORE_SLOTS+1];
+// map stored +2 for object bank
+u8 lastmap[MAX_RESTORE_SLOTS+2];
 
 gpatch_t gpatch;
 
@@ -307,7 +307,7 @@ void clone_actors(WORD_T *pcloneptr, u16 slot) {
 void clone_obj_bank() {
     // load current map and store it
     get_ptr(u8, current_map, CURRENT_MAP, 1);
-    lastmap[MAX_RESTORE_SLOTS] = *current_map;
+    lastmap[MAX_RESTORE_SLOTS+1] = *current_map;
 
     // actor value here is also the actor's next ptr
     // actor heap loops on itself
