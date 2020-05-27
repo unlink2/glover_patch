@@ -35,6 +35,7 @@ void init_mem() {
     gpatch.cutscene_skip = FALSE;
     gpatch.lockrng = FALSE;
     gpatch.resume_restore = FALSE;
+    gpatch.restore_slot = 0;
     // zero struct
     gmemset((BYTE_T*)&pmemwatch, 0x00, sizeof(memwatch));
     init_memwatch(&pmemwatch);

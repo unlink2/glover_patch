@@ -23,8 +23,8 @@ void init_default_menu(menudef *pmenu) {
     pmenu->strings[1] = "Memory Monitor ASCII";
     pmenu->strings[2] = "Save Position";
     pmenu->strings[3] = "Load Position";
-    pmenu->strings[4] = "Save Actors";
-    pmenu->strings[5] = "Load Actors";
+    pmenu->strings[4] = "Save Actors Slot           ";
+    pmenu->strings[5] = "Load Actors Slot           ";
     pmenu->strings[6] = "Start Timer";
     pmenu->strings[7] = "Level Select";
     pmenu->strings[8] = "Toggle Collision";
@@ -39,8 +39,8 @@ void init_default_menu(menudef *pmenu) {
     pmenu->type[1] = MENU_BUTTON;
     pmenu->type[2] = MENU_BUTTON;
     pmenu->type[3] = MENU_BUTTON;
-    pmenu->type[4] = MENU_BUTTON;
-    pmenu->type[5] = MENU_BUTTON;
+    pmenu->type[4] = MENU_VALUE_HWORD;
+    pmenu->type[5] = MENU_VALUE_HWORD;
     pmenu->type[6] = MENU_BUTTON;
     pmenu->type[7] = MENU_BUTTON;
     pmenu->type[8] = MENU_BUTTON;
@@ -51,6 +51,8 @@ void init_default_menu(menudef *pmenu) {
     pmenu->type[13] = MENU_BUTTON;
     pmenu->type[14] = MENU_BUTTON;
 
+    pmenu->pvalue[4] = &pmenu->pgpatch->restore_slot;
+    pmenu->pvalue[5] = &pmenu->pgpatch->restore_slot;
     pmenu->pvalue[11] = (void*)FRAME_RATE_1;
 
     pmenu->pactions = &main_menu_select;
@@ -185,10 +187,10 @@ void main_menu_select(menudef *pmenu) {
             restore_glover_pos();
             break;
         case 4:
-            clone_actors();
+            clone_actors(NULL, pmenu->pgpatch->restore_slot);
             break;
         case 5:
-            restore_actors();
+            restore_actors(NULL, pmenu->pgpatch->restore_slot);
             break;
         case 6:
             enable_timer();
@@ -227,6 +229,11 @@ void main_menu_update(menudef *pmenu) {
     HWORD_T *ptr = (HWORD_T*)pmenu->pvalue[11];
     char *str = pmenu->strings[11];
     to_hexstr(*ptr, str+5, 2);
+
+    pmenu->pgpatch->restore_slot = pmenu->pgpatch->restore_slot & MAX_RESTORE_SLOTS;
+    // restore to hex
+    to_hexstr((WORD_T)pmenu->pgpatch->restore_slot, pmenu->strings[5]+gstrlen("Load Actors Slot "), 2);
+    to_hexstr((WORD_T)pmenu->pgpatch->restore_slot, pmenu->strings[4]+gstrlen("Save Actors Slot "), 2);
 }
 
 void trigger_al(menudef *pmenu) {
@@ -389,7 +396,7 @@ void move_object_select(menudef *pmenu) {
             clone_obj_bank();
             break;
         case 12:
-            restore_actors();
+            restore_actors(NULL, MAX_RESTORE_SLOTS+1);
             break;
         case 13:
             toggle_show_objects();

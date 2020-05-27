@@ -11,7 +11,7 @@ float gpos_bac[3];
 // camera backup
 WORD_T gcam_bac[CAMERA_ACTOR_SIZE];
 // map stored
-u8 lastmap;
+u8 lastmap[MAX_RESTORE_SLOTS+1];
 
 gpatch_t gpatch;
 
@@ -60,9 +60,9 @@ void logic() {
     if (gpatch.resume_restore) {
         get_ptr(u8, current_map, CURRENT_MAP, 1);
         get_ptr(u16, fade_timer, FADE_TIMER, 1);
-        if (lastmap == *current_map && *fade_timer == 0) {
+        if (lastmap[gpatch.restore_slot] == *current_map && *fade_timer == 0) {
             if (gpatch.resume_timer++ > 60) {
-                restore_actors();
+                restore_actors(NULL, gpatch.restore_slot);
                 gpatch.resume_restore = FALSE;
             }
         }
@@ -88,13 +88,13 @@ void logic() {
 
         if (read_button(CU_INPUT, CONTROLLER_1)
                 && !read_button(CU_INPUT, LAST_INPUT_1)) {
-            clone_actors();
+            clone_actors(NULL, gpatch.restore_slot);
             // evd_write_msg(0x21);
         }
 
         if (read_button(CD_INPUT, CONTROLLER_1)
                 && !read_button(CD_INPUT, LAST_INPUT_1)) {
-            restore_actors();
+            restore_actors(NULL, gpatch.restore_slot);
             // evd_init();
         }
     }
@@ -242,16 +242,20 @@ WORD_T* clone_additional(WORD_T *src, WORD_T *pcloneptr, WORD_T size) {
     return pcloneptr;
 }
 
-void clone_actors() {
+void clone_actors(WORD_T *pcloneptr, u16 slot) {
     // load current map and store it
     get_ptr(u8, current_map, CURRENT_MAP, 1);
-    lastmap = *current_map;
+    lastmap[slot] = *current_map;
 
     // actor value here is also the actor's next ptr
     // actor heap loops on itself
     // if we're back at the start we are done
     get_ptr(glover_actor, pactor, ACTOR_HEAP_START, 1);
-    get_ptr(WORD_T, pcloneptr, ACTOR_HEAP_CLONE, 1); // current clone address
+
+    if (!pcloneptr) {
+        pcloneptr = ACTOR_HEAP_CLONE+ACTOR_HEAP_SIZE*slot;;
+    }
+    // get_ptr(WORD_T, pcloneptr, ACTOR_HEAP_CLONE, 1); // current clone address
 
     do {
         *pcloneptr = (WORD_T)pactor;
@@ -303,13 +307,13 @@ void clone_actors() {
 void clone_obj_bank() {
     // load current map and store it
     get_ptr(u8, current_map, CURRENT_MAP, 1);
-    lastmap = *current_map;
+    lastmap[MAX_RESTORE_SLOTS] = *current_map;
 
     // actor value here is also the actor's next ptr
     // actor heap loops on itself
     // if we're back at the start we are done
     get_ptr(obj_bank_t, pobj, OBJ_BANK, 1);
-    get_ptr(WORD_T, pcloneptr, ACTOR_HEAP_CLONE, 1); // current clone address
+    get_ptr(WORD_T, pcloneptr, ACTOR_HEAP_CLONE+ACTOR_HEAP_SIZE*(MAX_RESTORE_SLOTS+1), 1); // current clone address
 
     do {
         pcloneptr = clone_additional((WORD_T*)pobj->pdata, pcloneptr, pobj->size);
@@ -337,10 +341,10 @@ void clone_obj_bank() {
     *pcloneptr = *prng;
 }
 
-void restore_actors() {
+void restore_actors(WORD_T *pcloneptr, u16 slot) {
     // load current map and store it
     get_ptr(u8, current_map, CURRENT_MAP, 1);
-    if (lastmap != *current_map) {
+    if (lastmap[slot] != *current_map && slot <= MAX_RESTORE_SLOTS) {
         gpatch.resume_restore = TRUE;
         gpatch.resume_timer = 0;
         // force load
@@ -349,13 +353,16 @@ void restore_actors() {
         void (*init_load)(int) = INIT_LOAD;
         //fade();
         init_load(1);
-        load_map(lastmap);
+        load_map(lastmap[slot]);
         return;
     }
     gpatch.resume_restore = FALSE;
 
     WORD_T *pactor = NULL;
-    get_ptr(WORD_T, pcloneptr, ACTOR_HEAP_CLONE, 1);  // current clone address
+    if (!pcloneptr) {
+        pcloneptr = ACTOR_HEAP_CLONE+ACTOR_HEAP_SIZE*slot;
+    }
+    // get_ptr(WORD_T, pcloneptr, ACTOR_HEAP_CLONE, 1);  // current clone address
 
     do {
         pactor = (WORD_T*)*pcloneptr;
