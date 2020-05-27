@@ -23,8 +23,8 @@ void init_default_menu(menudef *pmenu) {
     pmenu->strings[1] = "Memory Monitor ASCII";
     pmenu->strings[2] = "Save Position";
     pmenu->strings[3] = "Load Position";
-    pmenu->strings[4] = "Save Actors Slot           ";
-    pmenu->strings[5] = "Load Actors Slot           ";
+    pmenu->strings[4] = "Save Actors     ";
+    pmenu->strings[5] = "Load Actors     ";
     pmenu->strings[6] = "Start Timer";
     pmenu->strings[7] = "Level Select";
     pmenu->strings[8] = "Toggle Collision";
@@ -232,8 +232,8 @@ void main_menu_update(menudef *pmenu) {
 
     pmenu->pgpatch->restore_slot = pmenu->pgpatch->restore_slot & MAX_RESTORE_SLOTS;
     // restore to hex
-    to_hexstr((WORD_T)pmenu->pgpatch->restore_slot, pmenu->strings[5]+gstrlen("Load Actors Slot "), 2);
-    to_hexstr((WORD_T)pmenu->pgpatch->restore_slot, pmenu->strings[4]+gstrlen("Save Actors Slot "), 2);
+    to_hexstr((WORD_T)pmenu->pgpatch->restore_slot, pmenu->strings[5]+gstrlen("Load Actors "), 1);
+    to_hexstr((WORD_T)pmenu->pgpatch->restore_slot, pmenu->strings[4]+gstrlen("Save Actors "), 1);
 }
 
 void glover_menu_select(menudef *pmenu) {
