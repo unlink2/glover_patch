@@ -5,6 +5,13 @@
 #include "utility.h"
 #include "savefile.h"
 
+/**
+ * Contains functions that manipulate the global state of the game
+ * and update components of the romhack that do not require rendering.
+ *
+ * Also contains a global gpatch object that keeps track of global state
+ */
+
 // max slots should have all bits set for &ing
 #define MAX_RESTORE_SLOTS 3
 
@@ -72,4 +79,10 @@ void toggle_fog();
 
 void toggle_show_objects();
 
-#endif 
+/**
+ * forward definition of menu
+ */
+typedef struct menudef menudef;
+void trigger_al(menudef *);
+
+#endif
