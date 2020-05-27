@@ -395,7 +395,7 @@ void toggle_fog() {
     *pfog ^= 1;
 }
 
- void toggle_show_objects() {
+void toggle_show_objects() {
     get_ptr(glover_actor, pactor, GLOVER_ACTOR, 1);
     BOOLEAN was_shown = pactor->visible_flag;
     do {
@@ -406,4 +406,28 @@ void toggle_fog() {
         }
         pactor = pactor->pnext;
     } while (pactor != (glover_actor*)GLOVER_ACTOR);
- }
+}
+
+
+void trigger_al(menudef *pmenu) {
+    get_ptr(WORD_T, al_inst, 0x801256FC, 1);
+    if (*al_inst == 0x1040001D) {
+        *al_inst = 0x1000001D; // branch always
+
+        // this byte determines which mad to load
+        // based on the current world (801E7533)
+        // 0F == mainmenu
+        // 13 == boss of world
+        // etc
+        get_ptr(BYTE_T, al_value, 0x801E7541, 1);
+        *al_value = 0x13;
+        get_ptr(BYTE_T, game_over, 0x801E7473, 1);
+        *game_over = 1;
+        pmenu->strings[2] = "Restore Game Over Code";
+        get_ptr(WORD_T, lives, 0x80290190, 1);
+        *lives = 0x00-1;
+    } else {
+        pmenu->strings[2] = "Trigger Afterlife";
+        *al_inst = 0x1040001D; // regulat instruction
+    }
+}
