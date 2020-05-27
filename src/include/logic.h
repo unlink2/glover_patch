@@ -5,6 +5,8 @@
 #include "utility.h"
 #include "savefile.h"
 
+#define MAX_RESTORE_SLOTS 3
+
 typedef struct gpatch_t {
     BOOLEAN infinite_hp;
     BOOLEAN infinite_lives;
@@ -16,6 +18,7 @@ typedef struct gpatch_t {
     BOOLEAN lockrng;
     BOOLEAN resume_restore; // was map loaded? resume restore of actors now
     u8 resume_timer; // run up until 60 to delay
+    u16 restore_slot;
 } gpatch_t;
 
 extern gpatch_t gpatch;
@@ -55,13 +58,13 @@ WORD_T* clone_additional(WORD_T *, WORD_T *, WORD_T);
 // uses A1 as the pointer to the next free backup heap location
 // each actor is ACTOR_SIZE bytes
 // the backup heap is locates at the start of exp pack memory
-void clone_actors();
+void clone_actors(WORD_T *, u16 slot);
 // same as clone_actors but just dumps everything in obj_bank
 void clone_obj_bank();
 
 // reverses actor backup
 // uses A0 as actor heap pointer
-void restore_actors();
+void restore_actors(WORD_T *, u16 slot);
 
 void toggle_collision();
 void toggle_fog();

@@ -42,6 +42,8 @@ extern WORD_T *LAST_INPUT_2;
 
 #define ACTOR_HEAP_START (WORD_T*)0x802902D8
 #define ACTOR_HEAP_CLONE (WORD_T*)0x80600000
+#define ACTOR_HEAP_SIZE 0x20000/4 // padding at end of heap clone
+
 #define ACTOR_SIZE 0xF0
 #define RNG_VALUE (WORD_T*)0x801ED3F0
 #define RNG_FUNC (void*)0x80147000
