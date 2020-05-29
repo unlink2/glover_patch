@@ -99,7 +99,7 @@ void init_glover_menu(menudef *pmenu) {
     cheat_names[2] = "Checkpoints";
     cheat_names[3] = "Infinite Lives";
     cheat_names[4] = "Powerball";
-    cheat_names[5] = "05";
+    cheat_names[5] = "Control Ball";
     cheat_names[6] = "Infinite Energy";
     cheat_names[7] = "Enemy Ball";
     cheat_names[8] = "Low Gravity";
@@ -112,8 +112,8 @@ void init_glover_menu(menudef *pmenu) {
     cheat_names[15] = "Frog";
     cheat_names[16] = "Hercules";
     cheat_names[17] = "Speedup";
-    cheat_names[18] = "12";
-    cheat_names[19] = "13";
+    cheat_names[18] = "Boomerang Ball";
+    cheat_names[19] = "Vanishing Ball";
     cheat_names[20] = "Froggy";
     cheat_names[21] = "Secret";
     cheat_names[22] = "All Cheats";
