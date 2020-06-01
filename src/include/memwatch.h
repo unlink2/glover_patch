@@ -25,6 +25,8 @@ typedef struct watch_addr {
     char name[33];
     BOOLEAN enabled;
     BOOLEAN sign;
+    BOOLEAN lock; // if true value will be locked (overwritten once a frame)
+    u32 value; // locked value
 } watch_addr;
 
 

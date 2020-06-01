@@ -373,6 +373,25 @@ void invert_sign(char *response, watch_addr *watch_addrs, arg a) {
     evd_usb_write(response, COMMAND_SIZE); // send back
 }
 
+void set_lock(char *response, watch_addr *watch_addrs, arg a) {
+    if (!a.value) {
+        response[0] = 'E';
+        response[1] = 'R';
+        response[2] = 'R';
+        response[3] = '\0';
+    } else {
+        // set sign of selected watch
+        u32 index = a.value[0]-48; // ascii to index
+        watch_addrs[index].lock = !watch_addrs[index].lock;
+        gmemcpy(watch_addrs[index].paddr,
+                (BYTE_T*)&watch_addrs[index].value, sizeof(u32));
+        response[0] = 'O';
+        response[1] = 'K';
+        response[2] = '\0';
+    }
+    evd_usb_write(response, COMMAND_SIZE); // send back
+}
+
 void dump(arg a, char *response) {
     u8 *paddr = (u8*)from_hexstr((char*)a.value, 8);
     char *pstr = response;
@@ -540,6 +559,9 @@ void evd_serial_terminal() {
     } else if (is_arg(data, "sign ")) {
         a = parse_arg(data, "sign ");
         invert_sign(response, pmemwatch.watch_addrs, a);
+    } else if (is_arg(data, "lock ")) {
+        a = parse_arg(data, "lock ");
+        set_lock(response, pmemwatch.watch_addrs, a);
     } else if (is_arg(data, "dump ")) {
         a = parse_arg(data, "dump ");
         dump(a, response);

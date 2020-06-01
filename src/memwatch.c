@@ -56,6 +56,11 @@ void render_watchselect(memwatch *pmw) {
     } else {
         gputsrdp("Z: Unsigned", 0x10, 0x10+9*i+1, pfont);
     }
+    if (pmw->watch_addrs[pmw->watch_index].lock) {
+        gputsrdp("L: Lock", 0x10, 0x18+9*i+2, pfont);
+    } else {
+        gputsrdp("L: Unlock", 0x10, 0x18+9*i+2, pfont);
+    }
 
     int y_offset = pmw->cursor_pos*9;
 
@@ -118,6 +123,24 @@ void prepare_watchaddr(memwatch *pmw) {
         if (!pmw->watch_addrs[i].enabled) {
             continue;
         }
+        // lock value?
+        if (pmw->watch_addrs[i].lock) {
+            switch(pmw->watch_addrs[i].type) {
+                case WORD_WATCH:
+                    *(WORD_T*)pmw->watch_addrs[i].paddr = pmw->watch_addrs[i].value;
+                    break;
+                case HWORD_WATCH:
+                    *(HWORD_T*)pmw->watch_addrs[i].paddr = (HWORD_T)pmw->watch_addrs[i].value;
+                    break;
+                case FLOAT_WATCH:
+                    gmemcpy((BYTE_T*)&pmw->watch_addrs[i].value, pmw->watch_addrs[i].paddr, sizeof(float));
+                    break;
+                default:
+                    *(BYTE_T*)pmw->watch_addrs[i].paddr = (BYTE_T)pmw->watch_addrs[i].value;
+                    break;
+            }
+        }
+
         if (pmw->watch_addrs[i].sign) {
             switch(pmw->watch_addrs[i].type) {
                 case WORD_WATCH:
@@ -254,6 +277,9 @@ void update_memwatch(memwatch *pmw) {
         } else if (read_button(Z_INPUT, CONTROLLER_2)
                 && !read_button(Z_INPUT, LAST_INPUT_2)) {
             pmw->watch_addrs[pmw->watch_index].sign = !pmw->watch_addrs[pmw->watch_index].sign;
+        } else if (read_button(L_INPUT, CONTROLLER_2)
+                && !read_button(L_INPUT, LAST_INPUT_2)) {
+            pmw->watch_addrs[pmw->watch_index].lock = !pmw->watch_addrs[pmw->watch_index].lock;
         }
         return;
     } else if ((pmw->flags & 0x80) == 0) {
@@ -343,6 +369,10 @@ void update_memwatch(memwatch *pmw) {
             // enable watch for 1 value
             WORD_T *paddr = (WORD_T*)(memwatch_current_addr(pmw)+pmw->cursor_pos);
             pmw->watch_addrs[pmw->watch_index].paddr = paddr;
+            // take a snapshot of the value
+            // as seen when it was selected
+            gmemcpy(pmw->watch_addrs[pmw->watch_index].paddr,
+                    (BYTE_T*)&pmw->watch_addrs[pmw->watch_index].value, sizeof(u32));
             // pmw->watch_type = WORD_WATCH;
             pmw->cursor_pos = 0; // set cursor to 0
             pmw->flags = 0x40;
