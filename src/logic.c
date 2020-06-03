@@ -20,7 +20,7 @@ void logic() {
     update_menu(&pmenu);
     update_keyboard(&pkb);
 
-    evd_serial_terminal();
+    evd_serial_terminal(&pmemwatch);
 
     // TODO hacky way to prevent crash
     // Toggle menu once
