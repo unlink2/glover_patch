@@ -63,7 +63,7 @@ u8 cheat_num = 0;
 u8 map_id = 0;
 
 void init_glover_menu(menudef *pmenu) {
-    pmenu->size = 10;
+    pmenu->size = 11;
     pmenu->cursor = 0;
     pmenu->strings[0] = "Toggle Infinite Lives";
     pmenu->strings[1] = "Toggle Infinite Health";
@@ -75,6 +75,7 @@ void init_glover_menu(menudef *pmenu) {
     pmenu->strings[7] = "Cheat                  ";
     pmenu->strings[8] = "Lock RNG (may crash)";
     pmenu->strings[9] = "Load Map         ";
+    pmenu->strings[10] = "Debug Graph";
 
     pmenu->type[0] = MENU_BUTTON;
     pmenu->type[1] = MENU_BUTTON;
@@ -86,6 +87,7 @@ void init_glover_menu(menudef *pmenu) {
     pmenu->type[7] = MENU_VALUE_BYTE;
     pmenu->type[8] = MENU_BUTTON;
     pmenu->type[9] = MENU_VALUE_BYTE;
+    pmenu->type[10] = MENU_BUTTON;
 
     pmenu->pvalue[7] = &cheat_num;
     pmenu->pvalue[9] = &map_id;
@@ -287,6 +289,10 @@ void glover_menu_select(menudef *pmenu) {
             //fade();
             init_load(1);
             load_map((int)(*(u8*)(pmenu->pvalue[9])));
+            break; }
+        case 10: {
+            get_ptr(u8, debug_graph, DEBUG_GRAPH, 1);
+            *debug_graph = !*debug_graph;
             break; }
         default:
             init_default_menu(pmenu);

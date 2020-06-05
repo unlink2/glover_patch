@@ -348,8 +348,8 @@ void add_watch(arg a, char *response, watch_type watch, watch_addr *watch_addrs,
     evd_usb_write(response, COMMAND_SIZE); // send back
 }
 
-void clear_watch(char *response, watch_addr *watch_addrs, u32 *watch_index) {
-    clear_all_watch(&pmemwatch);
+void clear_watch(char *response, watch_addr *watch_addrs, u32 *watch_index, memwatch *pmemwatch) {
+    clear_all_watch(pmemwatch);
     response[0] = 'O';
     response[1] = 'K';
     response[2] = '\0';
@@ -366,6 +366,25 @@ void invert_sign(char *response, watch_addr *watch_addrs, arg a) {
         // set sign of selected watch
         u32 index = a.value[0]-48; // ascii to index
         watch_addrs[index].sign = !watch_addrs[index].sign;
+        response[0] = 'O';
+        response[1] = 'K';
+        response[2] = '\0';
+    }
+    evd_usb_write(response, COMMAND_SIZE); // send back
+}
+
+void set_lock(char *response, watch_addr *watch_addrs, arg a) {
+    if (!a.value) {
+        response[0] = 'E';
+        response[1] = 'R';
+        response[2] = 'R';
+        response[3] = '\0';
+    } else {
+        // set sign of selected watch
+        u32 index = a.value[0]-48; // ascii to index
+        watch_addrs[index].lock = !watch_addrs[index].lock;
+        gmemcpy(watch_addrs[index].paddr,
+                (BYTE_T*)&watch_addrs[index].value, sizeof(u32));
         response[0] = 'O';
         response[1] = 'K';
         response[2] = '\0';
@@ -446,14 +465,14 @@ void listen(char *response, watch_addr *watch_addrs, u32 watch_index) {
     evd_usb_write(data, COMMAND_SIZE*MAX_WATCH); // send back
 }
 
-void evd_serial_terminal() {
+void evd_serial_terminal(memwatch *pmemwatch) {
     if (ed_init_done != TRUE) {
         return;
     }
 
     // rollover
-    if (pmemwatch.watch_index >= MAX_WATCH) {
-        pmemwatch.watch_index = 0;
+    if (pmemwatch->watch_index >= MAX_WATCH) {
+        pmemwatch->watch_index = 0;
     }
 
     char data[COMMAND_SIZE + 1];
@@ -523,23 +542,26 @@ void evd_serial_terminal() {
         poke(a, response, WORD_WATCH);
     } else if (is_arg(data, "watchw ")) {
         a = parse_arg(data, "watchw ");
-        add_watch(a, response, WORD_WATCH, pmemwatch.watch_addrs, &pmemwatch.watch_index);
+        add_watch(a, response, WORD_WATCH, pmemwatch->watch_addrs, &pmemwatch->watch_index);
     } else if (is_arg(data, "watchh ")) {
         a = parse_arg(data, "watchh ");
-        add_watch(a, response, HWORD_WATCH, pmemwatch.watch_addrs, &pmemwatch.watch_index);
+        add_watch(a, response, HWORD_WATCH, pmemwatch->watch_addrs, &pmemwatch->watch_index);
     } else if (is_arg(data, "watchb ")) {
         a = parse_arg(data, "watchb ");
-        add_watch(a, response, BYTE_WATCH, pmemwatch.watch_addrs, &pmemwatch.watch_index);
+        add_watch(a, response, BYTE_WATCH, pmemwatch->watch_addrs, &pmemwatch->watch_index);
     } else if (is_arg(data, "watchf ")) {
         a = parse_arg(data, "watchf ");
-        add_watch(a, response, FLOAT_WATCH, pmemwatch.watch_addrs, &pmemwatch.watch_index);
+        add_watch(a, response, FLOAT_WATCH, pmemwatch->watch_addrs, &pmemwatch->watch_index);
     } else if (is_arg(data, "listen")) {
-        listen(response, pmemwatch.watch_addrs, pmemwatch.watch_index);
+        listen(response, pmemwatch->watch_addrs, pmemwatch->watch_index);
     } else if (is_arg(data, "clearwatch")) {
-        clear_watch(response, pmemwatch.watch_addrs, &pmemwatch.watch_index);
+        clear_watch(response, pmemwatch->watch_addrs, &pmemwatch->watch_index, pmemwatch);
     } else if (is_arg(data, "sign ")) {
         a = parse_arg(data, "sign ");
-        invert_sign(response, pmemwatch.watch_addrs, a);
+        invert_sign(response, pmemwatch->watch_addrs, a);
+    } else if (is_arg(data, "lock ")) {
+        a = parse_arg(data, "lock ");
+        set_lock(response, pmemwatch->watch_addrs, a);
     } else if (is_arg(data, "dump ")) {
         a = parse_arg(data, "dump ");
         dump(a, response);

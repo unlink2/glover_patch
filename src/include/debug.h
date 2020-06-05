@@ -184,6 +184,6 @@ BOOLEAN evd_usb_busy();
 
 void evd_set_save_type(u8);
 
-void evd_serial_terminal();
+void evd_serial_terminal(memwatch *);
 
 #endif
