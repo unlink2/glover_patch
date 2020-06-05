@@ -118,6 +118,8 @@ extern WORD_T *LAST_INPUT_2;
 
 #define FADE_TIMER (HWORD_T*)0x801E753C
 
+#define DEBUG_GRAPH (BYTE_T*)0x801EFCA0 // nonzero enables graph
+
 void init_mem();
 
 #endif
