@@ -24,6 +24,7 @@ typedef struct gpatch_t {
     u8 menu_toggle; // TODO this is a hack to prevent a crash
     BOOLEAN cutscene_skip;
     BOOLEAN lockrng;
+	BOOLEAN disable_pause;
     BOOLEAN resume_restore; // was map loaded? resume restore of actors now
     u8 resume_timer; // run up until 60 to delay
     u16 restore_slot;
