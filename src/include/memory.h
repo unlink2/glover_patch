@@ -7,6 +7,7 @@
 #define GAME_MODE (BYTE_T*)0x801E7530 // byte 04 = gameplay 02 = level select
 #define GAME_STATE (BYTE_T*)0x801EC7F0 // 02 == demo
 #define PAUSE_FLAG (BYTE_T*)0x801EC7D3 // 01 = paused
+#define DISABLE_PAUSE_FLAG (BYTE_T*)0x801EC748 // 00 disables pause
 
 extern WORD_T *LAST_INPUT_1;
 extern WORD_T *LAST_INPUT_2;
