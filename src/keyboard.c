@@ -152,7 +152,7 @@ void render_keyboard(keyboard *pkb) {
     unsigned short start_y = 0x20;
 
     // TODO this fixed input disply issues for some reason?
-    gputsrdp("                ", 0x0, 0x0, pfont);
+    //gputsrdp("                ", 0x0, 0x0, pfont);
     // render input buffer
     if (pkb->pinput) {
         gputsrdp(pkb->pinput, 0x18, 0x10, pfont);
