@@ -8,6 +8,8 @@
 #include "include/matrix.h"
 #include "include/keyboard.h"
 
+u8 render_step = 0; // 0 or 1
+
 void render() {
     // reset dl ptr
     get_ptr(WORD_T, pbuffer, RDP_DL_BUFFER, RDP_DL_SIZE);
@@ -27,13 +29,16 @@ void render() {
         gmemset((BYTE_T*)pbuffer_keyboard, 0x00, RDP_DL_SIZE*sizeof(WORD_T));
     }
 
-    set_pbuffer(pbuffer_memwatch);
+    // render step selects which half of the dl buffer to point to (RDP_DL_SIZE/2)
+    render_step = !render_step;
+
+    set_pbuffer(pbuffer_memwatch+(RDP_DL_SIZE/2)*render_step);
     render_memwatch(&pmemwatch);
 
-    set_pbuffer(pbuffer);
+    set_pbuffer(pbuffer+(RDP_DL_SIZE/2)*render_step);
     render_menu(&pmenu);
 
-    set_pbuffer(pbuffer_keyboard);
+    set_pbuffer(pbuffer_keyboard+(RDP_DL_SIZE/2)*render_step);
     render_keyboard(&pkb);
 
     // print evd error message
