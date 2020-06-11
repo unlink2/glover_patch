@@ -123,6 +123,7 @@ void draw_charf(char c, HWORD_T *pframebuffer, WORD_T x, WORD_T y, HWORD_T *pfon
 }
 
 void gputsrdp(char *str, WORD_T x, WORD_T y, HWORD_T *pfont) {
+    if (str[0] == '\0') { return; }
     WORD_T *pbuffer = get_pbuffer();
     inc_pbuffer(rdp_texture_mode(pbuffer));
     while (str[0] != '\0') {
@@ -133,6 +134,8 @@ void gputsrdp(char *str, WORD_T x, WORD_T y, HWORD_T *pfont) {
 }
 
 void draw_charrdp(char c, WORD_T x, WORD_T y, HWORD_T *pfont) {
+    if (c == '\0') { return; }
+
     HWORD_T *pchar = pfont+(WORD_T)c*CHAR_W*CHAR_H;
     WORD_T *pbuffer = get_pbuffer();
     inc_pbuffer(rdp_load_tile(pchar, pbuffer));
