@@ -40,6 +40,7 @@ void render() {
 
     set_pbuffer(pbuffer_keyboard+(RDP_DL_SIZE/2)*render_step);
     render_keyboard(&pkb);
+    render_inputs(&pkb);
 
     // print evd error message
     if (pevd_msg) {

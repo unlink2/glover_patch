@@ -13,6 +13,9 @@ typedef struct keyboard {
     BOOLEAN shift;
     BOOLEAN success; // TRUE if input was ok, FALSE is canceled input
 
+    BOOLEAN render_inputs; // render input data
+    char inputs[128];
+
     char *pinput; // points to current input request string
     u32 input_len; // max string length
     u32 input_index; // input cursor position
@@ -54,6 +57,6 @@ void update_keyboard(keyboard *);
 
 void render_keyboard(keyboard *);
 
-
+void render_inputs(keyboard *);
 
 #endif
