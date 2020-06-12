@@ -317,7 +317,7 @@ void glover_menu_update(menudef *pmenu) {
         pmenu->strings[1] = "Enable Infinite Lives";
     }
     if (pmenu->pgpatch->disable_pause) {
-		pmenu->strings[11] = "Enable Pause Menu"; 
+	pmenu->strings[11] = "Enable Pause Menu"; 
     } else {
         pmenu->strings[11] = "Disable Pause Menu";
     }    
