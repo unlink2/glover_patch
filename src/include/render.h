@@ -10,6 +10,8 @@
 #define CHAR_W 8
 #define CHAR_H 8
 
+void clear_rdp_buffer();
+
 void render();
 
 

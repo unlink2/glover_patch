@@ -121,7 +121,7 @@ int rdp_load_tile(HWORD_T *pfont, WORD_T *pbuffer) {
     RDP_CLEAR_BUFFER(pbuffer, 8);
 
     // sync
-    pbuffer[0] = 0x28000000;
+    pbuffer[0] = 0x27000000;
     pbuffer[1] = 0x00000000;
 
     // set texture image
@@ -134,31 +134,31 @@ int rdp_load_tile(HWORD_T *pfont, WORD_T *pbuffer) {
 }
 
 int rdp_draw_tile(int xh, int yh, int w, int h, WORD_T *pbuffer) {
-    RDP_CLEAR_BUFFER(pbuffer, 16);
+    RDP_CLEAR_BUFFER(pbuffer, 8);
 
     // sync
-    pbuffer[0] = 0x31000000;
-    pbuffer[1] = 0x00000000;
+    // pbuffer[0] = 0x31000000;
+    // pbuffer[1] = 0x00000000;
 
     // set tile
-    pbuffer[2] = 0x35100400; //  0<<2,0<<2, 0, 7<<2,7<<2, sl 0.0 tl 0.0, sh 7.0 th 7.0
-    pbuffer[3] = 0x00000000;
+    pbuffer[0] = 0x35100400; //  0<<2,0<<2, 0, 7<<2,7<<2, sl 0.0 tl 0.0, sh 7.0 th 7.0
+    pbuffer[1] = 0x00000000;
 
     // set texture rect
-    pbuffer[4] = 0x34000000;
-    pbuffer[5] = 0x0001C01C;
+    pbuffer[2] = 0x34000000;
+    pbuffer[3] = 0x0001C01C;
 
     // sync
-    pbuffer[6] = 0x28000000;
-    pbuffer[7] = 0x00000000;
+    // pbuffer[6] = 0x28000000;
+    // pbuffer[7] = 0x00000000;
 
     // draw texture rect
-    pbuffer[8] = 0x24000000  | (xh+w) << 14 | (yh+h) << 2; // xh+w == xl; yh+h == yl
-    pbuffer[9] = 0x00000000 | xh << 14 | yh << 2;
-    pbuffer[10] = 0x00000000; // S 0.0 T 0.0
-    pbuffer[11] = 0x04000400; // scale factor 1:1
+    pbuffer[4] = 0x24000000  | (xh+w) << 14 | (yh+h) << 2; // xh+w == xl; yh+h == yl
+    pbuffer[5] = 0x00000000 | xh << 14 | yh << 2;
+    pbuffer[6] = 0x00000000; // S 0.0 T 0.0
+    pbuffer[7] = 0x04000400; // scale factor 1:1
 
-    rdp_send_dl(pbuffer, pbuffer+16);
+    rdp_send_dl(pbuffer, pbuffer+8);
 
     return 16;
 }
