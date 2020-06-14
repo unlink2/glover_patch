@@ -55,6 +55,7 @@ void init_mem() {
 
     gmemset((BYTE_T*)&pkb, 0x00, sizeof(keyboard));
     init_keyboard(&pkb);
+    pkb.render_inputs = FALSE;
 
     // extend level select
     get_ptr(BYTE_T, ext_level, LEVEL_SELECT, 1);
