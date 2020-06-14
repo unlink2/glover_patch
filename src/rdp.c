@@ -159,11 +159,7 @@ int rdp_draw_tile(int xh, int yh, int w, int h, WORD_T *pbuffer) {
     pbuffer[11] = 0x04000400; // scale factor 1:1
 
 
-    // sync
-    pbuffer[12] = 0x27000000;
-    pbuffer[13] = 0x00000000;
-
-    rdp_send_dl(pbuffer, pbuffer+16);
+    rdp_send_dl(pbuffer, pbuffer+8);
 
     return 16;
 }
