@@ -2,14 +2,8 @@ This is a glover romhack project intended to become a practice tool for speedrun
 
 Easy Install:
 
-To install the pre-built binaires and patch a rom simply download and install python from
-
-https://www.python.org/
-
-After the installation is complete simply drag and drop a glover NTSC rom (in z64 format!)
-onto the patchui.py file.
-Your patched rom will be in the "rom" folder
-
+To easily install a non-dev build use the web-builder which can be found here:
+https://krickl.dev/glover/gloverpatch.html
 
 ==============================================================
 
@@ -55,14 +49,3 @@ Now inside of the rom folder you will find a file called glover_patched.z64. Thi
 
 To make this you will need gcc-mips-linux-gnu installed.
 
-Controls:
-Controller 1:
-Start+Cleft/Start+Cright => Store/Load Position
-Start+Cup/Start+Cdown => Actor Savestate (Experimental might crash!)
-Start+A => Start timer
-Start+B => Level select
-
-Controller 2:
-Start => Launch RAM viewer
-Dpad Left/Right => Increase/Decrease RAM address by 0x20
-Dpad Up/Down => Increase/Decrease RAM address by 0x1000
