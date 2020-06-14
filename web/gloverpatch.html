@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" type="text/css" href="./style.css">
+        <title>GLover Patch Tool</title>
+
+    </head>
+
+    <body>
+        <header>
+            <h1>
+                Glover Patch Tool
+            </h1>
+        </header>
+
+        <p>
+            <h2 id="error_message"></h2>
+            <p>
+                Glover Pratice ROM patching tool usage:
+                <ul>
+                    <li>
+                        Select a ROM file in z64 format
+                    </li>
+                    <li>
+                        The tool will patch the ROM (This might take a few seconds)
+                    </li>
+                    <li>
+                        You will receive a download with the patched ROM
+                    </li>
+                </ul>
+            </p>
+
+            <input type="file" id="file-input" />
+        </p>
+        <p>
+            <p>Is this legal?</p>
+            Yes! The ROM file never leaves your computer.
+            Patching is entierly done locally and I do not distribute any Nintendo 64 ROM files.
+            It is the user's responsibility to provide a legit ROM.
+        </p>
+
+        <footer>
+            (C) 2020 Lukas Krickl
+            <a href="https://github.com/unlink2/glover_patch">Github</a>
+        </footer>
+    </body>
+
+    <script src="./patcher.js"></script>
+
+
+</html>
