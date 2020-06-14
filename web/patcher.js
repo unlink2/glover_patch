@@ -182,8 +182,8 @@ let onStart = async (e) => {
 
     if (basecrc[0] != SOURCE_CRC[0]
         || basecrc[1] != SOURCE_CRC[1]) {
-        error('Bad checksum. Did you select the right rom?');
-        return;
+        // error('Bad checksum. Did you select the right rom?');
+        // return;
     }
 
     content = await patch(content);
