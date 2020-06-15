@@ -105,6 +105,11 @@ void logic() {
             restore_actors(NULL, gpatch.restore_slot);
             // evd_init();
         }
+
+        if (read_button(Z_INPUT, CONTROLLER_1)
+                && !read_button(Z_INPUT, LAST_INPUT_1)) {
+            pkb.render_inputs = !pkb.render_inputs;
+        }
     }
 
     // controller 2
