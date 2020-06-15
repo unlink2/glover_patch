@@ -56,9 +56,14 @@ void logic() {
         }
     }
 
+    get_ptr(u8, current_map, CURRENT_MAP, 1);
+    if (*current_map == 0x2C || *current_map == 0x2B) { // intro scene
+        get_ptr(BYTE_T, disable_pause, DISABLE_PAUSE_FLAG, 1);
+        *disable_pause = 0x01; // prevent pause menu in intro
+    }
+
     // see if restore was interrupted
     if (gpatch.resume_restore) {
-        get_ptr(u8, current_map, CURRENT_MAP, 1);
         get_ptr(u16, fade_timer, FADE_TIMER, 1);
         if (lastmap[gpatch.restore_slot] == *current_map && *fade_timer == 0) {
             if (gpatch.resume_timer++ > 60) {
