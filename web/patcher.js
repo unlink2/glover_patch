@@ -2,7 +2,17 @@
  * Port of patch script to javascript for web patcher
  */
 
-const SOURCE_CRC = [239407100, -1610841227];
+/**
+ * All CRCs I could find
+ */
+const SOURCE_CRC = {
+    '!': [ -1905393153, -860554936 ],
+    'b1': [ 239407100, -1610841227 ],
+    'b2': [ 2004083387, 1909500197 ],
+    't1': [ 1368621458, -1119184735 ],
+    /* PAL CRCs */
+    /*'e!': [ -182226175, -1713115501 ],
+    'ef1': [ 1294684952, 1205555990 ]*/}
 const PAYLOAD_PATH = './bin/payload.bin';
 const CODE_PATH = './bin/code.bin';
 const ENTRY_PATH = './bin/entry.bin';
@@ -174,15 +184,28 @@ let downloadFile = (data, filename, mime) => {
     }, 100);
 }
 
+let isCrcOk = (basecrc) => {
+    for (let k in SOURCE_CRC) {
+        if (SOURCE_CRC[k][0] === basecrc[0]
+            && SOURCE_CRC[k][1] === basecrc[1]) {
+            if (k != '!') {
+                // warn user about potentially bad ROM
+                error(`Warning: ${k} is a potentially bad dump of the ROM. The hack may not work as expected.`);
+            }
+            return true;
+        }
+    }
+    return false;
+}
+
 let onStart = async (e) => {
     const cksum_offset = [0x10, 0x14]
     let content = new DataView(await readFile(e));
 
     let basecrc = await crc(content);
-
-    if (basecrc[0] != SOURCE_CRC[0]
-        || basecrc[1] != SOURCE_CRC[1]) {
-        error('Bad checksum. Did you select the right rom?');
+    error('');
+    if (!isCrcOk(basecrc)) {
+        error('Bad checksum. Did you select the right ROM?');
         return;
     }
 
