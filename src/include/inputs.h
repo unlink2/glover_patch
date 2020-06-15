@@ -21,6 +21,9 @@
 #define DPAD_RIGHT 0x18
 #define DPAD_LEFT 0x19
 
+#define X_AXIS 0x01
+#define Y_AXIS 0x00
+
 #include "utility.h"
 
 /**
@@ -30,6 +33,8 @@
  *  0 if no input
  */
 BOOLEAN read_button(unsigned int, WORD_T *);
+
+char get_stick(unsigned char, WORD_T *);
 
 /**
  * Stores controller input in another location

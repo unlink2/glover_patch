@@ -8,6 +8,17 @@
 #include "include/matrix.h"
 #include "include/keyboard.h"
 
+u8 render_step = 0; // 0 or 1
+
+void clear_rdp_buffer() {
+    get_ptr(WORD_T, pbuffer, RDP_DL_BUFFER, RDP_DL_SIZE);
+    get_ptr(WORD_T, pbuffer_memwatch, RDP_DL_BUFFER_MEMWATCH, RDP_DL_SIZE);
+    get_ptr(WORD_T, pbuffer_keyboard, RDP_DL_BUFFER_KEYBOARD, RDP_DL_SIZE);
+    gmemset((BYTE_T*)pbuffer, 0x00, RDP_DL_SIZE*sizeof(WORD_T));
+    gmemset((BYTE_T*)pbuffer_memwatch, 0x00, RDP_DL_SIZE*sizeof(WORD_T));
+    gmemset((BYTE_T*)pbuffer_keyboard, 0x00, RDP_DL_SIZE*sizeof(WORD_T));
+}
+
 void render() {
     // reset dl ptr
     get_ptr(WORD_T, pbuffer, RDP_DL_BUFFER, RDP_DL_SIZE);
@@ -21,20 +32,23 @@ void render() {
     if (pfont[0] != 0xFFFF) {
         // safety init
         decompress_font((WORD_T*)font8x8_basic, pfont, 0x000F, 0xFFFF);
+        clear_rdp_buffer();
         // clear rdp buffer once as well
-        gmemset((BYTE_T*)pbuffer, 0x00, RDP_DL_SIZE*sizeof(WORD_T));
-        gmemset((BYTE_T*)pbuffer_memwatch, 0x00, RDP_DL_SIZE*sizeof(WORD_T));
-        gmemset((BYTE_T*)pbuffer_keyboard, 0x00, RDP_DL_SIZE*sizeof(WORD_T));
+        set_pbuffer(pbuffer);
     }
 
-    set_pbuffer(pbuffer_memwatch);
+    // render step selects which half of the dl buffer to point to (RDP_DL_SIZE/2)
+    render_step = 0;// (render_step+1)&(RDP_BUFFERS-1);
+
+    set_pbuffer(pbuffer_memwatch+(RDP_DL_SIZE/RDP_BUFFERS)*render_step);
     render_memwatch(&pmemwatch);
 
-    set_pbuffer(pbuffer);
+    set_pbuffer(pbuffer+(RDP_DL_SIZE/RDP_BUFFERS)*render_step);
     render_menu(&pmenu);
 
-    set_pbuffer(pbuffer_keyboard);
+    set_pbuffer(pbuffer_keyboard+(RDP_DL_SIZE/RDP_BUFFERS)*render_step);
     render_keyboard(&pkb);
+    render_inputs(&pkb);
 
     // print evd error message
     if (pevd_msg) {

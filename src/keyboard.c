@@ -60,6 +60,33 @@ void input_request(char *pstr, u32 len, keyboard *pkb, void (*pcallback)(struct 
 }
 
 void update_keyboard(keyboard *pkb) {
+    if (pkb->render_inputs) {
+        // prepare input display (very basic)
+        // TODO better controller view
+        to_hexstr(get_stick(X_AXIS, CONTROLLER_1), pkb->inputs, 1);
+        to_hexstr(get_stick(Y_AXIS, CONTROLLER_1), pkb->inputs+2, 1);
+
+        const int start_keys = 5;
+        pkb->inputs[start_keys-1] = 'D';
+        pkb->inputs[start_keys] = read_button(DPAD_UP, CONTROLLER_1) ? '^' : ' ';
+        pkb->inputs[start_keys+1] = read_button(DPAD_DOWN, CONTROLLER_1) ? 'V' : ' ';
+        pkb->inputs[start_keys+2] = read_button(DPAD_LEFT, CONTROLLER_1) ? '<' : ' ';
+        pkb->inputs[start_keys+3] = read_button(DPAD_RIGHT, CONTROLLER_1) ? '>' : ' ';
+        pkb->inputs[start_keys+4] = read_button(A_INPUT, CONTROLLER_1) ? 'A' : ' ';
+        pkb->inputs[start_keys+5] = read_button(B_INPUT, CONTROLLER_1) ? 'B' : ' ';
+        pkb->inputs[start_keys+5] = read_button(B_INPUT, CONTROLLER_1) ? 'B' : ' ';
+        pkb->inputs[start_keys+6] = read_button(L_INPUT, CONTROLLER_1) ? 'L' : ' ';
+        pkb->inputs[start_keys+7] = read_button(R_INPUT, CONTROLLER_1) ? 'R' : ' ';
+        pkb->inputs[start_keys+8] = read_button(Z_INPUT, CONTROLLER_1) ? 'Z' : ' ';
+        pkb->inputs[start_keys+9] = 'C';
+        pkb->inputs[start_keys+10] = read_button(CU_INPUT, CONTROLLER_1) ? '^' : ' ';
+        pkb->inputs[start_keys+11] = read_button(CD_INPUT, CONTROLLER_1) ? 'V' : ' ';
+        pkb->inputs[start_keys+12] = read_button(CL_INPUT, CONTROLLER_1) ? '<' : ' ';
+        pkb->inputs[start_keys+13] = read_button(CR_INPUT, CONTROLLER_1) ? '>' : ' ';
+        pkb->inputs[start_keys+14] = read_button(START_INPUT, CONTROLLER_1) ? 'S' : ' ';
+        pkb->inputs[start_keys+15] = '\0';
+    }
+
     if ((pkb->flags & 0x40) != 0) {
         pkb->flags = 0x80;
         return;
@@ -68,8 +95,6 @@ void update_keyboard(keyboard *pkb) {
     if ((pkb->flags & 0x80) == 0) {
         return;
     }
-
-
 
     if (read_button(A_INPUT, CONTROLLER_2)
             && !read_button(A_INPUT, LAST_INPUT_2)) {
@@ -152,7 +177,7 @@ void render_keyboard(keyboard *pkb) {
     unsigned short start_y = 0x20;
 
     // TODO this fixed input disply issues for some reason?
-    gputsrdp("                ", 0x0, 0x0, pfont);
+    //gputsrdp("                ", 0x0, 0x0, pfont);
     // render input buffer
     if (pkb->pinput) {
         gputsrdp(pkb->pinput, 0x18, 0x10, pfont);
@@ -181,4 +206,12 @@ void render_keyboard(keyboard *pkb) {
     draw_char('_', pframebuffer, x_offset, y_offset,
             (WORD_T*)font8x8_basic, 0xF00F, 0x0000);
 
+}
+
+void render_inputs(keyboard *pkb) {
+    if (!pkb->render_inputs) {
+        return;
+    }
+    get_ptr(HWORD_T, pfont, FONT8X8, 0x4000);
+    gputsrdp(pkb->inputs, 18, 180, pfont);
 }
