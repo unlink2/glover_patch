@@ -298,6 +298,9 @@ void glover_menu_select(menudef *pmenu) {
             break; }
         case 11: {
             pmenu->pgpatch->disable_pause = !pmenu->pgpatch->disable_pause;
+            // do it here instead to not cause issues in the title screen
+            get_ptr(BYTE_T, nopause, DISABLE_PAUSE_FLAG, 1);
+            *nopause = 0x00;
             break; }
         default:
             init_default_menu(pmenu);
