@@ -1,0 +1,38 @@
+{
+    "name": "glover_patch_utility",
+    "version": "1.0.0",
+    "description": "Glover practice hack patcher",
+    "main": "patcher.js",
+    "scripts": {
+        "test": "mocha --reporter spec",
+        "lint": "npx eslint ./src/*",
+        "docs": "npx jsdoc ./src/justlog.js -d ./docs -R README.md",
+        "dist": "npx gulp -f gulpfile.cjs dev dist"
+    },
+    "author": "Lukas Krickl",
+    "license": "MIT",
+    "dependencies": {
+        "justlog.js": "^0.1.0"
+    },
+    "devDependencies": {
+        "chai": "^4.2.0",
+        "eslint": "^7.1.0",
+        "eslint-config-google": "^0.14.0",
+        "eslint-config-standard": "^14.1.1",
+        "eslint-plugin-import": "^2.20.2",
+        "eslint-plugin-node": "^11.1.0",
+        "eslint-plugin-promise": "^4.2.1",
+        "eslint-plugin-standard": "^4.0.1",
+        "gulp": "^4.0.2",
+        "gulp-concat": "^2.6.1",
+        "gulp-eslint": "^6.0.0",
+        "gulp-header": "^2.0.9",
+        "gulp-mocha": "^7.0.2",
+        "gulp-rename": "^2.0.0",
+        "gulp-sourcemaps": "^2.6.5",
+        "gulp-uglify": "^3.0.2",
+        "jsdoc": "^3.6.4",
+        "mocha": "^7.2.0",
+        "webpack-stream": "^5.2.1"
+    }
+}

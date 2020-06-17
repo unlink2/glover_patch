@@ -37,10 +37,17 @@ void logic() {
         get_ptr(WORD_T, hp, GLOVER_HP, 1);
         *hp = 0xFF;
     }
+
     if (gpatch.infinite_lives) {
         get_ptr(WORD_T, lives, GLOVER_LIVES, 1);
         *lives = 0xFF;
     }
+
+    if (gpatch.disable_pause) {
+        get_ptr(BYTE_T, nopause, DISABLE_PAUSE_FLAG, 1);
+        *nopause = 0x01;
+    }
+
     if (gpatch.lock_pos) {
         restore_glover_pos();
     }
