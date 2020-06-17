@@ -63,7 +63,7 @@ u8 cheat_num = 0;
 u8 map_id = 0;
 
 void init_glover_menu(menudef *pmenu) {
-    pmenu->size = 11;
+    pmenu->size = 12;
     pmenu->cursor = 0;
     pmenu->strings[0] = "Toggle Infinite Lives";
     pmenu->strings[1] = "Toggle Infinite Health";
@@ -76,6 +76,7 @@ void init_glover_menu(menudef *pmenu) {
     pmenu->strings[8] = "Lock RNG (may crash)";
     pmenu->strings[9] = "Load Map         ";
     pmenu->strings[10] = "Debug Graph";
+    pmenu->strings[11] = "Disable Pause Menu";
 
     pmenu->type[0] = MENU_BUTTON;
     pmenu->type[1] = MENU_BUTTON;
@@ -88,6 +89,7 @@ void init_glover_menu(menudef *pmenu) {
     pmenu->type[8] = MENU_BUTTON;
     pmenu->type[9] = MENU_VALUE_BYTE;
     pmenu->type[10] = MENU_BUTTON;
+    pmenu->type[11] = MENU_BUTTON;
 
     pmenu->pvalue[7] = &cheat_num;
     pmenu->pvalue[9] = &map_id;
@@ -294,6 +296,9 @@ void glover_menu_select(menudef *pmenu) {
             get_ptr(u8, debug_graph, DEBUG_GRAPH, 1);
             *debug_graph = !*debug_graph;
             break; }
+        case 11: {
+            pmenu->pgpatch->disable_pause = !pmenu->pgpatch->disable_pause;
+            break; }
         default:
             init_default_menu(pmenu);
             break;
@@ -311,6 +316,11 @@ void glover_menu_update(menudef *pmenu) {
     } else {
         pmenu->strings[1] = "Enable Infinite Lives";
     }
+    if (pmenu->pgpatch->disable_pause) {
+	pmenu->strings[11] = "Enable Pause Menu"; 
+    } else {
+        pmenu->strings[11] = "Disable Pause Menu";
+    }    
     // cheat select menu
 
     BYTE_T *cheatnum = (BYTE_T*)pmenu->pvalue[7];

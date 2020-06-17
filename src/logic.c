@@ -41,6 +41,14 @@ void logic() {
         get_ptr(WORD_T, lives, GLOVER_LIVES, 1);
         *lives = 0xFF;
     }
+    if (gpatch.disable_pause) {
+        get_ptr(BYTE_T, nopause, DISABLE_PAUSE_FLAG, 1);
+        *nopause = 0x01;
+    }
+	if (!gpatch.disable_pause) {
+		get_ptr(BYTE_T, nopause, DISABLE_PAUSE_FLAG, 1);
+		*nopause = 0x00;
+	}
     if (gpatch.lock_pos) {
         restore_glover_pos();
     }
