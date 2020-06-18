@@ -207,7 +207,6 @@ let swapHalfWord = (data, index) => {
 
 let swapToZ64 = (data, fileName) => {
     let head = data.getUint32(0, false);
-    console.log(`${head.toString(16)}`, fileName);
     // check first byte
     if (fileName.endsWith('.n64')) { // n64 format. bad!
         console.log('Converting to .z64!');
