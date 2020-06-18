@@ -12,7 +12,8 @@
     "author": "Lukas Krickl",
     "license": "MIT",
     "dependencies": {
-        "justlog.js": "^0.1.0"
+        "justlog.js": "^0.1.0",
+        "vue": "^2.6.11"
     },
     "devDependencies": {
         "chai": "^4.2.0",
