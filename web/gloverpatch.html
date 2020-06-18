@@ -8,14 +8,17 @@
     </head>
 
     <body>
+        <div id="app">
         <header>
             <h1>
                 Glover Patch Tool
+                <hr>
             </h1>
         </header>
 
         <p>
-            <h2 id="error_message"></h2>
+            <h2 id="error_message">{{error_message}}</h2>
+            <h2 id="warning_message">{{warning_message}}</h2>
             <p>
                 Glover Practice  ROM patching tool usage:
                 <ul>
@@ -67,11 +70,18 @@
         </p>
 
         <footer>
+            <hr>
             (C) 2020 Lukas Krickl
             <a href="https://github.com/unlink2/glover_patch">Github</a>
+            <a href="https://github.com/unlink2/glover_patch/issues">Report a bug</a>
         </footer>
+        </div>
     </body>
 
+    <script src="./node_modules/justlog.js/dist/justlog.main.min.js"></script>
+    <script src="./node_modules/vue/dist/vue.min.js"></script>
+    <script src="view.js"></script>
+    <script src="./patchrom.js"></script>
     <script src="./patcher.js"></script>
 
 
