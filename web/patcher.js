@@ -2,7 +2,13 @@
  * Port of patch script to javascript for web patcher
  */
 
-
+/**
+ * File selected by file picker
+ */
+const settings = {
+    file: undefined,
+    shouldPatchEasy: true
+};
 
 let readFile = (file) => {
     return new Promise((resolve, reject) => {
@@ -36,7 +42,16 @@ let downloadFile = (data, filename, mime) => {
     }, 100);
 }
 
-let onStart = async (e) => {
+let onStart = async () => {
+    let e = settings.file;
+    if (!e) {
+        error('Select a file first!');
+        return;
+    }
+
+    // get settings props
+    settings.shouldPatchEasy = app.shouldPatchEasy;
+
     const cksum_offset = [0x10, 0x14]
     let content = new DataView(await readFile(e));
     if (e.target.files[0].size > 16000000) {
@@ -51,13 +66,17 @@ let onStart = async (e) => {
         return;
     }
 
-    content = await patch(content);
+    content = await patch(content, settings);
     let cksm = await crc(content);
 
     content.setUint32(cksum_offset[0], cksm[0], false);
     content.setUint32(cksum_offset[1], cksm[1], false);
 
     downloadFile(content.buffer, 'glover_patched.z64');
+}
+
+let onFilePick = async (e) => {
+    settings.file = e;
 }
 
 let clearErr = () => {
@@ -77,4 +96,5 @@ let error = (message) => {
     app.error_message = message;
 }
 
-document.getElementById('file-input').addEventListener('change', onStart, false);
+document.getElementById('file-input').addEventListener('change', onFilePick, false);
+document.getElementById('start-patch').addEventListener('click', onStart);

@@ -34,8 +34,13 @@
                 </ul>
             </p>
 
-            <input type="file" id="file-input" />
+            <p><input type="file" id="file-input" /></p>
+            <p><input type="checkbox" v-model="shouldPatchEasy">Force easy mode</input></p>
+            <button type="button" id="start-patch">Patch!</button>
         </p>
+
+        <hr>
+
         <p>
             <p>Is this legal?</p>
             Yes! The ROM file never leaves your computer.
