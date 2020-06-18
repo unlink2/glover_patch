@@ -1,6 +1,11 @@
 const logger = new justlog.JustLog('GloverPatch', justlog.JustLog.LEVEL_DEBUG,
     new justlog.JustLogConsoleStream({color: false}));
 
+/**
+ * @typedef {Object} Settings
+ * @property {Bool} patchEasy Should easy mode be patched int?
+ */
+
 
 /**
  * All CRCs I could find
@@ -17,7 +22,13 @@ const PAYLOAD_PATH = './bin/payload.bin';
 const CODE_PATH = './bin/code.bin';
 const ENTRY_PATH = './bin/entry.bin';
 const VIRTUAL_TO_ROM = 0x800ff000;
-let patch = async (rom, payload_path=PAYLOAD_PATH, code_path=CODE_PATH, entry_path=ENTRY_PATH) => {
+
+/**
+ * @function patch Patches the rom
+ * @param {DataView} rom The rom data
+ * @param {Settings} settings Patcher settings object
+ */
+let patch = async (rom, settings, payload_path=PAYLOAD_PATH, code_path=CODE_PATH, entry_path=ENTRY_PATH) => {
     const payload_res = await fetch(payload_path);
     const ccode_res = await fetch(code_path);
     const entry_res = await fetch(entry_path);
@@ -62,10 +73,12 @@ let patch = async (rom, payload_path=PAYLOAD_PATH, code_path=CODE_PATH, entry_pa
     // 801396D1 0000
     // 801396D2 0000
     // 801396D3 0000
-    rom.setUint8(force_easy_ball, 0x00);
-    rom.setUint8(force_easy_ball+1, 0x00);
-    rom.setUint8(force_easy_ball+2, 0x00);
-    rom.setUint8(force_easy_ball+3, 0x00);
+    if (settings.shouldPatchEasy) {
+        rom.setUint8(force_easy_ball, 0x00);
+        rom.setUint8(force_easy_ball+1, 0x00);
+        rom.setUint8(force_easy_ball+2, 0x00);
+        rom.setUint8(force_easy_ball+3, 0x00);
+    }
 
     return rom;
 }
