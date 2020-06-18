@@ -198,9 +198,34 @@ let isCrcOk = (basecrc) => {
     return false;
 }
 
+let swapHalfWord = (data, index) => {
+    let val = data.getUint16(index, false);
+    val = ((val & 0xFF) << 8)
+               | ((val >> 8) & 0xFF);
+    data.setUint16(index, val, false);
+}
+
+let swapToZ64 = (data, fileName) => {
+    let head = data.getUint32(0, false);
+    console.log(`${head.toString(16)}`, fileName);
+    // check first byte
+    if (fileName.endsWith('.n64')) { // n64 format. bad!
+        console.log('Converting to .z64!');
+        for (let i = 0; i < data.byteLength; i += 2) {
+            // convert every half word
+            swapHalfWord(data, i);
+        }
+    } else {
+        console.log('No need to convert to .z64.');
+    }
+    return data;
+}
+
 let onStart = async (e) => {
     const cksum_offset = [0x10, 0x14]
     let content = new DataView(await readFile(e));
+
+    swapToZ64(content, e.target.files[0].name);
 
     let basecrc = await crc(content);
     error('');
