@@ -174,6 +174,10 @@ static void test_struct_size(void **state) {
     assert_int_equal(sizeof(save_file), 0x1C);
     assert_int_equal(sizeof(collision_polygon), 0x78);
     assert_int_equal(sizeof(camera_t), CAMERA_ACTOR_SIZE);
+
+    assert_int_equal(sizeof(action_t), 0x30);
+    assert_int_equal(sizeof(condition_t), 0x20);
+    assert_int_equal(sizeof(switch_t), 0x50);
 }
 
 static void test_m3_mul_v3(void **state) {
