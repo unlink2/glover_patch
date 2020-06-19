@@ -50,6 +50,11 @@ void render() {
     render_keyboard(&pkb);
     render_inputs(&pkb);
 
+    // render message
+    if (gpatch.message) {
+        gputsrdp(gpatch.message, 50, 200, pfont);
+    }
+
     // print evd error message
     if (pevd_msg) {
         gputsrdp(pevd_msg, 50, 200, pfont);

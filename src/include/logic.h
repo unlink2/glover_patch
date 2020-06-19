@@ -5,6 +5,8 @@
 #include "utility.h"
 #include "savefile.h"
 
+#define MSG_TIME 10
+
 /**
  * Contains functions that manipulate the global state of the game
  * and update components of the romhack that do not require rendering.
@@ -29,9 +31,17 @@ typedef struct gpatch_t {
     BOOLEAN resume_restore; // was map loaded? resume restore of actors now
     u8 resume_timer; // run up until 60 to delay
     u16 restore_slot;
+
+    char *message;
+    u16 msg_timer;
 } gpatch_t;
 
 extern gpatch_t gpatch;
+
+/*
+ * Set message
+ */
+void notify(gpatch_t *, const char*, u16);
 
 void logic();
 
