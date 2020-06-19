@@ -25,6 +25,7 @@ typedef struct gpatch_t {
     BOOLEAN cutscene_skip;
     BOOLEAN lockrng;
 	BOOLEAN disable_pause;
+    BOOLEAN clone_obj_bank; // clone obj bank instead of actor restore. disabled feature. not worth it
     BOOLEAN resume_restore; // was map loaded? resume restore of actors now
     u8 resume_timer; // run up until 60 to delay
     u16 restore_slot;
@@ -69,7 +70,7 @@ WORD_T* clone_additional(WORD_T *, WORD_T *, WORD_T);
 // the backup heap is locates at the start of exp pack memory
 void clone_actors(WORD_T *, u16 slot);
 // same as clone_actors but just dumps everything in obj_bank
-void clone_obj_bank();
+void clone_obj_bank(WORD_T *, u16);
 
 // reverses actor backup
 // uses A0 as actor heap pointer

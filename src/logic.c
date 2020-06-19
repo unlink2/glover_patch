@@ -307,13 +307,25 @@ void clone_actors(WORD_T *pcloneptr, u16 slot) {
     get_ptr(switch_t, pswitch, SWITCH_LIST_START, 1);
     do {
         pcloneptr = clone_additional((WORD_T*)pswitch, pcloneptr, sizeof(switch_t));
-        pcloneptr = clone_additional((WORD_T*)pswitch->pcondition1, pcloneptr, sizeof(condition_t));
-        pcloneptr = clone_additional((WORD_T*)pswitch->pcondition2, pcloneptr, sizeof(condition_t));
-        pcloneptr = clone_additional((WORD_T*)pswitch->paction1, pcloneptr, sizeof(action_t));
-        pcloneptr = clone_additional((WORD_T*)pswitch->paction2, pcloneptr, sizeof(action_t));
+        pcloneptr = clone_additional((WORD_T*)pswitch->ppuzzle1, pcloneptr, sizeof(puzzle_t));
+        pcloneptr = clone_additional((WORD_T*)pswitch->ppuzzle2, pcloneptr, sizeof(puzzle_t));
+        pcloneptr = clone_additional((WORD_T*)pswitch->pcond1, pcloneptr, sizeof(condition_t));
+        pcloneptr = clone_additional((WORD_T*)pswitch->pcond2, pcloneptr, sizeof(condition_t));
 
         pswitch = pswitch->pnext;
     } while (pswitch != (switch_t*)SWITCH_LIST_START);
+
+    // store obj bank if requested
+    if (gpatch.clone_obj_bank) {
+        clone_obj_bank(pcloneptr, slot);
+    }
+
+    // clone garibs TODO
+    /*get_ptr(garib_t, pgaribs, GARIB_LIST_START, 1);
+    do {
+        pcloneptr = clone_additional((WORD_T*)pgaribs, pcloneptr, sizeof(garib_t));
+        pgaribs = pgaribs->pnext;
+    } while (pgaribs != (garib_t*)GARIB_LIST_START); */
 
     // pcloneptr += 1;
     // clone camera
@@ -336,7 +348,7 @@ void clone_actors(WORD_T *pcloneptr, u16 slot) {
     *pcloneptr = *prng;
 }
 
-void clone_obj_bank() {
+void clone_obj_bank(WORD_T *pcloneptr, u16 slot) {
     // load current map and store it
     get_ptr(u8, current_map, CURRENT_MAP, 1);
     lastmap[MAX_RESTORE_SLOTS+1] = *current_map;
@@ -346,7 +358,12 @@ void clone_obj_bank() {
     // if we're back at the start we are done
     get_ptr(obj_bank_t, pobj, OBJ_BANK, 1);
     // current clone address
-    get_ptr(WORD_T, pcloneptr, ACTOR_HEAP_CLONE+ACTOR_HEAP_SIZE*(MAX_RESTORE_SLOTS+1), 1);
+
+    if (!pcloneptr) {
+        pcloneptr = ACTOR_HEAP_CLONE+ACTOR_HEAP_SIZE*slot;;
+    }
+    // get_ptr(WORD_T, pcloneptr, ACTOR_HEAP_CLONE+ACTOR_HEAP_SIZE*(MAX_RESTORE_SLOTS+1), 1);
+
 
     do {
         pcloneptr = clone_additional((WORD_T*)pobj->pdata, pcloneptr, pobj->size);
