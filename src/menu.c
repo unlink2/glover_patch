@@ -278,18 +278,20 @@ void glover_menu_select(menudef *pmenu) {
             get_ptr(u32, rngval, RNG_FUNC, 1);
             if (pmenu->pgpatch->lockrng) {
                 pmenu->strings[8] = "Unlock RNG";
-                rngval[0] = 0x3C04801E; // lui a0, 801E
-                rngval[1] = 0x3484D3F0; // ori a0, D3F0
-                rngval[2] = 0x8C820000; // lw v0, 00(a0)
-                rngval[3] = 0x03E00008; // jr ra
-                rngval[4] = 0x00000000; // nop
+                rngval[0] = 0x03E00008; // jr ra
+                rngval[1] = 0x00000000; // nop
+                //rngval[0] = 0x3C04801E; // lui a0, 801E
+                //rngval[1] = 0x3484D3F0; // ori a0, D3F0
+                //rngval[2] = 0x8C820000; // lw v0, 00(a0)
+                //rngval[3] = 0x03E00008; // jr ra
+                //rngval[4] = 0x00000000; // nop
             } else {
                 pmenu->strings[8] = "Lock RNG";
                 rngval[0] = 0x14800003; // original code
                 rngval[1] = 0x27BDFFF8;
-                rngval[2] = 0x08051C1C;
-                rngval[3] = 0x00001021;
-                rngval[4] = 0x3C03801F;
+                //rngval[2] = 0x08051C1C;
+                //rngval[3] = 0x00001021;
+                //rngval[4] = 0x3C03801F;
             }
             break; }
         case 9: {
