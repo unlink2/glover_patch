@@ -302,6 +302,10 @@ void clone_actors(WORD_T *pcloneptr, u16 slot) {
 
         pactor = pactor->pnext; // next value
     } while (pactor != (glover_actor*)ACTOR_HEAP_START);
+
+    // clone switches and conditions
+
+
     // pcloneptr += 1;
     // clone camera
     get_ptr(WORD_T, pcam, CAMERA_ACTOR, CAMERA_ACTOR_SIZE);
@@ -332,7 +336,8 @@ void clone_obj_bank() {
     // actor heap loops on itself
     // if we're back at the start we are done
     get_ptr(obj_bank_t, pobj, OBJ_BANK, 1);
-    get_ptr(WORD_T, pcloneptr, ACTOR_HEAP_CLONE+ACTOR_HEAP_SIZE*(MAX_RESTORE_SLOTS+1), 1); // current clone address
+    // current clone address
+    get_ptr(WORD_T, pcloneptr, ACTOR_HEAP_CLONE+ACTOR_HEAP_SIZE*(MAX_RESTORE_SLOTS+1), 1);
 
     do {
         pcloneptr = clone_additional((WORD_T*)pobj->pdata, pcloneptr, pobj->size);

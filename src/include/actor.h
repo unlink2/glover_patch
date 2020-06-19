@@ -122,4 +122,28 @@ typedef struct camera_t {
     BYTE_T buffer2[416];
 } camera_t;
 
+
+/**
+ * Conditions? part of switches
+ * 0x10 bytes long
+ */
+typedef struct condition_t {
+    void *porigin1; // they just point back to original address of ptr?
+    void *porigin2;
+    WORD_T flags; // ?
+    WORD_T unknown;
+} condition_t;
+
+/**
+ * Any push button like event
+ * 0x50 bytes long
+ */
+typedef struct switch_t {
+    struct switch_t *pnext;
+    struct switch_t *pprev;
+    condition_t *pcondition;
+    BYTE_T padding[0x50-sizeof(WORD_T*)*3];
+} switch_t;
+
+
 #endif
