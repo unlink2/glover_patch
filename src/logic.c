@@ -15,12 +15,27 @@ u8 lastmap[MAX_RESTORE_SLOTS+2];
 
 gpatch_t gpatch;
 
+/*
+ * Set message
+ */
+void notify(gpatch_t *pgpatch, const char *message, u16 timer) {
+    pgpatch->message = (char*)message;
+    pgpatch->msg_timer = timer;
+}
+
 void logic() {
     update_memwatch(&pmemwatch);
     update_menu(&pmenu);
     update_keyboard(&pkb);
 
     evd_serial_terminal(&pmemwatch);
+
+    // update message
+    if (gpatch.msg_timer > 0) {
+        gpatch.msg_timer--;
+    } else {
+        gpatch.message = NULL;
+    }
 
     // TODO hacky way to prevent crash
     // Toggle menu once
@@ -222,6 +237,8 @@ void store_glover_pos() {
     gpos_bac[2] = pglover->zpos;
 
     gmemcpy((BYTE_T*)pcam, (BYTE_T*)gcam_bac, CAMERA_ACTOR_SIZE);
+
+    notify(&gpatch, "Position saved!", MSG_TIME);
 }
 
 void restore_glover_pos() {
@@ -243,6 +260,8 @@ void restore_glover_pos() {
     pball->zpos = gpos_bac[2];
 
     gmemcpy((BYTE_T*)gcam_bac, (BYTE_T*)pcam, CAMERA_ACTOR_SIZE);
+
+    notify(&gpatch, "Position restored!", MSG_TIME);
 }
 
 WORD_T* clone_additional(WORD_T *src, WORD_T *pcloneptr, WORD_T size) {
@@ -346,6 +365,8 @@ void clone_actors(WORD_T *pcloneptr, u16 slot) {
     // store rng value
     pcloneptr += 1;
     *pcloneptr = *prng;
+
+    notify(&gpatch, "Actors stored!", MSG_TIME);
 }
 
 void clone_obj_bank(WORD_T *pcloneptr, u16 slot) {
@@ -389,6 +410,8 @@ void clone_obj_bank(WORD_T *pcloneptr, u16 slot) {
     // store rng value
     pcloneptr += 1;
     *pcloneptr = *prng;
+
+    notify(&gpatch, "Object Bank cloned!", MSG_TIME);
 }
 
 void restore_actors(WORD_T *pcloneptr, u16 slot) {
@@ -429,6 +452,8 @@ void restore_actors(WORD_T *pcloneptr, u16 slot) {
     // restore rng
     pcloneptr += 1;
     *prng = *pcloneptr;
+
+    notify(&gpatch, "Actors restored!", MSG_TIME);
 }
 
 void toggle_collision() {
