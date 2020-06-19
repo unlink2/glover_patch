@@ -135,15 +135,26 @@ typedef struct condition_t {
 } condition_t;
 
 /**
+ * Action object (physical switch?)
+ * 0x30 bytes
+ */
+typedef struct action_t {
+    BYTE_T padding[0x30]; // TODO what is in this struct?
+} action_t;
+
+/**
  * Any push button like event
  * 0x50 bytes long
  */
 typedef struct switch_t {
     struct switch_t *pnext;
     struct switch_t *pprev;
-    condition_t *pcondition;
-    BYTE_T padding[0x50-sizeof(WORD_T*)*3];
+    condition_t *pcondition1; // 2 conditions?
+    condition_t *pcondition2;
+    WORD_T unknown_1[4]; // some flags?
+    action_t *paction1; // 2 actions?
+    action_t *paction2;
+    BYTE_T padding[0x50-sizeof(WORD_T*)*10];
 } switch_t;
-
 
 #endif

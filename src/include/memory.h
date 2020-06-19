@@ -111,7 +111,7 @@ extern WORD_T *LAST_INPUT_2;
 
 #define CAMERA_MATRIX (WORD_T *)0x80206300
 
-#define SWITCH_STRUCT_START (WORD_T *)0x802994b4
+#define SWITCH_LIST_START (WORD_T *)0x802994b0
 
 #define TRIGGER_CHEAT (void (*)(int, int, int))0x801BB9AC // function(cheat_number, 1, 8) ??
 #define LOAD_MAP (void (*)(int))0x8011FF40 // function(map_id)

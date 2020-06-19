@@ -304,7 +304,16 @@ void clone_actors(WORD_T *pcloneptr, u16 slot) {
     } while (pactor != (glover_actor*)ACTOR_HEAP_START);
 
     // clone switches and conditions
+    get_ptr(switch_t, pswitch, SWITCH_LIST_START, 1);
+    do {
+        pcloneptr = clone_additional((WORD_T*)pswitch, pcloneptr, sizeof(switch_t));
+        pcloneptr = clone_additional((WORD_T*)pswitch->pcondition1, pcloneptr, sizeof(condition_t));
+        pcloneptr = clone_additional((WORD_T*)pswitch->pcondition2, pcloneptr, sizeof(condition_t));
+        pcloneptr = clone_additional((WORD_T*)pswitch->paction1, pcloneptr, sizeof(action_t));
+        pcloneptr = clone_additional((WORD_T*)pswitch->paction2, pcloneptr, sizeof(action_t));
 
+        pswitch = pswitch->pnext;
+    } while (pswitch != (switch_t*)SWITCH_LIST_START);
 
     // pcloneptr += 1;
     // clone camera
