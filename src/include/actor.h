@@ -126,21 +126,22 @@ typedef struct camera_t {
 /**
  * Conditions? part of switches
  * 0x10 bytes long
+ * puzzle.nes
  */
-typedef struct condition_t {
+typedef struct puzzle_t {
     void *porigin1; // they just point back to original address of ptr?
     void *porigin2;
     WORD_T flags; // ?
     WORD_T unknown;
-} condition_t;
+} puzzle_t;
 
 /**
  * Action object (physical switch?)
  * 0x30 bytes
  */
-typedef struct action_t {
+typedef struct condition_t {
     BYTE_T padding[0x30]; // TODO what is in this struct?
-} action_t;
+} condition_t;
 
 /**
  * Any push button like event
@@ -149,12 +150,23 @@ typedef struct action_t {
 typedef struct switch_t {
     struct switch_t *pnext;
     struct switch_t *pprev;
-    condition_t *pcondition1; // 2 conditions?
-    condition_t *pcondition2;
+    puzzle_t *ppuzzle1; // 2 puzzles?
+    puzzle_t *ppuzzle2;
     WORD_T unknown_1[4]; // some flags?
-    action_t *paction1; // 2 actions?
-    action_t *paction2;
+    condition_t *pcond1; // 2 conditions?
+    condition_t *pcond2;
     BYTE_T padding[0x50-sizeof(WORD_T*)*10];
 } switch_t;
+
+/**
+ * Garib
+ * 0xB0 bytes
+ * TODO
+ */
+typedef struct garib_t {
+    struct garib_t *pnext;
+    struct garib_t *pprev;
+    BYTE_T padding[0xB0-sizeof(WORD_T*)*2];
+} garib_t;
 
 #endif

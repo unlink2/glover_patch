@@ -146,6 +146,7 @@ void init_move_menu(menudef *pmenu) {
     pmenu->strings[11] = "Save Object Bank";
     pmenu->strings[12] = "Load Object Bank";
     pmenu->strings[13] = "Show/Hide all objects";
+    // pmenu->strings[14] = "ObjBank Savestates";
 
     pmenu->type[0] = MENU_BUTTON;
     pmenu->type[1] = MENU_BUTTON;
@@ -161,6 +162,7 @@ void init_move_menu(menudef *pmenu) {
     pmenu->type[11] = MENU_BUTTON;
     pmenu->type[12] = MENU_BUTTON;
     pmenu->type[13] = MENU_BUTTON;
+    // pmenu->type[14] = MENU_BUTTON;
 
     // set pvalue 0 to glover pointer
     pmenu->pvalue[0] = GLOVER_ACTOR;
@@ -276,12 +278,18 @@ void glover_menu_select(menudef *pmenu) {
             get_ptr(u32, rngval, RNG_FUNC, 1);
             if (pmenu->pgpatch->lockrng) {
                 pmenu->strings[8] = "Unlock RNG";
-                rngval[0] = 0x03E00008; // jr ra nop
-                rngval[1] = 0x00;
+                rngval[0] = 0x3C04801E; // lui a0, 801E
+                rngval[1] = 0x3484D3F0; // ori a0, D3F0
+                rngval[2] = 0x8C820000; // lw v0, 00(a0)
+                rngval[3] = 0x03E00008; // jr ra
+                rngval[4] = 0x00000000; // nop
             } else {
                 pmenu->strings[8] = "Lock RNG";
                 rngval[0] = 0x14800003; // original code
                 rngval[1] = 0x27BDFFF8;
+                rngval[2] = 0x08051C1C;
+                rngval[3] = 0x00001021;
+                rngval[4] = 0x3C03801F;
             }
             break; }
         case 9: {
@@ -389,7 +397,7 @@ void move_object_select(menudef *pmenu) {
             }
             break; }
         case 11:
-            clone_obj_bank();
+            clone_obj_bank(NULL, MAX_RESTORE_SLOTS+1);
             break;
         case 12:
             restore_actors(NULL, MAX_RESTORE_SLOTS+1);
@@ -397,6 +405,14 @@ void move_object_select(menudef *pmenu) {
         case 13:
             toggle_show_objects();
             break;
+        /* case 14:
+            pmenu->pgpatch->clone_obj_bank = !pmenu->pgpatch->clone_obj_bank;
+            if (pmenu->pgpatch->clone_obj_bank) {
+                pmenu->strings[14] = "Regulat Savestate";
+            } else {
+                pmenu->strings[14] = "ObjBank Savestate";
+            }
+            break; */
         default:
             init_default_menu(pmenu);
             break;

@@ -13,7 +13,7 @@ void init_memwatch(memwatch *pmw) {
 
     get_ptr(BYTE_T, string_buffer, SCREEN_BUFFER, 0x20*0x10);
     pmw->pstr = string_buffer;
-    pmw->base_addr = 0x80000000;
+    pmw->base_addr = MIN_RAM;
     pmw->flags = 0x0;
 }
 
@@ -208,7 +208,7 @@ void prepare_memwatch(memwatch *pmw) {
     WORD_T *paddr = (WORD_T*)(memwatch_current_addr(pmw));
 
     if ((WORD_T)paddr < pmw->base_addr
-            || (WORD_T)paddr >= 0x80400000) {
+            || (WORD_T)paddr >= MAX_RAM) {
         pmw->offset = 0;
         return;
     }
@@ -322,7 +322,7 @@ void update_memwatch(memwatch *pmw) {
             BYTE_T *paddr = memwatch_current_addr(pmw)+pmw->cursor_pos;
 
             if ((WORD_T)paddr < pmw->base_addr
-                    || (WORD_T)paddr >= 0x80400000) {
+                    || (WORD_T)paddr >= MAX_RAM) {
                 pmw->offset = 0;
                 return;
             }
@@ -337,7 +337,7 @@ void update_memwatch(memwatch *pmw) {
             BYTE_T *paddr = memwatch_current_addr(pmw)+pmw->cursor_pos;
 
             if ((WORD_T)paddr < pmw->base_addr
-                    || (WORD_T)paddr >= 0x80400000) {
+                    || (WORD_T)paddr >= MAX_RAM) {
                 pmw->offset = 0;
                 return;
             }
@@ -358,7 +358,7 @@ void update_memwatch(memwatch *pmw) {
             value = (WORD_T)*paddr;
         }
 
-        if ((WORD_T)value >= 0x80000000 && (WORD_T)value < 0x80400000) {
+        if ((WORD_T)value >= MIN_RAM && (WORD_T)value < MAX_RAM) {
             // follow pointer if in bounds
             pmw->offset = (value-pmw->base_addr)/WORDS_PER_PAGE/sizeof(WORD_T);
         }
@@ -386,7 +386,7 @@ void update_memwatch(memwatch *pmw) {
             BYTE_T *paddr = memwatch_current_addr(pmw)+pmw->cursor_pos;
 
             if ((WORD_T)paddr < pmw->base_addr
-                    || (WORD_T)paddr >= 0x80400000) {
+                    || (WORD_T)paddr >= MAX_RAM) {
                 pmw->offset = 0;
                 return;
             }
@@ -421,7 +421,7 @@ void address_input_request(keyboard *pkb, void *pmw) {
 
     memwatch *pmemwatch = (memwatch*)pmw;
     WORD_T value = from_hexstr(pkb->pinput, gstrlen(pkb->pinput));
-    if ((WORD_T)value >= 0x80000000 && (WORD_T)value < 0x80400000) {
+    if ((WORD_T)value >= MIN_RAM && (WORD_T)value < MAX_RAM) {
         // follow pointer if in bounds
         pmemwatch->offset = (value-pmemwatch->base_addr)/WORDS_PER_PAGE/sizeof(WORD_T);
         pmemwatch->cursor_pos = 0;
