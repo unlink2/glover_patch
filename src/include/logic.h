@@ -79,6 +79,13 @@ WORD_T* clone_additional(WORD_T *, WORD_T *, WORD_T);
 // each actor is ACTOR_SIZE bytes
 // the backup heap is locates at the start of exp pack memory
 void clone_actors(WORD_T *, u16 slot);
+
+typedef struct obj_bank_t obj_bank_t;
+/**
+ * Clone other actors from object bank
+ */
+WORD_T* clone_other_objects(WORD_T *, obj_bank_t *);
+
 // same as clone_actors but just dumps everything in obj_bank
 void clone_obj_bank(WORD_T *, u16);
 

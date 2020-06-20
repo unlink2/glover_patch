@@ -34,6 +34,15 @@ typedef struct actor_properties {
     u8 padding[0x60];
 } actor_properties;
 
+/**
+ * Platform properties object
+ * seems to be holding switch states
+ * 0x60 bytes
+ */
+typedef struct platform_t {
+    BYTE_T padding[0x60];
+} platform_t;
+
 // 190 bytes
 // PActBeh18.p
 typedef struct actor_collision {
