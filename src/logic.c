@@ -293,6 +293,7 @@ void clone_actors(WORD_T *pcloneptr, u16 slot) {
     if (!pcloneptr) {
         pcloneptr = ACTOR_HEAP_CLONE+ACTOR_HEAP_SIZE*slot;;
     }
+    WORD_T *pstart = pcloneptr; // for success message
     // get_ptr(WORD_T, pcloneptr, ACTOR_HEAP_CLONE, 1); // current clone address
 
     do {
@@ -334,10 +335,14 @@ void clone_actors(WORD_T *pcloneptr, u16 slot) {
         pswitch = pswitch->pnext;
     } while (pswitch != (switch_t*)SWITCH_LIST_START);
 
+
+    get_ptr(obj_bank_t, pobj, OBJ_BANK, 1);
+    pcloneptr = clone_other_objects(pcloneptr, pobj);
+
     // store obj bank if requested
-    if (gpatch.clone_obj_bank) {
+    /*if (gpatch.clone_obj_bank) {
         clone_obj_bank(pcloneptr, slot);
-    }
+    }*/
 
     // clone garibs TODO
     /*get_ptr(garib_t, pgaribs, GARIB_LIST_START, 1);
@@ -366,7 +371,50 @@ void clone_actors(WORD_T *pcloneptr, u16 slot) {
     pcloneptr += 1;
     *pcloneptr = *prng;
 
-    notify(&gpatch, "Actors stored!", MSG_TIME);
+    if (pcloneptr-pstart > ACTOR_HEAP_SIZE) {
+        notify(&gpatch, "War: Sate oob!", MSG_TIME);
+    } else {
+        char *success_msg = "         bytes stored!";
+        to_hexstr(pcloneptr-pstart, success_msg, sizeof(WORD_T));
+        success_msg[8] = ' ';
+        notify(&gpatch, success_msg, MSG_TIME);
+    }
+}
+
+/**
+ * This is maddening to write, but we really
+ * do not want to save the WHOLE object bank because it is absolutely
+ * unbeleiveably massive. Unless someone gives me another 4 MiB of RAM
+ * I might just be eternally doomed to write terrible code.
+ */
+#define do_clone(obj, name) if (gstrncmp(obj->name, name, 0xC) == 0) { return TRUE; }
+BOOLEAN clone_obj(obj_bank_t *pobj) {
+    if (gstrncmp(pobj->name, "Plat_Plane", 0xC) == 0) {
+        return TRUE;
+    }else if (gstrncmp(pobj->name, "Act_Stats", 0xC) == 0) {
+        return TRUE;
+    } else if (gstrncmp(pobj->name, "Garib", 0x5) == 0) {
+        return TRUE;
+    } else if (gstrncmp(pobj->name, "UniqAct", 0xC) == 0) {
+        return TRUE;
+    } else if (gstrncmp(pobj->name, "Instruct", 0xC) == 0) {
+        return TRUE;
+    } else if (gstrncmp(pobj->name, "Uniq", 0x4) == 0) {
+        return TRUE;
+    }
+    return FALSE;
+}
+
+WORD_T* clone_other_objects(WORD_T *pcloneptr, obj_bank_t *pobj) {
+    do {
+        if (clone_obj(pobj)) {
+            pcloneptr = clone_additional((WORD_T*)pobj->pdata, pcloneptr, pobj->size);
+        }
+
+        pobj++; // next value
+    } while (pobj->name[0] != '\0');
+
+    return pcloneptr;
 }
 
 void clone_obj_bank(WORD_T *pcloneptr, u16 slot) {
