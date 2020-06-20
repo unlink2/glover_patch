@@ -7,7 +7,8 @@
  */
 const settings = {
     file: undefined,
-    shouldPatchEasy: true
+    shouldPatchEasy: true,
+    next: false // get 'latest' version
 };
 
 let readFile = (file) => {
@@ -42,6 +43,16 @@ let downloadFile = (data, filename, mime) => {
     }, 100);
 }
 
+let onStable = async () => {
+    settings.next = false;
+    onStart();
+}
+
+let onNext = async () => {
+    settings.next = true;
+    onStart();
+}
+
 let onStart = async () => {
     let e = settings.file;
     if (!e) {
@@ -66,7 +77,11 @@ let onStart = async () => {
         return;
     }
 
-    content = await patch(content, settings);
+    if (!settings.next) {
+        content = await patch(content, settings);
+    } else {
+        content = await patch(content, settings, NEXT_PAYLOAD_PATH, NEXT_CODE_PATH, NEXT_ENTRY_PATH);
+    }
     let cksm = await crc(content);
 
     content.setUint32(cksum_offset[0], cksm[0], false);
@@ -97,4 +112,5 @@ let error = (message) => {
 }
 
 document.getElementById('file-input').addEventListener('change', onFilePick, false);
-document.getElementById('start-patch').addEventListener('click', onStart);
+document.getElementById('start-patch').addEventListener('click', onStable);
+document.getElementById('start-next-patch').addEventListener('click', onNext);

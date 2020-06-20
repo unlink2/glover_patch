@@ -23,6 +23,10 @@ const CODE_PATH = './bin/code.bin';
 const ENTRY_PATH = './bin/entry.bin';
 const VIRTUAL_TO_ROM = 0x800ff000;
 
+const NEXT_PAYLOAD_PATH = './next/payload.bin';
+const NEXT_CODE_PATH = './next/code.bin';
+const NEXT_ENTRY_PATH = './next/entry.bin';
+
 /**
  * @function patch Patches the rom
  * @param {DataView} rom The rom data
