@@ -3,6 +3,7 @@ const app = new Vue({
     data: {
         error_message: '',
         warning_message: '',
-        shouldPatchEasy: true
+        shouldPatchEasy: true,
+        next: false
     }
 });
