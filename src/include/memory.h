@@ -124,6 +124,8 @@ extern WORD_T *LAST_INPUT_2;
 #define LEVEL_SELECT (BYTE_T*)0x8011E653
 
 #define FADE_TIMER (HWORD_T*)0x801E753C
+#define LOAD_FADE (HWORD_T*)0x801E753C // is loading finished?
+#define TARGET_LOAD_FADE (HWORD_T*)0x801E753E
 
 #define DEBUG_GRAPH (BYTE_T*)0x801EFCA0 // nonzero enables graph
 
