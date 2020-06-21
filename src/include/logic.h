@@ -7,6 +7,8 @@
 
 #define MSG_TIME 10
 
+#define TIMER_PER_FRAME 0.20
+
 /**
  * Contains functions that manipulate the global state of the game
  * and update components of the romhack that do not require rendering.
@@ -32,6 +34,14 @@ typedef struct gpatch_t {
     u8 resume_timer; // run up until 60 to delay
     u16 restore_slot;
 
+    // frame timer. replaces use of in-game timer
+    // fixed point number
+    u16 timer_frames;
+    u8 timer_seconds;
+    u32 timer_minutes;
+    BOOLEAN enable_timer;
+    char timer_str[64];
+
     char *message;
     u16 msg_timer;
 } gpatch_t;
@@ -44,6 +54,9 @@ extern gpatch_t gpatch;
 void notify(gpatch_t *, const char*, u16);
 
 void logic();
+
+void update_timer(gpatch_t *);
+void toggle_timer(gpatch_t *);
 
 void enable_timer();
 void level_select();
