@@ -40,6 +40,7 @@ typedef struct gpatch_t {
     u8 timer_seconds;
     u32 timer_minutes;
     BOOLEAN enable_timer;
+    BOOLEAN auto_timer; // auto start timer when fade ends
     char timer_str[64];
 
     char *message;

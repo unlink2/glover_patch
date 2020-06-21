@@ -155,6 +155,18 @@ void logic() {
 }
 
 void update_timer(gpatch_t *pgpatch) {
+    // reset timer if requested
+    if (pgpatch->auto_timer) {
+        get_ptr(HWORD_T, fade, LOAD_FADE, 1);
+        get_ptr(HWORD_T, target, TARGET_LOAD_FADE, 1);
+        // omly reset when target is 0
+        if (*fade != 0x00 && *target == 0x00) {
+            // reset timer
+            toggle_timer(pgpatch);
+            pgpatch->enable_timer = TRUE;
+        }
+    }
+
     if (pgpatch->enable_timer) {
         to_decstr(pgpatch->timer_minutes, pgpatch->timer_str, sizeof(u8));
 
