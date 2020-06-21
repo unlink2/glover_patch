@@ -159,11 +159,18 @@ void update_timer(gpatch_t *pgpatch) {
     if (pgpatch->auto_timer) {
         get_ptr(HWORD_T, fade, LOAD_FADE, 1);
         get_ptr(HWORD_T, target, TARGET_LOAD_FADE, 1);
+        get_ptr(glover_actor, pglover, GLOVER_ACTOR, 1);
+        get_ptr(glover_actor, pball, BALL_ACTOR, 1);
         // omly reset when target is 0
         if (*fade != 0x00 && *target == 0x00) {
+            pgpatch->reset_now = TRUE;
+            pgpatch->enable_timer = FALSE;
+        }
+        if (pgpatch->reset_now && (pball->pcollision->pcollision_floor) && pglover->pcollision->pcollision_floor) {
             // reset timer
             toggle_timer(pgpatch);
             pgpatch->enable_timer = TRUE;
+            pgpatch->reset_now = FALSE;
         }
     }
 
