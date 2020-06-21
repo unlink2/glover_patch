@@ -44,7 +44,7 @@ let downloadFile = (data, filename, mime) => {
 }
 
 let onStable = async () => {
-    settings.next = false;
+    settings.next = app.next;
     onStart();
 }
 

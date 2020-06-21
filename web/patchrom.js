@@ -4,6 +4,7 @@ const logger = new justlog.JustLog('GloverPatch', justlog.JustLog.LEVEL_DEBUG,
 /**
  * @typedef {Object} Settings
  * @property {Bool} patchEasy Should easy mode be patched int?
+ * @property {Bool} next Use unstable build?
  */
 
 
