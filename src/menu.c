@@ -25,7 +25,7 @@ void init_default_menu(menudef *pmenu) {
     pmenu->strings[3] = "Load Position";
     pmenu->strings[4] = "Save Actors     ";
     pmenu->strings[5] = "Load Actors     ";
-    pmenu->strings[6] = "Start Timer";
+    pmenu->strings[6] = "Toggle Timer";
     pmenu->strings[7] = "Level Select";
     pmenu->strings[8] = "Toggle Collision";
     pmenu->strings[9] = "Fog";
@@ -199,7 +199,8 @@ void main_menu_select(menudef *pmenu) {
             restore_actors(NULL, pmenu->pgpatch->restore_slot);
             break;
         case 6:
-            enable_timer();
+            // enable_timer();
+            toggle_timer(pmenu->pgpatch);
             break;
         case 7:
             level_select();

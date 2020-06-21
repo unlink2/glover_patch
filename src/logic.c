@@ -95,11 +95,14 @@ void logic() {
         }
     }
 
+    update_timer(&gpatch);
 
     // only trigger this code if start is held
     if (read_button(START_INPUT, CONTROLLER_1)) {
-        if (read_button(A_INPUT, CONTROLLER_1)) {
-            enable_timer();
+        if (read_button(A_INPUT, CONTROLLER_1)
+                && !read_button(A_INPUT, LAST_INPUT_1)) {
+            // enable_timer();
+            toggle_timer(&gpatch);
         }
         if (read_button(B_INPUT, CONTROLLER_1)) {
             level_select();
@@ -149,6 +152,53 @@ void logic() {
     // store last input values
     store_inputs(CONTROLLER_2, LAST_INPUT_2);
     store_inputs(CONTROLLER_1, LAST_INPUT_1);
+}
+
+void update_timer(gpatch_t *pgpatch) {
+    if (pgpatch->enable_timer) {
+        to_decstr(pgpatch->timer_minutes, pgpatch->timer_str, sizeof(u8));
+
+        // add : and maybe leading 0
+        u16 len = gstrlen(pgpatch->timer_str);
+        pgpatch->timer_str[len] = ':';
+        if (pgpatch->timer_seconds < 10) {
+            pgpatch->timer_str[len+1] = '0';
+            pgpatch->timer_str[len+2] = '\0';
+        } else {
+            pgpatch->timer_str[len+1] = '\0';
+        }
+        to_decstr(pgpatch->timer_seconds, pgpatch->timer_str+gstrlen(pgpatch->timer_str), sizeof(u8));
+
+        // add : and maybe leading 0
+        len = gstrlen(pgpatch->timer_str);
+        pgpatch->timer_str[len] = ':';
+        if (pgpatch->timer_frames < 10) {
+            pgpatch->timer_str[len+1] = '0';
+            pgpatch->timer_str[len+2] = '\0';
+        } else {
+            pgpatch->timer_str[len+1] = '\0';
+        }
+        to_decstr(pgpatch->timer_frames, pgpatch->timer_str+gstrlen(pgpatch->timer_str), sizeof(u8));
+
+        pgpatch->timer_frames++;
+        if (pgpatch->timer_frames >= 20) {
+            pgpatch->timer_seconds++;
+            pgpatch->timer_frames = 0;
+        }
+        if (pgpatch->timer_seconds >= 60) {
+            pgpatch->timer_minutes++;
+            pgpatch->timer_seconds = 0;
+        }
+        notify(pgpatch, pgpatch->timer_str, 20);
+    }
+}
+
+void toggle_timer(gpatch_t *pgpatch) {
+    pgpatch->enable_timer = !pgpatch->enable_timer;
+    pgpatch->timer_frames = 0;
+    pgpatch->timer_seconds = 0;
+    pgpatch->timer_minutes = 0;
+    pgpatch->message = NULL;
 }
 
 void enable_timer() {
