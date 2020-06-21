@@ -156,10 +156,10 @@ void logic() {
 
 void update_timer(gpatch_t *pgpatch) {
     // reset timer if requested
+    get_ptr(HWORD_T, disinput, DISABLE_INPUT_TIMER, 1);
     if (pgpatch->auto_timer) {
         get_ptr(HWORD_T, fade, LOAD_FADE, 1);
         get_ptr(HWORD_T, target, TARGET_LOAD_FADE, 1);
-        get_ptr(HWORD_T, disinput, DISABLE_INPUT_TIMER, 1);
         // omly reset when target is 0
         if (*fade != 0x00 && *target == 0x00) {
             pgpatch->reset_now = TRUE;
@@ -173,7 +173,7 @@ void update_timer(gpatch_t *pgpatch) {
         }
     }
 
-    if (pgpatch->enable_timer) {
+    if (pgpatch->enable_timer && *disinput == 0) {
         to_decstr(pgpatch->timer_minutes, pgpatch->timer_str, sizeof(u8));
 
         // add : and maybe leading 0
@@ -207,6 +207,8 @@ void update_timer(gpatch_t *pgpatch) {
             pgpatch->timer_minutes++;
             pgpatch->timer_seconds = 0;
         }
+        notify(pgpatch, pgpatch->timer_str, 20);
+    } else if (pgpatch->enable_timer) {
         notify(pgpatch, pgpatch->timer_str, 20);
     }
 }
