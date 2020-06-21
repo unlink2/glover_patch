@@ -173,7 +173,7 @@ void update_timer(gpatch_t *pgpatch) {
         }
     }
 
-    if (pgpatch->enable_timer && *disinput > 0xFF) {
+    if (pgpatch->enable_timer && *disinput < 0xFF) {
         to_decstr(pgpatch->timer_minutes, pgpatch->timer_str, sizeof(u8));
 
         // add : and maybe leading 0
