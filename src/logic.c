@@ -173,7 +173,7 @@ void update_timer(gpatch_t *pgpatch) {
     }
 
     // only inc timer if not paused && in auto mode, not in goal or not win
-    if (pgpatch->enable_timer && *disinput < 0xFF && (*did_hit_load == 0 && pgpatch->auto_timer)
+    if (pgpatch->enable_timer && *disinput < 0xFF && (*did_hit_load == 0 || !pgpatch->auto_timer)
             && *in_goal1 == 0 && *in_goal2 == 0 && *win_level == 0) {
         to_decstr(pgpatch->timer_minutes, pgpatch->timer_str, sizeof(u8));
 
