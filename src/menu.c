@@ -63,7 +63,7 @@ u8 cheat_num = 0;
 u8 map_id = 0;
 
 void init_glover_menu(menudef *pmenu) {
-    pmenu->size = 13;
+    pmenu->size = 14;
     pmenu->cursor = 0;
     pmenu->strings[0] = "Toggle Infinite Lives";
     pmenu->strings[1] = "Toggle Infinite Health";
@@ -78,6 +78,7 @@ void init_glover_menu(menudef *pmenu) {
     pmenu->strings[10] = "Debug Graph";
     pmenu->strings[11] = "Disable Pause Menu";
     pmenu->strings[12] = "Autostart timer";
+    pmenu->strings[13] = "Use IGT";
 
     pmenu->type[0] = MENU_BUTTON;
     pmenu->type[1] = MENU_BUTTON;
@@ -92,6 +93,7 @@ void init_glover_menu(menudef *pmenu) {
     pmenu->type[10] = MENU_BUTTON;
     pmenu->type[11] = MENU_BUTTON;
     pmenu->type[12] = MENU_BUTTON;
+    pmenu->type[13] = MENU_BUTTON;
 
     pmenu->pvalue[7] = &cheat_num;
     pmenu->pvalue[9] = &map_id;
@@ -317,6 +319,19 @@ void glover_menu_select(menudef *pmenu) {
             break; }
         case 12:
             pmenu->pgpatch->auto_timer = !pmenu->pgpatch->auto_timer;
+            if (pmenu->pgpatch->auto_timer) {
+                pmenu->strings[12] = "Disable Auto TImer";
+            } else {
+                pmenu->strings[12] = "Auto Timer";
+            }
+            break;
+        case 13:
+            pmenu->pgpatch->use_igt = !pmenu->pgpatch->use_igt;
+            if (pmenu->pgpatch->use_igt) {
+                pmenu->strings[13] = "Use Custom Timer";
+            } else {
+                pmenu->strings[13] = "Use IGT";
+            }
             break;
         default:
             init_default_menu(pmenu);

@@ -184,43 +184,46 @@ void update_timer(gpatch_t *pgpatch) {
             pgpatch->reset_now = FALSE;
         }
     }
+    if (pgpatch->auto_timer && pgpatch->use_igt) {
+        get_ptr(WORD_T, igt, IGT, 1);
+        pgpatch->timer_frames = *igt;
+        pgpatch->enable_timer = TRUE;
+    }
 
     // only inc timer if not paused && in auto mode, not in goal or not win
-    if (pgpatch->enable_timer && *disinput < 0xFF && (*did_hit_load == 0 || !pgpatch->auto_timer)
+    if (pgpatch->enable_timer && *disinput < 0xFF && (*did_hit_load == 0 || !pgpatch->use_igt)
             && *in_goal1 == 0 && *in_goal2 == 0 && *win_level == 0) {
-        to_decstr(pgpatch->timer_minutes, pgpatch->timer_str, sizeof(u8));
+    
+        u32 timer_seconds = pgpatch->timer_frames / 20;
+        u32 timer_minutes = timer_seconds / 60; // 20 frames per second
+        timer_seconds = timer_seconds - timer_minutes * 60;
+        u32 timer_frames = pgpatch->timer_frames % 20;
+
+        to_decstr(timer_minutes, pgpatch->timer_str, sizeof(u8));
 
         // add : and maybe leading 0
         u16 len = gstrlen(pgpatch->timer_str);
         pgpatch->timer_str[len] = ':';
-        if (pgpatch->timer_seconds < 10) {
+        if (timer_seconds < 10) {
             pgpatch->timer_str[len+1] = '0';
             pgpatch->timer_str[len+2] = '\0';
         } else {
             pgpatch->timer_str[len+1] = '\0';
         }
-        to_decstr(pgpatch->timer_seconds, pgpatch->timer_str+gstrlen(pgpatch->timer_str), sizeof(u8));
+        to_decstr(timer_seconds, pgpatch->timer_str+gstrlen(pgpatch->timer_str), sizeof(u8));
 
         // add : and maybe leading 0
         len = gstrlen(pgpatch->timer_str);
         pgpatch->timer_str[len] = ':';
-        if (pgpatch->timer_frames < 10) {
+        if (timer_frames < 10) {
             pgpatch->timer_str[len+1] = '0';
             pgpatch->timer_str[len+2] = '\0';
         } else {
             pgpatch->timer_str[len+1] = '\0';
         }
-        to_decstr(pgpatch->timer_frames, pgpatch->timer_str+gstrlen(pgpatch->timer_str), sizeof(u8));
+        to_decstr(timer_frames, pgpatch->timer_str+gstrlen(pgpatch->timer_str), sizeof(u8));
 
         pgpatch->timer_frames++;
-        if (pgpatch->timer_frames >= 20) {
-            pgpatch->timer_seconds++;
-            pgpatch->timer_frames = 0;
-        }
-        if (pgpatch->timer_seconds >= 60) {
-            pgpatch->timer_minutes++;
-            pgpatch->timer_seconds = 0;
-        }
         notify(pgpatch, pgpatch->timer_str, 20);
     } else if (pgpatch->enable_timer) {
         notify(pgpatch, pgpatch->timer_str, 20);
@@ -230,8 +233,6 @@ void update_timer(gpatch_t *pgpatch) {
 void toggle_timer(gpatch_t *pgpatch) {
     pgpatch->enable_timer = !pgpatch->enable_timer;
     pgpatch->timer_frames = 0;
-    pgpatch->timer_seconds = 0;
-    pgpatch->timer_minutes = 0;
     pgpatch->message = NULL;
 }
 
