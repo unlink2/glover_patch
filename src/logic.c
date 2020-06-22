@@ -164,11 +164,24 @@ void update_timer(gpatch_t *pgpatch) {
     get_ptr(HWORD_T, win_level, WIN_LEVEL, 1);
     get_ptr(HWORD_T, did_hit_load, IS_PAUSED, 1);
     if (pgpatch->auto_timer) {
-        get_ptr(HWORD_T, igt_delay, IGT_WAIT_TARGET, 1);
-        get_ptr(WORD_T, frame_counter, FRAME_COUNTER, 1);
-        if (*igt_delay * 0x14 > *frame_counter) {
+        /*get_ptr(HWORD_T, igt_delay, IGT_WAIT_TARGET, 1);
+          get_ptr(WORD_T, frame_counter, FRAME_COUNTER, 1);
+          if (*igt_delay * 0x14 > *frame_counter) {
+          toggle_timer(pgpatch);
+          pgpatch->enable_timer = TRUE;
+          }*/
+        get_ptr(HWORD_T, fade, LOAD_FADE, 1);
+        get_ptr(HWORD_T, target, TARGET_LOAD_FADE, 1);
+        // omly reset when target is 0
+        if (*fade != 0x00 && *target == 0x00) {
+            pgpatch->reset_now = TRUE;
+            pgpatch->enable_timer = FALSE;
+        }
+        if (pgpatch->reset_now && *disinput == 0) {
+            // reset timer
             toggle_timer(pgpatch);
             pgpatch->enable_timer = TRUE;
+            pgpatch->reset_now = FALSE;
         }
     }
 
