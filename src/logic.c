@@ -157,23 +157,21 @@ void logic() {
 void update_timer(gpatch_t *pgpatch) {
     // reset timer if requested
     get_ptr(HWORD_T, disinput, DISABLE_INPUT_TIMER, 1);
+    get_ptr(HWORD_T, in_goal1, IN_GOAL1, 1);
+    get_ptr(HWORD_T, in_goal2, IN_GOAL2, 1);
+    get_ptr(HWORD_T, win_level, WIN_LEVEL, 1);
+    get_ptr(HWORD_T, did_hit_load, DID_HIT_LOAD, 1);
     if (pgpatch->auto_timer) {
-        get_ptr(HWORD_T, fade, LOAD_FADE, 1);
-        get_ptr(HWORD_T, target, TARGET_LOAD_FADE, 1);
-        // omly reset when target is 0
-        if (*fade != 0x00 && *target == 0x00) {
-            pgpatch->reset_now = TRUE;
-            pgpatch->enable_timer = FALSE;
-        }
-        if (pgpatch->reset_now && *disinput == 0) {
-            // reset timer
+        get_ptr(HWORD_T, igt_delay, IGT_WAIT_TARGET, 1);
+        get_ptr(WORD_T, frame_counter, FRAME_COUNTER, 1);
+        if (*igt_delay * 0x14 > *frame_counter) {
             toggle_timer(pgpatch);
             pgpatch->enable_timer = TRUE;
-            pgpatch->reset_now = FALSE;
         }
     }
 
-    if (pgpatch->enable_timer && *disinput < 0xFF) {
+    if (pgpatch->enable_timer && *disinput < 0xFF && *did_hit_load == 0
+            && *in_goal1 == 0 && *in_goal2 == 0 && *win_level == 0) {
         to_decstr(pgpatch->timer_minutes, pgpatch->timer_str, sizeof(u8));
 
         // add : and maybe leading 0
