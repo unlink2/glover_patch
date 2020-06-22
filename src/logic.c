@@ -160,7 +160,7 @@ void update_timer(gpatch_t *pgpatch) {
     get_ptr(HWORD_T, in_goal1, IN_GOAL1, 1);
     get_ptr(HWORD_T, in_goal2, IN_GOAL2, 1);
     get_ptr(HWORD_T, win_level, WIN_LEVEL, 1);
-    get_ptr(HWORD_T, did_hit_load, DID_HIT_LOAD, 1);
+    get_ptr(HWORD_T, did_hit_load, IS_PAUSED, 1);
     if (pgpatch->auto_timer) {
         get_ptr(HWORD_T, igt_delay, IGT_WAIT_TARGET, 1);
         get_ptr(WORD_T, frame_counter, FRAME_COUNTER, 1);
