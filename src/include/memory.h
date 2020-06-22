@@ -9,6 +9,14 @@
 #define PAUSE_FLAG (BYTE_T*)0x801EC7D3 // 01 = paused
 #define DISABLE_PAUSE_FLAG (BYTE_T*)0x801EC748 // 00 disables pause
 
+#define DID_HIT_LOAD (BYTE_T*)0x801EC7D2 // 01 if load was hit
+#define IGT (WORD_T*)0x80290198 // in game time
+#define IN_GOAL1 (HWORD_T*)0x801e7466 // if != 0 glover will stick to goal
+#define IN_GOAL2 (HWORD_T*)0x801E7620 // if != 0 glover will also stick to goal
+#define WIN_LEVEL (HWORD_T*)0x801E7466 // if != 0 dec until 0 then win
+#define FRAME_COUNTER (WORD_T*)0x802004E0 // frames since level loaded
+#define IGT_WAIT_TARGET (HWORD_T*)0x801E76D4 // dont start igt until this value * 0x14 < FRAME_COUNTER
+
 extern WORD_T *LAST_INPUT_1;
 extern WORD_T *LAST_INPUT_2;
 // #define LAST_INPUT_1 (WORD_T*)0x800002C4
