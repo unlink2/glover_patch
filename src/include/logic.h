@@ -36,12 +36,11 @@ typedef struct gpatch_t {
 
     // frame timer. replaces use of in-game timer
     // fixed point number
-    u16 timer_frames;
-    u8 timer_seconds;
-    u32 timer_minutes;
+    u32 timer_frames;
     BOOLEAN enable_timer;
     BOOLEAN auto_timer; // auto start timer when fade ends
-    BOOLEAN reset_now; // rest timer only if this flag is set
+    BOOLEAN reset_now; // reset timer now!
+    BOOLEAN use_igt; // use igt for auto timer
     char timer_str[64];
 
     char *message;
