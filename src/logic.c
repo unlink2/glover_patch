@@ -154,6 +154,8 @@ void logic() {
     store_inputs(CONTROLLER_1, LAST_INPUT_1);
 }
 
+// uses the game auto start conditions as igt (less accurate than my solution but now
+// it will match igt...)
 void update_timer(gpatch_t *pgpatch) {
     // reset timer if requested
     get_ptr(HWORD_T, disinput, DISABLE_INPUT_TIMER, 1);
@@ -170,7 +172,8 @@ void update_timer(gpatch_t *pgpatch) {
         }
     }
 
-    if (pgpatch->enable_timer && *disinput < 0xFF && *did_hit_load == 0
+    // only inc timer if not paused && in auto mode, not in goal or not win
+    if (pgpatch->enable_timer && *disinput < 0xFF && (*did_hit_load == 0 && pgpatch->auto_timer)
             && *in_goal1 == 0 && *in_goal2 == 0 && *win_level == 0) {
         to_decstr(pgpatch->timer_minutes, pgpatch->timer_str, sizeof(u8));
 
