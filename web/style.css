@@ -1,7 +1,7 @@
-#error_message {
+.error_message {
     color: red;
 }
 
-#warning_message {
+.warning_message {
     color: orange;
 }

@@ -5,6 +5,7 @@
 #include "include/menu.h"
 #include "include/actor.h"
 #include "include/debug.h"
+#include "include/playerinfo.h"
 
 // x y and z coordinates
 float gpos_bac[3];
@@ -27,8 +28,8 @@ void logic() {
     update_memwatch(&pmemwatch);
     update_menu(&pmenu);
     update_keyboard(&pkb);
-
     evd_serial_terminal(&pmemwatch);
+
 
     // update message
     if (gpatch.msg_timer > 0) {
@@ -334,7 +335,7 @@ void restore_glover_pos() {
 
     // stop glover
     pglover->velx = 0;
-    pglover->vely = 0;
+    pglover->gravity = 0;
     pglover->velz = 0;
 
     pglover->xpos = gpos_bac[0];
