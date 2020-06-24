@@ -251,19 +251,19 @@ static void test_to_decstr(void **state) {
 
 static void test_to_floatstr(void **state) {
     char *str = my_malloc(64);
-    to_floatstr(3.1415f, str, 3);
+    to_floatstr_pad(3.1415f, str, 3, 0);
     assert_string_equal(str, "3.141");
 
-    to_floatstr(3.1415f, str, 0);
+    to_floatstr_pad(3.1415f, str, 0, 0);
     assert_string_equal(str, "3");
 
-    to_floatstr(-3.1415f, str, 3);
+    to_floatstr_pad(-3.1415f, str, 3, 0);
     assert_string_equal(str, "-3.141");
 
-    to_floatstr((float)0xFF800000, str, 0);
+    to_floatstr_pad((float)0xFF800000, str, 0, 0);
     assert_string_equal(str, "-I");
 
-    to_floatstr((float)0x7F800000, str, 0);
+    to_floatstr_pad((float)0x7F800000, str, 0, 0);
     assert_string_equal(str, "I");
 
     my_free(str);

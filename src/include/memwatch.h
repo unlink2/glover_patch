@@ -19,7 +19,7 @@ typedef enum watch_type {
     FLOAT_WATCH
 } watch_type;
 
-#define MAX_WATCH 4
+#define MAX_WATCH 10
 
 typedef struct watch_addr {
     void *paddr;
