@@ -17,6 +17,8 @@ void set_pbuffer(WORD_T *ptr) {
 }
 
 void rdp_send_dl(WORD_T *start, WORD_T *end) {
+    if (start == end) { return; }
+
     void *(*pdisableint)() = (void *(*)())DISABLE_INT;
     void *(*prestoreint)() = (void *(*)())RESTORE_INT;
 
@@ -35,6 +37,8 @@ void rdp_send_dl(WORD_T *start, WORD_T *end) {
     // & 0x00FFFFFF -> converts to physical address for dma
     ((volatile WORD_T*)0xA4100000)[0] = ((WORD_T)start) & 0x00FFFFFF;
     ((volatile WORD_T*)0xA4100000)[1] = ((WORD_T)end) & 0x00FFFFFF;
+    RDP_WAIT_PIPE(0x00);
+
     prestoreint();
 }
 
@@ -44,7 +48,7 @@ int rdp_sync_full(WORD_T *pbuffer) {
     // full pipeline sync
     pbuffer[0] = 0x29000000;
     pbuffer[1] = 0x00000000;
-    rdp_send_dl(pbuffer, pbuffer+8);
+    // rdp_send_dl(pbuffer, pbuffer+8);
 
     // set frame buffer
     // pbuffer += 8;
@@ -58,7 +62,7 @@ int rdp_sync_pipe(WORD_T *pbuffer) {
     RDP_CLEAR_BUFFER(pbuffer, 8);
     pbuffer[0] = 0x27000000;
     pbuffer[1] = 0x00000000;
-    rdp_send_dl(pbuffer, pbuffer+8);
+    // rdp_send_dl(pbuffer, pbuffer+8);
 
     return 8;
 }
@@ -67,7 +71,7 @@ int rdp_sync_load(WORD_T *pbuffer) {
     RDP_CLEAR_BUFFER(pbuffer, 8);
     pbuffer[0] = 0x31000000;
     pbuffer[1] = 0x00000000;
-    rdp_send_dl(pbuffer, pbuffer+8);
+    // rdp_send_dl(pbuffer, pbuffer+8);
 
     return 8;
 }
@@ -76,7 +80,7 @@ int rdp_sync_tile(WORD_T *pbuffer) {
     RDP_CLEAR_BUFFER(pbuffer, 8);
     pbuffer[0] = 0x28000000;
     pbuffer[1] = 0x00000000;
-    rdp_send_dl(pbuffer, pbuffer+8);
+    // rdp_send_dl(pbuffer, pbuffer+8);
 
     return 8;
 }
@@ -87,7 +91,7 @@ int rdp_draw_primitives(WORD_T *pbuffer) {
     // enable primitive mode
     pbuffer[0] = 0xEFB000FF;
     pbuffer[1] = 0x00004004;
-    rdp_send_dl(pbuffer, pbuffer+8);
+    // rdp_send_dl(pbuffer, pbuffer+8);
     return 8;
 }
 
@@ -99,7 +103,7 @@ int rdp_draw_rect(WORD_T color, int tx, int ty, int bx, int by, WORD_T *pbuffer)
 
     pbuffer[2] = 0xF6000000 | ( bx << 14 ) | ( by << 2 );
     pbuffer[3] = ( tx << 14 ) | ( ty << 2 );
-    rdp_send_dl(pbuffer, pbuffer+8);
+    // rdp_send_dl(pbuffer, pbuffer+8);
 
     return 8;
 }
@@ -112,7 +116,7 @@ int rdp_texture_mode(WORD_T *pbuffer) {
     pbuffer[2] = 0x3C0000C1;
     pbuffer[3] = 0x0F2001FF;
 
-    rdp_send_dl(pbuffer, pbuffer+8);
+    // rdp_send_dl(pbuffer, pbuffer+8);
 
     return 8;
 }
@@ -128,7 +132,10 @@ int rdp_load_tile(HWORD_T *pfont, WORD_T *pbuffer) {
     pbuffer[2] = 0x3D100007;
     pbuffer[3] = (WORD_T)pfont;
 
-    rdp_send_dl(pbuffer, pbuffer+8);
+    pbuffer[4] = 0x31000000;
+    pbuffer[5] = 0x00000000;
+
+    // rdp_send_dl(pbuffer, pbuffer+8);
 
     return 8;
 }
@@ -158,7 +165,7 @@ int rdp_draw_tile(int xh, int yh, int w, int h, WORD_T *pbuffer) {
     pbuffer[6] = 0x00000000; // S 0.0 T 0.0
     pbuffer[7] = 0x04000400; // scale factor 1:1
 
-    rdp_send_dl(pbuffer, pbuffer+8);
+    // rdp_send_dl(pbuffer, pbuffer+8);
 
-    return 16;
+    return 8;
 }

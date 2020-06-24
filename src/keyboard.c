@@ -176,12 +176,6 @@ void render_keyboard(keyboard *pkb) {
     unsigned short start_x = 0x18;
     unsigned short start_y = 0x20;
 
-    // TODO this fixed input disply issues for some reason?
-    //gputsrdp("                ", 0x0, 0x0, pfont);
-    // render input buffer
-    if (pkb->pinput) {
-        gputsrdp(pkb->pinput, 0x18, 0x10, pfont);
-    }
 
     if (!pkb->shift) {
         for (int i = 0; i < pkb->row_len; i++, start_y += CHAR_H+1) {
@@ -201,6 +195,11 @@ void render_keyboard(keyboard *pkb) {
 
     unsigned int x_offset = (pkb->cursor)*(CHAR_W)+0x18;
     unsigned int y_offset = (pkb->row)*(CHAR_H+1)+0x20;
+
+    // render input buffer
+    if (pkb->pinput) {
+        gputsrdp(pkb->pinput, 0x18, 0x10, pfont);
+    }
 
     // render cursor
     draw_char('_', pframebuffer, x_offset, y_offset,

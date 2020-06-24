@@ -9,6 +9,8 @@
 #include "include/keyboard.h"
 
 u8 render_step = 0; // 0 or 1
+WORD_T *rdp_start_next = NULL;
+WORD_T *rdp_end_next = NULL;
 
 void clear_rdp_buffer() {
     get_ptr(WORD_T, pbuffer, RDP_DL_BUFFER, RDP_DL_SIZE);
@@ -22,7 +24,7 @@ void clear_rdp_buffer() {
 void render() {
     // reset dl ptr
     get_ptr(WORD_T, pbuffer, RDP_DL_BUFFER, RDP_DL_SIZE);
-    get_ptr(WORD_T, pbuffer_memwatch, RDP_DL_BUFFER_MEMWATCH, RDP_DL_SIZE);
+    // get_ptr(WORD_T, pbuffer_memwatch, RDP_DL_BUFFER_MEMWATCH, RDP_DL_SIZE);
     get_ptr(WORD_T, pbuffer_keyboard, RDP_DL_BUFFER_KEYBOARD, RDP_DL_SIZE);
 
     get_ptr(HWORD_T, pfont, FONT8X8, 0x4000);
@@ -40,15 +42,22 @@ void render() {
     // render step selects which half of the dl buffer to point to (RDP_DL_SIZE/2)
     render_step = 0;// (render_step+1)&(RDP_BUFFERS-1);
 
-    set_pbuffer(pbuffer_memwatch+(RDP_DL_SIZE/RDP_BUFFERS)*render_step);
+    // send previous dl
+    rdp_send_dl(rdp_start_next, rdp_end_next);
+
+    WORD_T *pbuffer_start = get_pbuffer();
+
+    if (pbuffer_start > pbuffer_keyboard) {
+        set_pbuffer(pbuffer);
+        pbuffer_start = pbuffer;
+    }
+
+    // set_pbuffer(pbuffer_start);
     render_memwatch(&pmemwatch);
-
-    set_pbuffer(pbuffer+(RDP_DL_SIZE/RDP_BUFFERS)*render_step);
     render_menu(&pmenu);
-
-    set_pbuffer(pbuffer_keyboard+(RDP_DL_SIZE/RDP_BUFFERS)*render_step);
     render_keyboard(&pkb);
     render_inputs(&pkb);
+
 
     // render message
     if (gpatch.message) {
@@ -60,9 +69,9 @@ void render() {
         gputsrdp(pevd_msg, 50, 200, pfont);
     }
 
-    // TODO send all rdp commands at once
-    // WORD_T *pend = get_pbuffer();
-    // rdp_send_dl(pbuffer, pend);
+    // set next list
+    rdp_start_next = pbuffer_start;
+    rdp_end_next = get_pbuffer();
 }
 
 
