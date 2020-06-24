@@ -150,7 +150,7 @@ void prepare_watchaddr(memwatch *pmw) {
                     to_hexstr_signed((HWORD_T)*(HWORD_T*)(pmw->watch_addrs[i].paddr), pstr, sizeof(HWORD_T));
                     break;
                 case FLOAT_WATCH:
-                    to_floatstr((float)*(float*)(pmw->watch_addrs[i].paddr), pstr, 4);
+                    to_floatstr((float)*(float*)(pmw->watch_addrs[i].paddr), pstr, 5);
                     break;
                 default:
                     to_hexstr_signed((BYTE_T)*(BYTE_T*)(pmw->watch_addrs[i].paddr), pstr, sizeof(BYTE_T));
@@ -165,7 +165,7 @@ void prepare_watchaddr(memwatch *pmw) {
                     to_hexstr((HWORD_T)*(HWORD_T*)(pmw->watch_addrs[i].paddr), pstr, sizeof(HWORD_T));
                     break;
                 case FLOAT_WATCH:
-                    to_floatstr((float)*(float*)(pmw->watch_addrs[i].paddr), pstr, 4);
+                    to_floatstr((float)*(float*)(pmw->watch_addrs[i].paddr), pstr, 5);
                     break;
                 default:
                     to_hexstr((BYTE_T)*(BYTE_T*)(pmw->watch_addrs[i].paddr), pstr, sizeof(BYTE_T));

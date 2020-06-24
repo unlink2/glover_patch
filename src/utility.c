@@ -144,7 +144,7 @@ int to_decstr(WORD_T value, char *pstr, WORD_T size) {
 }
 
 void to_floatstr(float n, char *pdest, WORD_T size) {
-    to_floatstr_pad(n, pdest, size, 10);
+    to_floatstr_pad(n, pdest, size, 0);
 }
 
 void to_floatstr_pad(float n, char *pstr, WORD_T size, BYTE_T pad) {
