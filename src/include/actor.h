@@ -11,12 +11,6 @@
  */
 
 
-typedef struct obj_bank_t {
-    char name[12]; // name of object in bank, if first byte is 0 end of bank
-    BYTE_T *pdata; // ptr to data of object
-    u32 size; // size of data
-} obj_bank_t;
-
 // struct from colwav.py
 // TODO verify. This has not been verified to be correct yet
 // 78 bytes
@@ -27,6 +21,42 @@ typedef struct collision_polygon {
     vector3 pos3;
     u8 unknown_1[68];
 } collision_polygon;
+
+/**
+ * Polygon struct for model
+ * TODO incomplete size
+ */
+typedef struct model_props_t {
+    char padding[34];
+    HWORD_T *pcolor; // pointer to tint color. just one hword
+} model_props_t;
+
+/**
+ * Model entries 0x40 bytes
+ * TODO incomplete
+ */
+typedef struct model_entry_t {
+    u32 unknown0;
+    char name[0xC]; // GBOdy = glover body object
+    u32 offset; // offset from center or previous?
+    void *unknown_ptr1;
+    model_props_t *pmodel_props; // color properties
+    WORD_T *pmodel_transforms; // position and transform?
+    collision_polygon *ppositions; // relative position of polygons?
+    WORD_T *ppolygons; // i think?
+    u32 padding[3]; // not sure yet
+    // 2 pointers to next object difference seems to be origin of where they attach
+    struct model_entry_t *pnext1; // next object
+    struct model_entry_t *pnext2; // another pnext? TODO what's the difference?
+    u32 padding2[2]; // unsure
+} model_entry_t;
+
+typedef struct obj_bank_t {
+    char name[12]; // name of object in bank, if first byte is 0 end of bank
+    BYTE_T *pdata; // ptr to data of object
+    u32 size; // size of data
+} obj_bank_t;
+
 
 // 60 bytes
 // PAct_Anim.t
