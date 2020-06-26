@@ -22,6 +22,14 @@ typedef struct collision_polygon {
     u8 unknown_1[68];
 } collision_polygon;
 
+// polygon type
+// TODO verify that they are just a v3 of s32
+typedef struct model_polygon_t {
+    ivector3 p1;
+    ivector3 p2;
+    ivector3 p3;
+} model_polygon_t;
+
 /**
  * Polygon struct for model
  * TODO incomplete size
@@ -29,6 +37,8 @@ typedef struct collision_polygon {
 typedef struct model_props_t {
     char padding[34];
     HWORD_T *pcolor; // pointer to tint color. just one hword
+    char padding2[0x9C-34-sizeof(HWORD_T*)]; // lots of proprty values here
+    model_polygon_t *polygons; // pointer to polygon array offset 0x9C
 } model_props_t;
 
 /**
@@ -107,6 +117,13 @@ typedef struct model_other {
     u8 padding[0x50];
 } model_other;
 
+// model data of actor
+// TODO size is likely wrong!
+typedef struct model_data_t {
+    char padding[0xC]; // unknown data
+    model_entry_t *pmodel_start; // ptr to start of model tree
+} model_data_t;
+
 // size == F0
 // LAND_ACTOR
 typedef struct glover_actor {
@@ -140,7 +157,7 @@ typedef struct glover_actor {
     u32 scaley;
     u32 scalez;
 
-    u32 *pmodel_data; // TODO create struct for this
+    model_data_t *pmodel_data; // TODO create struct for this
     actor_properties *pproperties; // PAct_Anim.t
     model_other *pother; // ObjBank.mp
     u32 *unknown_ptr_2; // Act_Shad.t (40 bytes)
