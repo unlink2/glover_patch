@@ -14,18 +14,14 @@ WORD_T *rdp_end_next = NULL;
 
 void clear_rdp_buffer() {
     get_ptr(WORD_T, pbuffer, RDP_DL_BUFFER, RDP_DL_SIZE);
-    get_ptr(WORD_T, pbuffer_memwatch, RDP_DL_BUFFER_MEMWATCH, RDP_DL_SIZE);
-    get_ptr(WORD_T, pbuffer_keyboard, RDP_DL_BUFFER_KEYBOARD, RDP_DL_SIZE);
-    gmemset((BYTE_T*)pbuffer, 0x00, RDP_DL_SIZE*sizeof(WORD_T));
-    gmemset((BYTE_T*)pbuffer_memwatch, 0x00, RDP_DL_SIZE*sizeof(WORD_T));
-    gmemset((BYTE_T*)pbuffer_keyboard, 0x00, RDP_DL_SIZE*sizeof(WORD_T));
+    gmemset((BYTE_T*)pbuffer, 0x00, RDP_DL_END-RDP_DL_BUFFER);
 }
 
 void render() {
     // reset dl ptr
     get_ptr(WORD_T, pbuffer, RDP_DL_BUFFER, RDP_DL_SIZE);
-    // get_ptr(WORD_T, pbuffer_memwatch, RDP_DL_BUFFER_MEMWATCH, RDP_DL_SIZE);
-    get_ptr(WORD_T, pbuffer_keyboard, RDP_DL_BUFFER_KEYBOARD, RDP_DL_SIZE);
+    get_ptr(WORD_T, pbuffer_end, RDP_DL_END, RDP_DL_SIZE);
+    // get_ptr(WORD_T, pbuffer_keyboard, RDP_DL_BUFFER_KEYBOARD, RDP_DL_SIZE);
 
     get_ptr(HWORD_T, pfont, FONT8X8, 0x4000);
     // check if font is decompressed
@@ -47,7 +43,7 @@ void render() {
 
     WORD_T *pbuffer_start = get_pbuffer();
 
-    if (pbuffer_start > pbuffer_keyboard) {
+    if (pbuffer_start > pbuffer_end) {
         set_pbuffer(pbuffer);
         pbuffer_start = pbuffer;
     }
