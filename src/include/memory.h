@@ -95,8 +95,7 @@ extern WORD_T *LAST_INPUT_2;
 // each DL Buffer contains an upper and lower half for double buffering
 #define RDP_DL_SIZE 0x30000
 #define RDP_DL_BUFFER 0x80529D40
-#define RDP_DL_BUFFER_MEMWATCH RDP_DL_BUFFER+RDP_DL_SIZE
-#define RDP_DL_BUFFER_KEYBOARD RDP_DL_BUFFER_MEMWATCH+RDP_DL_SIZE
+#define RDP_DL_END 0x805e9d40
 #define RDP_BUFFERS 4
 
 // uncompressed location of font 0x4000 bytes
