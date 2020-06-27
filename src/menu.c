@@ -136,7 +136,7 @@ void init_glover_menu(menudef *pmenu) {
 BYTE_T move_value;
 
 void init_move_menu(menudef *pmenu) {
-    pmenu->size = 14;
+    pmenu->size = 15;
     pmenu->cursor = 0;
     pmenu->strings[0] = "Next Object";
     pmenu->strings[1] = "Prev Object";
@@ -152,6 +152,7 @@ void init_move_menu(menudef *pmenu) {
     pmenu->strings[11] = "Save Object Bank";
     pmenu->strings[12] = "Load Object Bank";
     pmenu->strings[13] = "Show/Hide all objects";
+    pmenu->strings[14] = "Change Glover Model";
     // pmenu->strings[14] = "ObjBank Savestates";
 
     pmenu->type[0] = MENU_BUTTON;
@@ -168,7 +169,8 @@ void init_move_menu(menudef *pmenu) {
     pmenu->type[11] = MENU_BUTTON;
     pmenu->type[12] = MENU_BUTTON;
     pmenu->type[13] = MENU_BUTTON;
-    // pmenu->type[14] = MENU_BUTTON;
+    pmenu->type[14] = MENU_BUTTON;
+    pmenu->type[15] = MENU_BUTTON;
 
     // set pvalue 0 to glover pointer
     pmenu->pvalue[0] = GLOVER_ACTOR;
@@ -443,6 +445,14 @@ void move_object_select(menudef *pmenu) {
                 pmenu->strings[14] = "ObjBank Savestate";
             }
             break; */
+        case 14: {
+            // index glover model
+            get_ptr(glover_actor, pglover, GLOVER_ACTOR, 1);
+            glover_actor *pact = (glover_actor*)pmenu->pvalue[0];
+            pglover->pmodel_data = pact->pmodel_data;
+
+            // TODO extract from ObjBank (Keys ObjBank.mp or TexBank)
+            break; }
         default:
             init_default_menu(pmenu);
             break;
@@ -467,6 +477,14 @@ void move_object_update(menudef *pmenu) {
             && !read_button(R_INPUT, LAST_INPUT_2)) {
         u32 select = pmenu->cursor; // store old cursor
         pmenu->cursor = 10; // toggle rendering
+        move_object_select(pmenu);
+        pmenu->cursor = select; // restore
+    }
+    // easy model swap
+    if (read_button(Z_INPUT, CONTROLLER_2)
+            && !read_button(Z_INPUT, LAST_INPUT_2)) {
+        u32 select = pmenu->cursor; // store old cursor
+        pmenu->cursor = 14; // toggle rendering
         move_object_select(pmenu);
         pmenu->cursor = select; // restore
     }

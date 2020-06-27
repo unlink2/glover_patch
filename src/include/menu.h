@@ -25,9 +25,9 @@ typedef struct menudef {
     BYTE_T cursor; // cursor position
 
     HWORD_T size; // size of menu strings (max is 0xF)
-    char *strings[0xF]; // strings
-    menu_entry_t type[0xF]; // type of item
-    void *pvalue[0xF]; // if menu type is value this is the pointer to the value
+    char *strings[0x1F]; // strings
+    menu_entry_t type[0x1F]; // type of item
+    void *pvalue[0x1F]; // if menu type is value this is the pointer to the value
 
     // actions for each item
     // if cursor == 0xFFFF -> back action
