@@ -68,6 +68,7 @@ static void test_gstrncmp(void **state) {
     assert_int_equal(gstrncmp("Hello", "Hello++", 16), -2);
     assert_int_equal(gstrncmp("HeLLo", "Hello", 16), 2);
     assert_int_equal(gstrncmp("heLLO", "hello", 2), 0);
+    assert_int_equal(gstrncmp("ObjBank.mp", "ObjBank.mp", 0xC), 0);
 }
 
 static void test_split_space(void **state) {
@@ -180,6 +181,7 @@ static void test_struct_size(void **state) {
     assert_int_equal(sizeof(switch_t), 0x50);
     assert_int_equal(sizeof(garib_t), 0xB0);
     assert_int_equal(sizeof(model_entry_t), 0x68);
+    assert_int_equal(sizeof(model_data_list_t), 0x10);
 }
 
 static void test_m3_mul_v3(void **state) {

@@ -224,4 +224,10 @@ typedef struct garib_t {
     BYTE_T padding[0xB0-sizeof(WORD_T*)*2];
 } garib_t;
 
+//
+typedef struct model_data_list_t {
+   WORD_T flags; // not sure
+   model_data_t *pmodel_data; // can be swapped with any model
+} model_data_list_t;
+
 #endif
