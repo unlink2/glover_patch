@@ -449,7 +449,9 @@ void move_object_select(menudef *pmenu) {
             // index glover model
             get_ptr(glover_actor, pglover, GLOVER_ACTOR, 1);
             glover_actor *pact = (glover_actor*)pmenu->pvalue[0];
-            pglover->pmodel_data = pact->pmodel_data;
+            if (pact->pmodel_data) {
+                pglover->pmodel_data = pact->pmodel_data;
+            }
 
             // TODO extract from ObjBank (Keys ObjBank.mp or TexBank)
             break; }
