@@ -14,6 +14,10 @@ char *cheat_names[CHEATS_LEN];
 
 menudef pmenu;
 
+void put_bool(BOOLEAN expr, char *pstr) {
+    pstr[1] = expr ? 'x' : ' ';
+}
+
 void init_default_menu(menudef *pmenu) {
     get_ptr(char, string_buffer, SCREEN_BUFFER, 0x20*0x10);
     pmenu->pstr = string_buffer;
@@ -65,8 +69,8 @@ u8 map_id = 0;
 void init_glover_menu(menudef *pmenu) {
     pmenu->size = 15;
     pmenu->cursor = 0;
-    pmenu->strings[0] = "Toggle Infinite Lives";
-    pmenu->strings[1] = "Toggle Infinite Health";
+    pmenu->strings[0] = "[ ] Infinite Lives";
+    pmenu->strings[1] = "[ ] Infinite Health";
     pmenu->strings[2] = "Trigger Afterlife";
     pmenu->strings[3] = "Lock Position";
     pmenu->strings[4] = "Summon Ball";
@@ -80,6 +84,10 @@ void init_glover_menu(menudef *pmenu) {
     pmenu->strings[12] = "Autostart timer";
     pmenu->strings[13] = "Use IGT";
     pmenu->strings[14] = "Player Info";
+
+    // set bool values
+    put_bool(pmenu->pgpatch->infinite_lives, pmenu->strings[0]);
+    put_bool(pmenu->pgpatch->infinite_hp, pmenu->strings[1]);
 
     pmenu->type[0] = MENU_BUTTON;
     pmenu->type[1] = MENU_BUTTON;
@@ -254,10 +262,12 @@ void main_menu_update(menudef *pmenu) {
 void glover_menu_select(menudef *pmenu) {
     switch(pmenu->cursor) {
         case 0:
-            pmenu->pgpatch->infinite_hp = !pmenu->pgpatch->infinite_hp;
+            pmenu->pgpatch->infinite_lives = !pmenu->pgpatch->infinite_lives;
+            put_bool(pmenu->pgpatch->infinite_lives, pmenu->strings[0]);
             break;
         case 1:
-            pmenu->pgpatch->infinite_lives = !pmenu->pgpatch->infinite_lives;
+            pmenu->pgpatch->infinite_hp = !pmenu->pgpatch->infinite_hp;
+            put_bool(pmenu->pgpatch->infinite_hp, pmenu->strings[1]);
             break;
         case 2:
             trigger_al(pmenu);
@@ -349,7 +359,7 @@ void glover_menu_select(menudef *pmenu) {
 }
 
 void glover_menu_update(menudef *pmenu) {
-    if (pmenu->pgpatch->infinite_hp) {
+    /*if (pmenu->pgpatch->infinite_hp) {
         pmenu->strings[0] = "Disable Infinite Health";
     } else {
         pmenu->strings[0] = "Enable Infinite Health";
@@ -358,7 +368,7 @@ void glover_menu_update(menudef *pmenu) {
         pmenu->strings[1] = "Disable Infinite Lives";
     } else {
         pmenu->strings[1] = "Enable Infinite Lives";
-    }
+    }*/
     if (pmenu->pgpatch->disable_pause) {
 	pmenu->strings[11] = "Enable Pause Menu"; 
     } else {
