@@ -44,6 +44,14 @@ typedef struct menudef {
 
 extern menudef pmenu;
 
+/*
+ * Puts a boolean value into the string
+ * String in question must start with "[ ]" function will modify
+ * contents of those first 3 characters based on the boolean value
+ * TODO update all old bool values
+ */
+void put_bool(BOOLEAN, char *);
+
 void init_default_menu(menudef *);
 void init_glover_menu(menudef *);
 void init_move_menu(menudef *);
