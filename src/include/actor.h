@@ -23,22 +23,27 @@ typedef struct collision_polygon {
 } collision_polygon;
 
 // polygon type
+// each byte is a normalized direction vector from the origin
 // TODO verify that they are just a v3 of s32
 typedef struct model_polygon_t {
-    ivector3 p1;
-    ivector3 p2;
-    ivector3 p3;
+    s16 v1;
 } model_polygon_t;
 
 /**
  * Polygon struct for model
  * TODO incomplete size
+ * This struct makes no sense.
+ * Whoever is reading this please be warned. This way lies madness.
+ * One day we will render triangles with this, but what will I have to give in return?
  */
 typedef struct model_props_t {
     char padding[34];
     HWORD_T *pcolor; // pointer to tint color. just one hword
     char padding2[0x9C-34-sizeof(HWORD_T*)]; // lots of proprty values here
-    model_polygon_t *polygons; // pointer to polygon array offset 0x9C
+
+    // seems like data between this struct and polygon ptr is related to model as well.
+    // dynamic array kinda of deal? where is the damn size?
+    model_polygon_t *polygons; // pointer to polygon array offset 0x9C (what is the size though?) 
 } model_props_t;
 
 /**
