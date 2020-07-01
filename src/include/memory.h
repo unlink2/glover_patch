@@ -136,7 +136,10 @@ extern WORD_T *LAST_INPUT_2;
 
 #define DEBUG_GRAPH (BYTE_T*)0x801EFCA0 // nonzero enables graph
 
-#define MODEL_DATA_TABLE (void*)0x80329D50 // list of all loaded models. zero terminated
+/**
+ * This is a volotile ptr. follow obj bank  ObjBank.mp or TexBank
+ */
+// #define MODEL_DATA_TABLE (void*)0x80329D50 // list of all loaded models. zero terminated
 
 void init_mem();
 
