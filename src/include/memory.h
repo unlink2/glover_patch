@@ -141,6 +141,8 @@ extern WORD_T *LAST_INPUT_2;
  */
 // #define MODEL_DATA_TABLE (void*)0x80329D50 // list of all loaded models. zero terminated
 
+#define BALL_STORAGE (WORD_T*)0x801EFD00 // is set to 0x2A if ball enters a loading zone
+
 void init_mem();
 
 #endif
