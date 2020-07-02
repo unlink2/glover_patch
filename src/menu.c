@@ -67,7 +67,7 @@ u8 cheat_num = 0;
 u8 map_id = 0;
 
 void init_glover_menu(menudef *pmenu) {
-    pmenu->size = 15;
+    pmenu->size = 16;
     pmenu->cursor = 0;
     pmenu->strings[0] = "[ ] Infinite Lives";
     pmenu->strings[1] = "[ ] Infinite Health";
@@ -84,6 +84,7 @@ void init_glover_menu(menudef *pmenu) {
     pmenu->strings[12] = "Autostart timer";
     pmenu->strings[13] = "Use IGT";
     pmenu->strings[14] = "Player Info";
+    pmenu->strings[15] = "Store Ball";
 
     // set bool values
     put_bool(pmenu->pgpatch->infinite_lives, pmenu->strings[0]);
@@ -104,6 +105,7 @@ void init_glover_menu(menudef *pmenu) {
     pmenu->type[12] = MENU_BUTTON;
     pmenu->type[13] = MENU_BUTTON;
     pmenu->type[14] = MENU_BUTTON;
+    pmenu->type[15] = MENU_BUTTON;
 
     pmenu->pvalue[7] = &cheat_num;
     pmenu->pvalue[9] = &map_id;
@@ -352,6 +354,10 @@ void glover_menu_select(menudef *pmenu) {
             clear_all_watch(pmenu->pmemwatch);
             update_playerinfo(&pmenu->pgpatch->pi, pmenu->pmemwatch);
             break;
+        case 15: {
+            get_ptr(WORD_T, store_ball, BALL_STORAGE, 1);
+            *store_ball = 0x2A;
+            break; }
         default:
             init_default_menu(pmenu);
             break;
