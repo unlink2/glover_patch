@@ -8,6 +8,7 @@
 /**
  * Returns the next part of a string
  * or NULL if string start is \0
+ * Size is token's total size until terminator
  */
 char* get_next_token(char *pstr, unsigned int *size);
 

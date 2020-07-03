@@ -35,6 +35,27 @@ static void test_get_next_token(void **state) {
     char *t5 = get_next_token(t4+size, &size);
     assert_null(t5);
     assert_int_equal(size, 0);
+
+    char *termstring = "Terminated<>Stringtest=test";
+    char *t6 = get_next_token(termstring, &size);
+    assert_true(strncmp(t6, "Terminated", size) == 0);
+    assert_int_equal(size, strlen("Terminated"));
+
+    char *t7 = get_next_token(t6+size, &size);
+    assert_true(strncmp(t7, "<>", size) == 0);
+    assert_int_equal(size, strlen("<>"));
+
+    char *t8 = get_next_token(t7+size, &size);
+    assert_true(strncmp(t8, "Stringtest", size) == 0);
+    assert_int_equal(size, strlen("Stringtest"));
+
+    char *t9 = get_next_token(t8+size, &size);
+    assert_true(strncmp(t9, "=", size) == 0);
+    assert_int_equal(size, strlen("="));
+
+    char *t10 = get_next_token(t9+size, &size);
+    assert_true(strncmp(t10, "test", size) == 0);
+    assert_int_equal(size, strlen("test"));
 }
 
 int main() {
