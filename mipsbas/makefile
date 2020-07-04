@@ -9,7 +9,7 @@ BINDIR=./bin
 LIBS=
 CFLAGS=-Wall -nostdlib
 TEST_MAIN = test
-MODULES = utility
+MODULES = utility lispvalue
 
 .DEFAULT_GOAL := test
 
