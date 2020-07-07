@@ -100,6 +100,8 @@ void logic() {
 
     // only trigger this code if start is held
     if (read_button(START_INPUT, CONTROLLER_1)) {
+        get_ptr(BYTE_T, pause_anim, PAUSE_MENU_ANIMATION, 1);
+
         if (read_button(A_INPUT, CONTROLLER_1)
                 && !read_button(A_INPUT, LAST_INPUT_1)) {
             // enable_timer();
@@ -107,6 +109,7 @@ void logic() {
         }
         if (read_button(B_INPUT, CONTROLLER_1)) {
             level_select();
+            *pause_anim = 0x00;
         }
 
         if (read_button(CL_INPUT, CONTROLLER_1)) {

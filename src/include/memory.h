@@ -136,6 +136,8 @@ extern WORD_T *LAST_INPUT_2;
 
 #define DEBUG_GRAPH (BYTE_T*)0x801EFCA0 // nonzero enables graph
 
+#define PAUSE_MENU_ANIMATION (BYTE_T*)0x801E765F
+
 /**
  * This is a volotile ptr. follow obj bank  ObjBank.mp or TexBank
  */
