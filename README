@@ -27,6 +27,7 @@ cd glover_patch
 chmod +x ./glovepatch.py
 chmod +x ./build_gcc.sh
 mkdir rom
+git clone https://github.com/unlink2/mipslisp mlisp
 ./build_gcc.sh
 
 Note that build_gcc.sh will ask for your root password twice.

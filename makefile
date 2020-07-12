@@ -3,14 +3,16 @@ CCLOC = gcc
 LD=mips-elf-ld
 
 INCLUDEDIR=./src/include
+MLISPINCLUDEDIR=./mlisp/src/include
 SRCDIR=./src
+MLISPSRCDIR=./mlisp/src
 ODIR=./obj
 ODIRLOC=./obj/local
 BINDIR=./bin
 
 LIBS=
 CFLAGS=-Wall -nostdlib -nodefaultlibs -fno-builtin -EB -g -fno-pic -mabi=eabi -ffreestanding \
-	   -ffunction-sections -fdata-sections -march=vr4300 -mtune=vr4300 -mgp32 -mlong32 -G 0
+	   -ffunction-sections -fdata-sections -march=vr4300 -mtune=vr4300 -mgp32 -mlong32 -G 0 -fno-builtin-memcpy
 # optional flags
 # CFLAGS+=-Os -flto -ffat-lto-objects  \
 #			-mno-extern-sdata -mgpopt -mfix4300 -mbranch-likely \
@@ -18,18 +20,25 @@ CFLAGS=-Wall -nostdlib -nodefaultlibs -fno-builtin -EB -g -fno-pic -mabi=eabi -f
 MAIN = main
 TEST_MAIN = test
 MODULES = utility inputs logic render memory memwatch font8x8_basic debug rdp menu matrix keyboard playerinfo
+MLISP_MODULES = builtin lispvalue token utility
 
 .DEFAULT_GOAL := glover_patch
 
 DEPS=$(patsubst %,$(INCLUDEDIR)/%.h,$(MODULES))
+DEPS+=$(patsubst %,$(MLISPINCLUDEDIR)/%.h,$(MLISP_MODULES))
 OBJ=$(patsubst %,$(ODIR)/%.o,$(MODULES))
 OBJ+=$(patsubst %,$(ODIR)/%.o,$(MAIN))
+OBJ+=$(patsubst %,$(ODIR)/mlisp/%.o,$(MLISP_MODULES))
+
 TEST_OBJ=$(patsubst %,$(ODIRLOC)/%.o,$(MODULES))
 TEST_OBJ+=$(patsubst %,$(ODIRLOC)/%.o,$(TEST_MAIN))
 
 # main
 
 $(ODIR)/%.o: $(SRCDIR)/%.c $(DEPS) | init
+	$(CC) -c -o  $@ $< $(CFLAGS)
+
+$(ODIR)/mlisp/%.o: $(MLISPSRCDIR)/%.c $(DEPS) | init
 	$(CC) -c -o  $@ $< $(CFLAGS)
 
 $(BINDIR)/code.bin: $(OBJ)
@@ -64,6 +73,7 @@ clean:
 .PHONY: setup
 init:
 	mkdir -p $(ODIR)
+	mkdir -p $(ODIR)/mlisp
 	mkdir -p $(BINDIR)
 	mkdir -p $(ODIRLOC)
 
