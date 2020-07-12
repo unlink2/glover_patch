@@ -6,3 +6,4 @@ __pycache__/
 obj/
 gcc_build/
 node_modules/
+mlisp/

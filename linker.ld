@@ -4,6 +4,7 @@
 OUTPUT_FORMAT("elf32-bigmips")
 OUTPUT_ARCH(mips)
 ENTRY(__start)
+memcpy = lmemcpy;
 SECTIONS
 {
   PROVIDE(start = 0x80400200) ;
