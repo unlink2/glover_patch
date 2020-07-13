@@ -19,7 +19,8 @@ CFLAGS=-Wall -nostdlib -nodefaultlibs -fno-builtin -EB -g -fno-pic -mabi=eabi -f
 # 			-mno-check-zero-division -mxgot
 MAIN = main
 TEST_MAIN = test
-MODULES = utility inputs logic render memory memwatch font8x8_basic debug rdp menu matrix keyboard playerinfo
+MODULES = utility inputs logic render memory memwatch font8x8_basic debug rdp menu matrix keyboard playerinfo\
+		  script
 MLISP_MODULES = builtin lispvalue token utility
 
 .DEFAULT_GOAL := glover_patch
@@ -32,7 +33,7 @@ OBJ+=$(patsubst %,$(ODIR)/mlisp/%.o,$(MLISP_MODULES))
 
 TEST_OBJ=$(patsubst %,$(ODIRLOC)/%.o,$(MODULES))
 TEST_OBJ+=$(patsubst %,$(ODIRLOC)/%.o,$(TEST_MAIN))
-
+TEST_OBJ+=$(patsubst %,$(ODIRLOC)/mlisp/%.o,$(MLISP_MODULES))
 # main
 
 $(ODIR)/%.o: $(SRCDIR)/%.c $(DEPS) | init
@@ -56,6 +57,10 @@ glover_patch: $(BINDIR)/code.bin
 $(ODIRLOC)/%.o: $(SRCDIR)/%.c $(DEPS) | init
 	$(CCLOC) -c -o $@ $< -Wall -g
 
+
+$(ODIRLOC)/mlisp/%.o: $(MLISPSRCDIR)/%.c $(DEPS) | init
+	$(CCLOC) -c -o $@ $< -Wall -g
+
 build_test: $(TEST_OBJ)
 	$(CCLOC) -o $(BINDIR)/${TEST_MAIN} $^ $(LIBS) -l cmocka
 
@@ -66,6 +71,8 @@ test: build_test
 clean:
 	@echo Cleaning stuff. This make file officially is doing better than you irl.
 	rm -f $(ODIR)/*.o
+	rm -f $(ODIR)/mlisp/*.o
+	rm -f $(ODIRLOC)/mlisp/*.o
 	rm -f $(ODIRLOC)/*.o
 	rm -f $(BINDIR)/*
 
@@ -76,4 +83,5 @@ init:
 	mkdir -p $(ODIR)/mlisp
 	mkdir -p $(BINDIR)
 	mkdir -p $(ODIRLOC)
+	mkdir -p $(ODIRLOC)/mlisp
 
