@@ -36,8 +36,8 @@ void init_keyboard(keyboard *pkb) {
 
     pkb->rows_lower[0] = "0123456789 ";
     pkb->rows_lower[1] = "abcdefghij ";
-    pkb->rows_lower[2] = "klmnopqrst ";
-    pkb->rows_lower[3] = "uvwxyz.,+? ";
+    pkb->rows_lower[2] = "klmnopqrst\"";
+    pkb->rows_lower[3] = "uvwxyz.,+?'";
 
     pkb->shift = TRUE;
     pkb->row_len = 4;
