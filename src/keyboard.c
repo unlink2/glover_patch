@@ -29,19 +29,19 @@ void init_hex_keyboard(keyboard *pkb) {
 void init_keyboard(keyboard *pkb) {
     pkb->pcallback = NULL;
 
-    pkb->rows[0] = "0123456789";
-    pkb->rows[1] = "ABCDEFGHIJ";
-    pkb->rows[2] = "KLMNOPQRST";
-    pkb->rows[3] = "UVWXYZ.,!?";
+    pkb->rows[0] = "!@#$%^&*() ";
+    pkb->rows[1] = "ABCDEFGHIJ ";
+    pkb->rows[2] = "KLMNOPQRST ";
+    pkb->rows[3] = "UVWXYZ-=|/ ";
 
-    pkb->rows_lower[0] = "0123456789";
-    pkb->rows_lower[1] = "abcdefghij";
-    pkb->rows_lower[2] = "klmnopqrst";
-    pkb->rows_lower[3] = "uvwxyz.,!?";
+    pkb->rows_lower[0] = "0123456789 ";
+    pkb->rows_lower[1] = "abcdefghij ";
+    pkb->rows_lower[2] = "klmnopqrst ";
+    pkb->rows_lower[3] = "uvwxyz.,+? ";
 
     pkb->shift = TRUE;
     pkb->row_len = 4;
-    pkb->col_len = 10;
+    pkb->col_len = 11;
     pkb->row = 0;
     pkb->cursor = 0;
     pkb->pinput = "Test test";
