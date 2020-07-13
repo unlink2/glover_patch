@@ -13,7 +13,7 @@
 #define USB_WRITE_TIMEOUT 5000
 #define MAJOR_VERSION 0
 #define MINOR_VERSION 1
-#define BUFFER_SIZE 512
+#define BUFFER_SIZE 1024
 
 int stop = 0;
 int listen = 0;
@@ -145,7 +145,7 @@ void mainloop(struct ftdi_context *ftdi, unsigned char *send_buff, unsigned char
         }
 
         ftdi_write_data(ftdi, send_buff, BUFFER_SIZE);
-
+        usleep(100000); // wait for response
         ret_r = ftdi_read_data(ftdi, recv_buff, BUFFER_SIZE);
 
         if (ret_r > 0) {

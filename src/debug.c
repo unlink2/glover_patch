@@ -6,7 +6,7 @@
 
 static volatile struct pi_regs* const pir = (struct pi_regs *)0xa4600000;
 
-#define COMMAND_SIZE 64
+#define COMMAND_SIZE 1024
 
 char *pevd_msg;
 char *pevd_msg_buffer[COMMAND_SIZE+1];
