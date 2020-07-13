@@ -1,6 +1,8 @@
 #include "include/debug.h"
 #include "include/render.h"
 #include "include/utility.h"
+#include "include/script.h"
+#include "include/logic.h"
 
 static volatile struct pi_regs* const pir = (struct pi_regs *)0xa4600000;
 
@@ -492,6 +494,8 @@ void evd_serial_terminal(memwatch *pmemwatch) {
         return;
     }
 
+    // notify(&gpatch, data, 10);
+
     // parse args
     arg a;
     if (is_arg(data, "print ")) {
@@ -565,5 +569,9 @@ void evd_serial_terminal(memwatch *pmemwatch) {
     } else if (is_arg(data, "dump ")) {
         a = parse_arg(data, "dump ");
         dump(a, response);
+    } else if (is_arg(data, "e ")) {
+        // execute as lisp value
+        repl(&vm, data+gstrlen("e "), response);
+        evd_usb_write(response, COMMAND_SIZE); // send back
     }
 }
