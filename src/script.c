@@ -129,6 +129,12 @@ void repl(lispvm_t *pvm, char *pinput, char *out_buffer) {
     } else {
         print_lisp_value(&eval.value, out_buffer);
     }
+
+
+    // on exit we reset
+    if (pvm->exit) {
+        reset_vm(pvm);
+    }
 }
 
 void reset_vm(lispvm_t *pvm) {
