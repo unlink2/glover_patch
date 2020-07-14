@@ -5,6 +5,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <pthread.h>
+#include <editline.h>
 
 #define FILE_CHUNK 0x8000
 #define USB_VENDOR 0x0403
@@ -106,6 +107,7 @@ void send_batch(struct ftdi_context *ftdi, unsigned char *send_buff, unsigned ch
         strcpy((char*)send_buff, line);
 
         ftdi_write_data(ftdi, send_buff, BUFFER_SIZE);
+        usleep(100000); // wait for response
         ret_r = ftdi_read_data(ftdi, recv_buff, BUFFER_SIZE);
         if (ret_r == 0) {
             return;
@@ -129,8 +131,12 @@ void mainloop(struct ftdi_context *ftdi, unsigned char *send_buff, unsigned char
         if (!listen) {
             fprintf(stderr, ">> ");
             // send cmdt to OS to test usb communication
-            fgets((char*)send_buff, BUFFER_SIZE, stdin);
-            send_buff[strlen((char*)send_buff)-1] = '\0'; // remove new line char
+            // fgets((char*)send_buff, BUFFER_SIZE, stdin);
+            // send_buff[strlen((char*)send_buff)-1] = '\0'; // remove new line char
+            char *buffer = readline("> ");
+            add_history(buffer);
+            strcpy((char*)send_buff, buffer);
+            free(buffer);
         } else {
             strcpy((char*)send_buff, "listen");
             // clear_screen();

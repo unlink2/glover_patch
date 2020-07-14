@@ -569,9 +569,9 @@ void evd_serial_terminal(memwatch *pmemwatch) {
     } else if (is_arg(data, "dump ")) {
         a = parse_arg(data, "dump ");
         dump(a, response);
-    } else if (is_arg(data, "e ")) {
+    } else {
         // execute as lisp value
-        repl(&vm, data+gstrlen("e "), response);
+        repl(&vm, data, response);
         evd_usb_write(response, COMMAND_SIZE); // send back
     }
 }
