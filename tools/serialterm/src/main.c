@@ -129,11 +129,11 @@ void mainloop(struct ftdi_context *ftdi, unsigned char *send_buff, unsigned char
         // if in listening mode do not allow input, just receive
         // CTRL+C will first exit listen mode before exiting the loop
         if (!listen) {
-            fprintf(stderr, ">> ");
+            // fprintf(stderr, ">> ");
             // send cmdt to OS to test usb communication
             // fgets((char*)send_buff, BUFFER_SIZE, stdin);
             // send_buff[strlen((char*)send_buff)-1] = '\0'; // remove new line char
-            char *buffer = readline("> ");
+            char *buffer = readline(">> ");
             add_history(buffer);
             strcpy((char*)send_buff, buffer);
             free(buffer);
