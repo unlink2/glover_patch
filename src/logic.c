@@ -6,6 +6,7 @@
 #include "include/actor.h"
 #include "include/debug.h"
 #include "include/playerinfo.h"
+#include "include/script.h"
 
 // x y and z coordinates
 float gpos_bac[3];
@@ -29,7 +30,9 @@ void logic() {
     update_menu(&pmenu);
     update_keyboard(&pkb);
     evd_serial_terminal(&pmemwatch);
-
+    if (update_vm(&vm, out_buffer)) {
+        notify(&gpatch, out_buffer, 1);
+    }
 
     // update message
     if (gpatch.msg_timer > 0) {

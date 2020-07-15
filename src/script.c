@@ -7,9 +7,16 @@
 // and at this point im too tired to care
 void to_floatstr(float, char *, WORD_T);
 void to_hexstr_signed(WORD_T, char *, WORD_T);
+void to_hexstr(WORD_T, char *, WORD_T);
 
 char vm_code_buffer[VM_CODE_SIZE];
 char out_buffer[VM_OUT_SIZE];
+
+char *current_script = NULL;
+void set_script(lispvm_t *pvm, char *script, char *out_buffer) {
+    current_script = script;
+    repl(pvm, current_script, out_buffer);
+}
 
 char* type_to_string(lisp_type type) {
     switch (type) {
@@ -37,7 +44,7 @@ char* type_to_string(lisp_type type) {
 void on_error(lispvm_t *pvm, lispeval_t *eval, char *buffer, char *out_buffer) {
     lmemset(out_buffer, 0, VM_OUT_SIZE);
 
-    // copy string in an awful way 
+    // copy string in an awful way
     // printf("%s in '%*.*s' %s %s\n", eval->pmessage, len, len, eval->value.ptoken, type_to_string(eval->value.type), buffer);
     // on error collapse stack
     lstrncpy(out_buffer, eval->pmessage, VM_OUT_SIZE);
@@ -95,7 +102,7 @@ short print_lisp_value(lispval_t *pval, char *out_buffer) {
             lstrncpy(out_buffer, pval->value.pstring, pval->arg_len);
             break;
         case TYPE_NUMBER:
-            to_hexstr_signed(pval->value.intval, out_buffer, 4);
+            to_hexstr(pval->value.intval, out_buffer, 4);
             len += lstrlen(out_buffer);
             break;
         case TYPE_FLOAT:
@@ -121,6 +128,17 @@ short print_lisp_value(lispval_t *pval, char *out_buffer) {
     return len;
 }
 
+char update_vm(lispvm_t *pvm, char *out_buffer) {
+    // run a script if we have one
+    // the onframe function is called
+    if (current_script) {
+        repl(pvm, "(onframe)", out_buffer);
+        return 1;
+    }
+
+    return 0;
+}
+
 void repl(lispvm_t *pvm, char *pinput, char *out_buffer) {
     lispeval_t eval = eval_expression_from(pvm, pinput, lstrlen(pinput));
 
@@ -142,6 +160,7 @@ void reset_vm(lispvm_t *pvm) {
     init_lisp_vm(pvm, vm_code_buffer, VM_CODE_SIZE);
     lmemset((unsigned char*)vm_code_buffer, 0, VM_CODE_SIZE);
     register_builtins(pvm);
+    current_script = NULL;
 }
 
 lispvm_t vm;
