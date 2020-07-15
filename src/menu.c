@@ -194,14 +194,15 @@ void init_move_menu(menudef *pmenu) {
 }
 
 void init_script_menu(menudef *pmenu) {
-    pmenu->size = 2;
+    pmenu->size = 3;
     pmenu->cursor = 0;
     pmenu->strings[0] = "Input code...";
     pmenu->strings[1] = "Reset VM...";
+    pmenu->strings[2] = "Load Floor Collision Script";
 
     pmenu->type[0] = MENU_BUTTON;
     pmenu->type[1] = MENU_BUTTON;
-
+    pmenu->type[2] = MENU_BUTTON;
 
     pmenu->pactions = &script_menu_select;
     pmenu->pupdate = &script_menu_update;
@@ -540,6 +541,9 @@ void script_menu_select(menudef *pmenu) {
         case 1:
             reset_vm(&vm);
             notify(pmenu->pgpatch, "VM Reset!", 40);
+            break;
+        case 2:
+            set_script(&vm, "(defun 'onframe '() '(peeki32 (peeki32 0x802903B0)))", out_buffer);
             break;
         default:
             init_default_menu(pmenu);
