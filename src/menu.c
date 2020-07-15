@@ -543,6 +543,7 @@ void script_menu_select(menudef *pmenu) {
             notify(pmenu->pgpatch, "VM Reset!", 40);
             break;
         case 2:
+            reset_vm(&vm);
             set_script(&vm, "(defun 'onframe '() '(peeki32 (peeki32 0x802903B0)))", out_buffer);
             break;
         default:
