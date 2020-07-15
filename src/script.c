@@ -132,7 +132,7 @@ char update_vm(lispvm_t *pvm, char *out_buffer) {
     // run a script if we have one
     // the onframe function is called
     if (current_script) {
-        repl(pvm, "(onframe)", out_buffer);
+        repl(pvm, "(if '(isdef 'onframe) '(onframe))", out_buffer);
         return 1;
     }
 
