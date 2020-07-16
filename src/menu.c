@@ -560,25 +560,30 @@ void render_menu(menudef *pmenu) {
         return;
     }
 
-    HWORD_T *pframebuffer = get_frame_buffer();
+    // HWORD_T *pframebuffer = get_frame_buffer();
     get_ptr(HWORD_T, pfont, FONT8X8, 0x4000);
+    get_ptr(HWORD_T, pfont_hi, FONT8X8_HI, 0x4000);
     // render menu if flag is enabled
     unsigned short start_x = 0x10;
     unsigned short start_y = 0x20;
     // display 16 bytes on screen 1 word per line
     for (int i = 0; i < pmenu->size; i++, start_y += CHAR_H+1) {
-        gputsrdp(pmenu->strings[i], start_x, start_y, pfont);
+        if (i == pmenu->cursor) {
+            gputsrdp(pmenu->strings[i], start_x, start_y, pfont_hi);
+        } else {
+            gputsrdp(pmenu->strings[i], start_x, start_y, pfont);
+        }
     }
 
 
-    unsigned int x_offset = start_x;
-    unsigned int y_offset = (pmenu->cursor)*(CHAR_H+1)+0x20;
+    // unsigned int x_offset = start_x;
+    // unsigned int y_offset = (pmenu->cursor)*(CHAR_H+1)+0x20;
 
     // render cursor
-    draw_char('_', pframebuffer, x_offset, y_offset,
+    /*draw_char('_', pframebuffer, x_offset, y_offset,
             (WORD_T*)font8x8_basic, 0xF00F, 0x0000);
     draw_char('_', pframebuffer, x_offset+8, y_offset,
-            (WORD_T*)font8x8_basic, 0xF00F, 0x0000);
+            (WORD_T*)font8x8_basic, 0xF00F, 0x0000);*/
 
 }
 
