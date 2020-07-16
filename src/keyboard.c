@@ -170,8 +170,9 @@ void render_keyboard(keyboard *pkb) {
     inc_pbuffer(rdp_sync_pipe(get_pbuffer()));
 
     // render all rows and some instructions
-    HWORD_T *pframebuffer = get_frame_buffer();
+    // HWORD_T *pframebuffer = get_frame_buffer();
     get_ptr(HWORD_T, pfont, FONT8X8, 0x4000);
+    get_ptr(HWORD_T, pfont_hi, FONT8X8_HI, 0x4000);
     // render if flag is enabled
     unsigned short start_x = 0x18;
     unsigned short start_y = 0x20;
@@ -201,10 +202,13 @@ void render_keyboard(keyboard *pkb) {
         gputsrdp(pkb->pinput, 0x18, 0x10, pfont);
     }
 
-    // render cursor
-    draw_char('_', pframebuffer, x_offset, y_offset,
-            (WORD_T*)font8x8_basic, 0xF00F, 0x0000);
+    char *cur_str = "";
+    cur_str[0] = pkb->rows[pkb->row][pkb->cursor];
+    gputsrdp(cur_str, x_offset, y_offset, pfont_hi);
 
+    // render cursor
+    /* draw_char('_', pframebuffer, x_offset, y_offset,
+            (WORD_T*)font8x8_basic, 0xF00F, 0x0000);*/
 }
 
 void render_inputs(keyboard *pkb) {

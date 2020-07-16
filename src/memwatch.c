@@ -38,16 +38,21 @@ void render_watchaddr(memwatch *pmw) {
 }
 
 void render_watchselect(memwatch *pmw) {
-    HWORD_T *pframebuffer = get_frame_buffer();
+    // HWORD_T *pframebuffer = get_frame_buffer();
 
     get_ptr(HWORD_T, pfont, FONT8X8, 0x4000);
+    get_ptr(HWORD_T, pfont_hi, FONT8X8_HI, 0x4000);
 
     // render strings
     char *pstr = (char*)pmw->pstr;
 
     int i = 0;
     for (i = 0; i < 5; i++) {
-        gputsrdp(pstr, 0x10, 0x10+9*i, pfont);
+        if (i == pmw->cursor_pos) {
+            gputsrdp(pstr, 0x10, 0x10+9*i, pfont_hi);
+        } else {
+            gputsrdp(pstr, 0x10, 0x10+9*i, pfont);
+        }
         pstr += 0x10;
     }
 
@@ -62,13 +67,13 @@ void render_watchselect(memwatch *pmw) {
         gputsrdp("L: Unlock", 0x10, 0x18+9*i+2, pfont);
     }
 
-    int y_offset = pmw->cursor_pos*9;
+    // int y_offset = pmw->cursor_pos*9;
 
     // render memwatch cursor
-    draw_char('_', pframebuffer, 0x10, 0x10+y_offset,
+    /* draw_char('_', pframebuffer, 0x10, 0x10+y_offset,
             (WORD_T*)font8x8_basic, 0xF00F, 0x0000);
     draw_char('_', pframebuffer, 0x18, 0x10+y_offset,
-            (WORD_T*)font8x8_basic, 0xF00F, 0x0000);
+            (WORD_T*)font8x8_basic, 0xF00F, 0x0000);*/
 }
 
 void render_memwatch(memwatch *pmw) {
@@ -83,13 +88,18 @@ void render_memwatch(memwatch *pmw) {
     HWORD_T *pframebuffer = get_frame_buffer();
 
     get_ptr(HWORD_T, pfont, FONT8X8, 0x4000);
+    get_ptr(HWORD_T, pfont_hi, FONT8X8_HI, 0x4000);
 
     unsigned short start_x = 0x24;
     unsigned short start_y = 0x20;
 
     // render strings
     char *pstr = (char*)pmw->pstr;
-    gputsrdp(pstr, start_x, start_y-0x10, pfont);
+    if (pmw->cursor_pos == 0xFFFF) {
+        gputsrdp(pstr, start_x, start_y-0x10, pfont_hi);
+    } else {
+        gputsrdp(pstr, start_x, start_y-0x10, pfont);
+    }
     pstr += 0x10;
 
     char index_buffer[4];
@@ -105,15 +115,13 @@ void render_memwatch(memwatch *pmw) {
     int y_offset = (pmw->cursor_pos/BYTES_PER_LINE)*(CHAR_H+1)+0x10;
 
     // if cursor is pointing at address
-    if (pmw->cursor_pos == 0xFFFF) {
-        x_offset = 0;
-        y_offset = 0;
+    if (pmw->cursor_pos != 0xFFFF) {
+        // render memwatch cursor
+        draw_char('_', pframebuffer, start_x+x_offset, 0x10+y_offset,
+                (WORD_T*)font8x8_basic, 0xF00F, 0x0000);
+        draw_char('_', pframebuffer, start_x+8+x_offset, 0x10+y_offset,
+                (WORD_T*)font8x8_basic, 0xF00F, 0x0000);
     }
-    // render memwatch cursor
-    draw_char('_', pframebuffer, start_x+x_offset, 0x10+y_offset,
-            (WORD_T*)font8x8_basic, 0xF00F, 0x0000);
-    draw_char('_', pframebuffer, start_x+8+x_offset, 0x10+y_offset,
-            (WORD_T*)font8x8_basic, 0xF00F, 0x0000);
 }
 
 void prepare_watchaddr(memwatch *pmw) {

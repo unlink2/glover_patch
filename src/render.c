@@ -24,12 +24,14 @@ void render() {
     // get_ptr(WORD_T, pbuffer_keyboard, RDP_DL_BUFFER_KEYBOARD, RDP_DL_SIZE);
 
     get_ptr(HWORD_T, pfont, FONT8X8, 0x4000);
+    get_ptr(HWORD_T, pfont_hi, FONT8X8_HI, 0x4000);
     // check if font is decompressed
     // test if pixel matches bg color
     // first char is NULL and therefore empty
     if (pfont[0] != 0xFFFF) {
         // safety init
         decompress_font((WORD_T*)font8x8_basic, pfont, 0x000F, 0xFFFF);
+        decompress_font((WORD_T*)font8x8_basic, pfont_hi, 0xFFFF, 0xC00F);
         clear_rdp_buffer();
         // clear rdp buffer once as well
         set_pbuffer(pbuffer);

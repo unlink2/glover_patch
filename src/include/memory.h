@@ -101,6 +101,7 @@ extern WORD_T *LAST_INPUT_2;
 // uncompressed location of font 0x4000 bytes
 // TODO make sure this is a good location
 #define FONT8X8 (WORD_T*)0x80525C30
+#define FONT8X8_HI (WORD_T*)0x80521c30 // highlight font location
 
 // 0x20 strings of 0x10 bytes each. will be rendered to the screen
 // every frame if needed
