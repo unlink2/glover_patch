@@ -56,30 +56,25 @@ short print_lisp_value(lispval_t *pval, char *out_buffer);
 short print_list(lispval_t *pval, char *out_buffer) {
     out_buffer[0] = '(';
     out_buffer++;
-    short len = 1;
-    int i = 0;
-    int total_len = pval->arg_len;
-    while (pval->pnext && i < total_len) {
-        pval = pval->pnext;
+    pval = pval->value.plist;
+    short len = 0;
+    while (pval) {
         if (pval) {
             short newlen = print_lisp_value(pval, out_buffer);
             out_buffer = out_buffer + newlen;
-            if (pval->type == TYPE_LIST) {
-                // use next for N iterations
-                int arg_len = pval->arg_len;
-                for (int i = 0; i < arg_len && pval->pnext; i++) {
-                    pval = pval->pnext;
-                }
-            }
-            if (pval->pnext && i+1 < total_len) {
+            len += newlen;
+            if (pval->pnext) {
                 out_buffer[0] = ' ';
+                out_buffer++;
+                len++;
+            } else {
+                out_buffer[0] = ')';
                 out_buffer++;
                 len++;
             }
         }
-        i++;
+        pval = pval->pnext;
     }
-    out_buffer[0] = ')';
     out_buffer++;
     len++;
     return len;
