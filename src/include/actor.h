@@ -111,7 +111,8 @@ typedef struct actor_collision {
 // 50 bytes (Verified in Object Bank)
 // ACTOR_COL
 typedef struct model_properties {
-    u8 padding[0x50];
+    u8 padding[0x4C];
+    u32 animation_state; // animation state (offset?)
 } model_properties;
 
 // TODO needs better name
@@ -128,6 +129,12 @@ typedef struct model_data_t {
     char padding[0xC]; // unknown data
     model_entry_t *pmodel_start; // ptr to start of model tree
 } model_data_t;
+
+// model act_shad_t
+// 0x40 size
+typedef struct act_shad {
+    char padding[0x40];
+} act_shad_t;
 
 // size == F0
 // LAND_ACTOR
@@ -165,7 +172,7 @@ typedef struct glover_actor {
     model_data_t *pmodel_data; // TODO create struct for this
     actor_properties *pproperties; // PAct_Anim.t
     model_other *pother; // ObjBank.mp
-    u32 *unknown_ptr_2; // Act_Shad.t (40 bytes)
+    act_shad_t *act_shad; // Act_Shad.t (40 bytes)
     actor_collision *pcollision; // PActBeh18.p
     model_properties *pmodelproperties; // ACTOR_COL
 
