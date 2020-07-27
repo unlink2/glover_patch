@@ -47,9 +47,12 @@ void render() {
 
     if (pbuffer_start > pbuffer_end) {
         set_pbuffer(pbuffer);
-        pbuffer_start = pbuffer;
+        pbuffer_start = get_pbuffer();
     }
 
+    // TODO somehow this dies on pj64's
+    // video plugin when rendering too much, but not on console.
+    // Too bad! Use glide or angrylion instead
     // set_pbuffer(pbuffer_start);
     render_memwatch(&pmemwatch);
     render_menu(&pmenu);
