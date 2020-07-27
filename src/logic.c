@@ -151,6 +151,20 @@ void logic() {
         store_inputs(CONTROLLER_2, LAST_INPUT_2);
     }
 
+    // glover force movement
+    if (read_button(CL_INPUT, CONTROLLER_2)) {
+        get_ptr(glover_actor, pglover, GLOVER_ACTOR, 1);
+
+        pglover->ypos += 2.0f;
+    }
+    if (read_button(CR_INPUT, CONTROLLER_2)) {
+        get_ptr(glover_actor, pglover, GLOVER_ACTOR, 1);
+
+        pglover->ypos -= 2.0f;
+    }
+
+
+
     frame_advance();
 
     get_ptr(save_file, file1, FILE1_START, 7);
