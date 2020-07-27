@@ -51,9 +51,9 @@ void on_error(lispvm_t *pvm, lispeval_t *eval, char *buffer, char *out_buffer) {
     pvm->stack_ptr = 0;
 }
 
-short print_lisp_value(lispval_t *pval, char *out_buffer);
+short print_lisp_value(lispobject_t *pval, char *out_buffer);
 
-short print_list(lispval_t *pval, char *out_buffer) {
+short print_list(lispobject_t *pval, char *out_buffer) {
     out_buffer[0] = '(';
     out_buffer++;
     pval = pval->value.plist;
@@ -81,7 +81,7 @@ short print_list(lispval_t *pval, char *out_buffer) {
 }
 
 // returns lenght of string added
-short print_lisp_value(lispval_t *pval, char *out_buffer) {
+short print_lisp_value(lispobject_t *pval, char *out_buffer) {
     short len = 0;
     switch (pval->type) {
         case TYPE_LIST:
