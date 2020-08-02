@@ -21,7 +21,7 @@ MAIN = main
 TEST_MAIN = test
 MODULES = utility inputs logic render memory memwatch font8x8_basic debug rdp menu matrix keyboard playerinfo\
 		  script
-MLISP_MODULES = builtin lispvalue token utility
+MLISP_MODULES = builtin lispvalue token utility map
 
 .DEFAULT_GOAL := glover_patch
 
