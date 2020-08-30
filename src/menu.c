@@ -69,7 +69,7 @@ u8 cheat_num = 0;
 u8 map_id = 0;
 
 void init_glover_menu(menudef *pmenu) {
-    pmenu->size = 17;
+    pmenu->size = 18;
     pmenu->cursor = 0;
     pmenu->strings[0] = "[ ] Infinite Lives";
     pmenu->strings[1] = "[ ] Infinite Health";
@@ -88,6 +88,7 @@ void init_glover_menu(menudef *pmenu) {
     pmenu->strings[14] = "Player Info";
     pmenu->strings[15] = "Store Ball";
     pmenu->strings[16] = "[ ] Gravity";
+    pmenu->strings[17] = "Toggle Sticky";
 
     // set bool values
     put_bool(pmenu->pgpatch->infinite_lives, pmenu->strings[0]);
@@ -112,6 +113,7 @@ void init_glover_menu(menudef *pmenu) {
     pmenu->type[14] = MENU_BUTTON;
     pmenu->type[15] = MENU_BUTTON;
     pmenu->type[16] = MENU_BUTTON;
+    pmenu->type[17] = MENU_BUTTON;
 
     pmenu->pvalue[7] = &cheat_num;
     pmenu->pvalue[9] = &map_id;
@@ -387,6 +389,10 @@ void glover_menu_select(menudef *pmenu) {
             *enable_gravity = !*enable_gravity;
             put_bool(*enable_gravity, pmenu->strings[16]);
             break; }
+	case 17: {
+	    get_ptr(glover_actor, pglover, GLOVER_ACTOR, 1);  
+	    pglover->actor_flags ^= 0x0000C000;
+	    break; }
         default:
             init_default_menu(pmenu);
             break;
