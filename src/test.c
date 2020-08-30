@@ -68,6 +68,7 @@ static void test_gstrncmp(void **state) {
     assert_int_equal(gstrncmp("Hello", "Hello++", 16), -2);
     assert_int_equal(gstrncmp("HeLLo", "Hello", 16), 2);
     assert_int_equal(gstrncmp("heLLO", "hello", 2), 0);
+    assert_int_equal(gstrncmp("ObjBank.mp", "ObjBank.mp", 0xC), 0);
 }
 
 static void test_split_space(void **state) {
@@ -174,6 +175,15 @@ static void test_struct_size(void **state) {
     assert_int_equal(sizeof(save_file), 0x1C);
     assert_int_equal(sizeof(collision_polygon), 0x78);
     assert_int_equal(sizeof(camera_t), CAMERA_ACTOR_SIZE);
+
+    assert_int_equal(sizeof(condition_t), 0x30);
+    assert_int_equal(sizeof(puzzle_t), 0x20);
+    assert_int_equal(sizeof(switch_t), 0x50);
+    assert_int_equal(sizeof(garib_t), 0xB0);
+    assert_int_equal(sizeof(model_entry_t), 0x68);
+    assert_int_equal(sizeof(model_data_list_t), 0x10);
+    assert_int_equal(sizeof(act_shad_t), 0x40);
+    assert_int_equal(sizeof(model_properties), 0x50);
 }
 
 static void test_m3_mul_v3(void **state) {
@@ -246,19 +256,19 @@ static void test_to_decstr(void **state) {
 
 static void test_to_floatstr(void **state) {
     char *str = my_malloc(64);
-    to_floatstr(3.1415f, str, 3);
+    to_floatstr_pad(3.1415f, str, 3, 0);
     assert_string_equal(str, "3.141");
 
-    to_floatstr(3.1415f, str, 0);
+    to_floatstr_pad(3.1415f, str, 0, 0);
     assert_string_equal(str, "3");
 
-    to_floatstr(-3.1415f, str, 3);
+    to_floatstr_pad(-3.1415f, str, 3, 0);
     assert_string_equal(str, "-3.141");
 
-    to_floatstr((float)0xFF800000, str, 0);
+    to_floatstr_pad((float)0xFF800000, str, 0, 0);
     assert_string_equal(str, "-I");
 
-    to_floatstr((float)0x7F800000, str, 0);
+    to_floatstr_pad((float)0x7F800000, str, 0, 0);
     assert_string_equal(str, "I");
 
     my_free(str);

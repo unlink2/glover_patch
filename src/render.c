@@ -9,29 +9,29 @@
 #include "include/keyboard.h"
 
 u8 render_step = 0; // 0 or 1
+WORD_T *rdp_start_next = NULL;
+WORD_T *rdp_end_next = NULL;
 
 void clear_rdp_buffer() {
     get_ptr(WORD_T, pbuffer, RDP_DL_BUFFER, RDP_DL_SIZE);
-    get_ptr(WORD_T, pbuffer_memwatch, RDP_DL_BUFFER_MEMWATCH, RDP_DL_SIZE);
-    get_ptr(WORD_T, pbuffer_keyboard, RDP_DL_BUFFER_KEYBOARD, RDP_DL_SIZE);
-    gmemset((BYTE_T*)pbuffer, 0x00, RDP_DL_SIZE*sizeof(WORD_T));
-    gmemset((BYTE_T*)pbuffer_memwatch, 0x00, RDP_DL_SIZE*sizeof(WORD_T));
-    gmemset((BYTE_T*)pbuffer_keyboard, 0x00, RDP_DL_SIZE*sizeof(WORD_T));
+    gmemset((BYTE_T*)pbuffer, 0x00, RDP_DL_END-RDP_DL_BUFFER);
 }
 
 void render() {
     // reset dl ptr
     get_ptr(WORD_T, pbuffer, RDP_DL_BUFFER, RDP_DL_SIZE);
-    get_ptr(WORD_T, pbuffer_memwatch, RDP_DL_BUFFER_MEMWATCH, RDP_DL_SIZE);
-    get_ptr(WORD_T, pbuffer_keyboard, RDP_DL_BUFFER_KEYBOARD, RDP_DL_SIZE);
+    get_ptr(WORD_T, pbuffer_end, RDP_DL_END, RDP_DL_SIZE);
+    // get_ptr(WORD_T, pbuffer_keyboard, RDP_DL_BUFFER_KEYBOARD, RDP_DL_SIZE);
 
     get_ptr(HWORD_T, pfont, FONT8X8, 0x4000);
+    get_ptr(HWORD_T, pfont_hi, FONT8X8_HI, 0x4000);
     // check if font is decompressed
     // test if pixel matches bg color
     // first char is NULL and therefore empty
     if (pfont[0] != 0xFFFF) {
         // safety init
         decompress_font((WORD_T*)font8x8_basic, pfont, 0x000F, 0xFFFF);
+        decompress_font((WORD_T*)font8x8_basic, pfont_hi, 0xFFFF, 0xC00F);
         clear_rdp_buffer();
         // clear rdp buffer once as well
         set_pbuffer(pbuffer);
@@ -40,24 +40,39 @@ void render() {
     // render step selects which half of the dl buffer to point to (RDP_DL_SIZE/2)
     render_step = 0;// (render_step+1)&(RDP_BUFFERS-1);
 
-    set_pbuffer(pbuffer_memwatch+(RDP_DL_SIZE/RDP_BUFFERS)*render_step);
+    // send previous dl
+    rdp_send_dl(rdp_start_next, rdp_end_next);
+
+    WORD_T *pbuffer_start = get_pbuffer();
+
+    if (pbuffer_start > pbuffer_end) {
+        set_pbuffer(pbuffer);
+        pbuffer_start = get_pbuffer();
+    }
+
+    // TODO somehow this dies on pj64's
+    // video plugin when rendering too much, but not on console.
+    // Too bad! Use glide or angrylion instead
+    // set_pbuffer(pbuffer_start);
     render_memwatch(&pmemwatch);
-
-    set_pbuffer(pbuffer+(RDP_DL_SIZE/RDP_BUFFERS)*render_step);
     render_menu(&pmenu);
-
-    set_pbuffer(pbuffer_keyboard+(RDP_DL_SIZE/RDP_BUFFERS)*render_step);
     render_keyboard(&pkb);
     render_inputs(&pkb);
+
+
+    // render message
+    if (gpatch.message) {
+        gputsrdp(gpatch.message, 50, 200, pfont);
+    }
 
     // print evd error message
     if (pevd_msg) {
         gputsrdp(pevd_msg, 50, 200, pfont);
     }
 
-    // TODO send all rdp commands at once
-    // WORD_T *pend = get_pbuffer();
-    // rdp_send_dl(pbuffer, pend);
+    // set next list
+    rdp_start_next = pbuffer_start;
+    rdp_end_next = get_pbuffer();
 }
 
 

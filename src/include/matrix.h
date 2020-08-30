@@ -10,6 +10,12 @@ typedef struct vector3 {
     float z;
 } vector3;
 
+typedef struct ivector3 {
+    s32 x;
+    s32 y;
+    s32 z;
+} ivector3; 
+
 typedef struct matrix3 {
     vector3 x;
     vector3 y;

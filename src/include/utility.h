@@ -55,6 +55,7 @@ void str_reverse(char *, int);
 
 int to_decstr(WORD_T, char *, WORD_T);
 void to_floatstr(float, char *, WORD_T);
+void to_floatstr_pad(float, char *, WORD_T, BYTE_T);
 
 int gpow(int, int);
 

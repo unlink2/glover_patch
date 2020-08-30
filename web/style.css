@@ -1,3 +1,7 @@
-#error_message {
-    color: red
+.error_message {
+    color: red;
+}
+
+.warning_message {
+    color: orange;
 }

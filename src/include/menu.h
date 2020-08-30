@@ -25,9 +25,9 @@ typedef struct menudef {
     BYTE_T cursor; // cursor position
 
     HWORD_T size; // size of menu strings (max is 0xF)
-    char *strings[0xF]; // strings
-    menu_entry_t type[0xF]; // type of item
-    void *pvalue[0xF]; // if menu type is value this is the pointer to the value
+    char *strings[0x1F]; // strings
+    menu_entry_t type[0x1F]; // type of item
+    void *pvalue[0x1F]; // if menu type is value this is the pointer to the value
 
     // actions for each item
     // if cursor == 0xFFFF -> back action
@@ -44,9 +44,18 @@ typedef struct menudef {
 
 extern menudef pmenu;
 
+/*
+ * Puts a boolean value into the string
+ * String in question must start with "[ ]" function will modify
+ * contents of those first 3 characters based on the boolean value
+ * TODO update all old bool values
+ */
+void put_bool(BOOLEAN, char *);
+
 void init_default_menu(menudef *);
 void init_glover_menu(menudef *);
 void init_move_menu(menudef *);
+void init_script_menu(menudef *);
 
 void main_menu_select(menudef *);
 void main_menu_update(menudef *);
@@ -57,8 +66,13 @@ void glover_menu_select(menudef *);
 void move_object_update(menudef *);
 void move_object_select(menudef *);
 
+void script_menu_select(menudef *);
+void script_menu_update(menudef *);
+
 void render_menu(menudef *);
 
 void update_menu(menudef *);
+
+void script_input_request(keyboard *pkb, void *pgp);
 
 #endif

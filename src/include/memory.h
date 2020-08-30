@@ -9,6 +9,14 @@
 #define PAUSE_FLAG (BYTE_T*)0x801EC7D3 // 01 = paused
 #define DISABLE_PAUSE_FLAG (BYTE_T*)0x801EC748 // 00 disables pause
 
+#define IS_PAUSED (BYTE_T*)0x801EC7D2 // 01 if load was hit or game is paused
+#define IGT (WORD_T*)0x80290198 // in game time
+#define IN_GOAL1 (HWORD_T*)0x801e7466 // if != 0 glover will stick to goal
+#define IN_GOAL2 (HWORD_T*)0x801E7620 // if != 0 glover will also stick to goal
+#define WIN_LEVEL (HWORD_T*)0x801E7466 // if != 0 dec until 0 then win
+#define FRAME_COUNTER (WORD_T*)0x802004E0 // frames since level loaded
+#define IGT_WAIT_TARGET (HWORD_T*)0x801E76D4 // dont start igt until this value * 0x14 < FRAME_COUNTER
+
 extern WORD_T *LAST_INPUT_1;
 extern WORD_T *LAST_INPUT_2;
 // #define LAST_INPUT_1 (WORD_T*)0x800002C4
@@ -87,13 +95,13 @@ extern WORD_T *LAST_INPUT_2;
 // each DL Buffer contains an upper and lower half for double buffering
 #define RDP_DL_SIZE 0x30000
 #define RDP_DL_BUFFER 0x80529D40
-#define RDP_DL_BUFFER_MEMWATCH RDP_DL_BUFFER+RDP_DL_SIZE
-#define RDP_DL_BUFFER_KEYBOARD RDP_DL_BUFFER_MEMWATCH+RDP_DL_SIZE
+#define RDP_DL_END 0x805e9d40
 #define RDP_BUFFERS 4
 
 // uncompressed location of font 0x4000 bytes
 // TODO make sure this is a good location
 #define FONT8X8 (WORD_T*)0x80525C30
+#define FONT8X8_HI (WORD_T*)0x80521c30 // highlight font location
 
 // 0x20 strings of 0x10 bytes each. will be rendered to the screen
 // every frame if needed
@@ -104,12 +112,17 @@ extern WORD_T *LAST_INPUT_2;
 #define Y_BAC (WORD_T*)0x805002B4
 #define Z_BAC (WORD_T*)0x805002B8
 
+#define ENABLE_GRAVITY (BYTE_T*)0x801EEB60
+
 // TODO find better size
 #define CAMERA_ACTOR_SIZE ACTOR_SIZE*2
 #define CAMERA_ACTOR (WORD_T*)0x8028F8E0
 #define CAMERA_DATA (WORD_T*)0x80202248
 
 #define CAMERA_MATRIX (WORD_T *)0x80206300
+
+#define SWITCH_LIST_START (WORD_T *)0x802994b0
+#define GARIB_LIST_START (WORD_T *)0x80332690 // TODO this is not correct!
 
 #define TRIGGER_CHEAT (void (*)(int, int, int))0x801BB9AC // function(cheat_number, 1, 8) ??
 #define LOAD_MAP (void (*)(int))0x8011FF40 // function(map_id)
@@ -121,8 +134,19 @@ extern WORD_T *LAST_INPUT_2;
 #define LEVEL_SELECT (BYTE_T*)0x8011E653
 
 #define FADE_TIMER (HWORD_T*)0x801E753C
+#define LOAD_FADE (HWORD_T*)0x801E753C // is loading finished?
+#define TARGET_LOAD_FADE (HWORD_T*)0x801E753E
 
 #define DEBUG_GRAPH (BYTE_T*)0x801EFCA0 // nonzero enables graph
+
+#define PAUSE_MENU_ANIMATION (BYTE_T*)0x801E765F
+
+/**
+ * This is a volotile ptr. follow obj bank  ObjBank.mp or TexBank
+ */
+// #define MODEL_DATA_TABLE (void*)0x80329D50 // list of all loaded models. zero terminated
+
+#define BALL_STORAGE (WORD_T*)0x801EFD00 // is set to 0x2A if ball enters a loading zone
 
 void init_mem();
 

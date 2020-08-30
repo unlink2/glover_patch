@@ -5,6 +5,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <pthread.h>
+#include <editline.h>
 
 #define FILE_CHUNK 0x8000
 #define USB_VENDOR 0x0403
@@ -13,7 +14,7 @@
 #define USB_WRITE_TIMEOUT 5000
 #define MAJOR_VERSION 0
 #define MINOR_VERSION 1
-#define BUFFER_SIZE 512
+#define BUFFER_SIZE 1024
 
 int stop = 0;
 int listen = 0;
@@ -106,6 +107,7 @@ void send_batch(struct ftdi_context *ftdi, unsigned char *send_buff, unsigned ch
         strcpy((char*)send_buff, line);
 
         ftdi_write_data(ftdi, send_buff, BUFFER_SIZE);
+        usleep(100000); // wait for response
         ret_r = ftdi_read_data(ftdi, recv_buff, BUFFER_SIZE);
         if (ret_r == 0) {
             return;
@@ -127,10 +129,14 @@ void mainloop(struct ftdi_context *ftdi, unsigned char *send_buff, unsigned char
         // if in listening mode do not allow input, just receive
         // CTRL+C will first exit listen mode before exiting the loop
         if (!listen) {
-            fprintf(stderr, ">> ");
+            // fprintf(stderr, ">> ");
             // send cmdt to OS to test usb communication
-            fgets((char*)send_buff, BUFFER_SIZE, stdin);
-            send_buff[strlen((char*)send_buff)-1] = '\0'; // remove new line char
+            // fgets((char*)send_buff, BUFFER_SIZE, stdin);
+            // send_buff[strlen((char*)send_buff)-1] = '\0'; // remove new line char
+            char *buffer = readline(">> ");
+            add_history(buffer);
+            strcpy((char*)send_buff, buffer);
+            free(buffer);
         } else {
             strcpy((char*)send_buff, "listen");
             // clear_screen();
@@ -145,7 +151,7 @@ void mainloop(struct ftdi_context *ftdi, unsigned char *send_buff, unsigned char
         }
 
         ftdi_write_data(ftdi, send_buff, BUFFER_SIZE);
-
+        usleep(100000); // wait for response
         ret_r = ftdi_read_data(ftdi, recv_buff, BUFFER_SIZE);
 
         if (ret_r > 0) {
