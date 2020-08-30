@@ -5,6 +5,14 @@ Easy Install:
 To easily install a non-dev build use the web-builder which can be found here:
 https://krickl.dev/glover/gloverpatch.html
 
+Note for Porject64 Users:
+=========================
+
+When using Project64 please use GlideN64 Video Plugin or ANgrylion.
+They give the best results. The only big issue on PJ64 is that the
+memory monitor cursor does not render on Glide, but if you're running on emulator
+you likely will not need it anyway.
+
 ==============================================================
 
 How to build from source?
@@ -27,6 +35,7 @@ cd glover_patch
 chmod +x ./glovepatch.py
 chmod +x ./build_gcc.sh
 mkdir rom
+git clone https://github.com/unlink2/mipslisp mlisp
 ./build_gcc.sh
 
 Note that build_gcc.sh will ask for your root password twice.

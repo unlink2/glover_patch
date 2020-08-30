@@ -4,6 +4,11 @@
 #include "memory.h"
 #include "utility.h"
 #include "savefile.h"
+#include "playerinfo.h"
+
+#define MSG_TIME 10
+
+#define TIMER_PER_FRAME 0.20
 
 /**
  * Contains functions that manipulate the global state of the game
@@ -25,14 +30,36 @@ typedef struct gpatch_t {
     BOOLEAN cutscene_skip;
     BOOLEAN lockrng;
 	BOOLEAN disable_pause;
+    BOOLEAN clone_obj_bank; // clone obj bank instead of actor restore. disabled feature. not worth it
     BOOLEAN resume_restore; // was map loaded? resume restore of actors now
     u8 resume_timer; // run up until 60 to delay
     u16 restore_slot;
+
+    // frame timer. replaces use of in-game timer
+    // fixed point number
+    u32 timer_frames;
+    BOOLEAN enable_timer;
+    BOOLEAN auto_timer; // auto start timer when fade ends
+    BOOLEAN reset_now; // reset timer now!
+    BOOLEAN use_igt; // use igt for auto timer
+    char timer_str[64];
+
+    char *message;
+    u16 msg_timer;
+    playerinfo pi;
 } gpatch_t;
 
 extern gpatch_t gpatch;
 
+/*
+ * Set message
+ */
+void notify(gpatch_t *, const char*, u16);
+
 void logic();
+
+void update_timer(gpatch_t *);
+void toggle_timer(gpatch_t *);
 
 void enable_timer();
 void level_select();
@@ -68,8 +95,15 @@ WORD_T* clone_additional(WORD_T *, WORD_T *, WORD_T);
 // each actor is ACTOR_SIZE bytes
 // the backup heap is locates at the start of exp pack memory
 void clone_actors(WORD_T *, u16 slot);
+
+typedef struct obj_bank_t obj_bank_t;
+/**
+ * Clone other actors from object bank
+ */
+WORD_T* clone_other_objects(WORD_T *, obj_bank_t *);
+
 // same as clone_actors but just dumps everything in obj_bank
-void clone_obj_bank();
+void clone_obj_bank(WORD_T *, u16);
 
 // reverses actor backup
 // uses A0 as actor heap pointer

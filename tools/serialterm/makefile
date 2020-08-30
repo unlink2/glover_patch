@@ -7,7 +7,7 @@ SRCDIR=./src
 ODIR=./obj
 BINDIR=./bin
 
-LIBS=-lusb -lftdi
+LIBS=-lusb -lftdi -leditline
 CFLAGS=-Wall -g
 MAIN = main
 TEST_MAIN = test

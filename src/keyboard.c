@@ -29,19 +29,19 @@ void init_hex_keyboard(keyboard *pkb) {
 void init_keyboard(keyboard *pkb) {
     pkb->pcallback = NULL;
 
-    pkb->rows[0] = "0123456789";
-    pkb->rows[1] = "ABCDEFGHIJ";
-    pkb->rows[2] = "KLMNOPQRST";
-    pkb->rows[3] = "UVWXYZ.,!?";
+    pkb->rows[0] = "!@#$%^&*() ";
+    pkb->rows[1] = "ABCDEFGHIJ ";
+    pkb->rows[2] = "KLMNOPQRST ";
+    pkb->rows[3] = "UVWXYZ-=|/ ";
 
-    pkb->rows_lower[0] = "0123456789";
-    pkb->rows_lower[1] = "abcdefghij";
-    pkb->rows_lower[2] = "klmnopqrst";
-    pkb->rows_lower[3] = "uvwxyz.,!?";
+    pkb->rows_lower[0] = "0123456789 ";
+    pkb->rows_lower[1] = "abcdefghij ";
+    pkb->rows_lower[2] = "klmnopqrst\"";
+    pkb->rows_lower[3] = "uvwxyz.,+?'";
 
     pkb->shift = TRUE;
     pkb->row_len = 4;
-    pkb->col_len = 10;
+    pkb->col_len = 11;
     pkb->row = 0;
     pkb->cursor = 0;
     pkb->pinput = "Test test";
@@ -170,18 +170,13 @@ void render_keyboard(keyboard *pkb) {
     inc_pbuffer(rdp_sync_pipe(get_pbuffer()));
 
     // render all rows and some instructions
-    HWORD_T *pframebuffer = get_frame_buffer();
+    // HWORD_T *pframebuffer = get_frame_buffer();
     get_ptr(HWORD_T, pfont, FONT8X8, 0x4000);
+    get_ptr(HWORD_T, pfont_hi, FONT8X8_HI, 0x4000);
     // render if flag is enabled
     unsigned short start_x = 0x18;
     unsigned short start_y = 0x20;
 
-    // TODO this fixed input disply issues for some reason?
-    //gputsrdp("                ", 0x0, 0x0, pfont);
-    // render input buffer
-    if (pkb->pinput) {
-        gputsrdp(pkb->pinput, 0x18, 0x10, pfont);
-    }
 
     if (!pkb->shift) {
         for (int i = 0; i < pkb->row_len; i++, start_y += CHAR_H+1) {
@@ -202,10 +197,18 @@ void render_keyboard(keyboard *pkb) {
     unsigned int x_offset = (pkb->cursor)*(CHAR_W)+0x18;
     unsigned int y_offset = (pkb->row)*(CHAR_H+1)+0x20;
 
-    // render cursor
-    draw_char('_', pframebuffer, x_offset, y_offset,
-            (WORD_T*)font8x8_basic, 0xF00F, 0x0000);
+    // render input buffer
+    if (pkb->pinput) {
+        gputsrdp(pkb->pinput, 0x18, 0x10, pfont);
+    }
 
+    char *cur_str = "";
+    cur_str[0] = pkb->rows[pkb->row][pkb->cursor];
+    gputsrdp(cur_str, x_offset, y_offset, pfont_hi);
+
+    // render cursor
+    /* draw_char('_', pframebuffer, x_offset, y_offset,
+            (WORD_T*)font8x8_basic, 0xF00F, 0x0000);*/
 }
 
 void render_inputs(keyboard *pkb) {

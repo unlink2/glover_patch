@@ -143,7 +143,11 @@ int to_decstr(WORD_T value, char *pstr, WORD_T size) {
     return i;
 }
 
-void to_floatstr(float n, char *pstr, WORD_T size) {
+void to_floatstr(float n, char *pdest, WORD_T size) {
+    to_floatstr_pad(n, pdest, size, 0);
+}
+
+void to_floatstr_pad(float n, char *pstr, WORD_T size, BYTE_T pad) {
     if ((u32)n == 0xFF800000) {
         pstr[0] = '-';
         pstr[1] = 'I';
@@ -179,6 +183,13 @@ void to_floatstr(float n, char *pstr, WORD_T size) {
         pstr[i] = '.';
         f = f * (float)gpow(10, size); // amount of numbers after point
         to_decstr((int)f, pstr+i+1, 0);
+    }
+
+    // pad float to exact amount of characters
+    // using \1 char to make it 'invisible'
+    for (int i = gstrlen(pstr); i < pad; i++) {
+        pstr[i] = 1;
+        pstr[i+1] = '\0';
     }
 }
 

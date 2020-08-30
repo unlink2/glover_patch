@@ -10,7 +10,7 @@ include "lib/N64.INC" // Include N64 Definitions
 
 constant DMA_RAM($80400000)
 constant DMA_ROM($B0780000)
-constant DMA_SIZE($FFFF)
+constant DMA_SIZE($1FFFF)
 
 // custom entry point
 

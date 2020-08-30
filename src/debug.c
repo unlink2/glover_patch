@@ -1,10 +1,12 @@
 #include "include/debug.h"
 #include "include/render.h"
 #include "include/utility.h"
+#include "include/script.h"
+#include "include/logic.h"
 
 static volatile struct pi_regs* const pir = (struct pi_regs *)0xa4600000;
 
-#define COMMAND_SIZE 64
+#define COMMAND_SIZE 1024
 
 char *pevd_msg;
 char *pevd_msg_buffer[COMMAND_SIZE+1];
@@ -492,6 +494,8 @@ void evd_serial_terminal(memwatch *pmemwatch) {
         return;
     }
 
+    // notify(&gpatch, data, 10);
+
     // parse args
     arg a;
     if (is_arg(data, "print ")) {
@@ -565,5 +569,10 @@ void evd_serial_terminal(memwatch *pmemwatch) {
     } else if (is_arg(data, "dump ")) {
         a = parse_arg(data, "dump ");
         dump(a, response);
+    } else {
+        set_script(&vm, "", out_buffer); // set script to execute every frame
+        // execute as lisp value
+        repl(&vm, data, response);
+        evd_usb_write(response, COMMAND_SIZE); // send back
     }
 }

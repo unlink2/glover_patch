@@ -9,6 +9,8 @@
 #include "include/keyboard.h"
 #include "include/logic.h"
 #include "include/utility.h"
+#include "include/script.h"
+#include "../mlisp/src/include/mlisp.h"
 
 WORD_T *LAST_INPUT_1;
 WORD_T *LAST_INPUT_2;
@@ -81,4 +83,6 @@ void init_mem() {
     pevd_msg = NULL;
 
     *plast = 0x00;
+
+    reset_vm(&vm);
 }

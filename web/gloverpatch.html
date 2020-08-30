@@ -1,26 +1,40 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <script src="./node_modules/vue/dist/vue.min.js"></script>
         <meta charset="UTF-8">
+
+        <meta name="keywords" content="Glover, Nintendo 64, speedrunning, practice hack, N64, patch, romhack">
+        <meta name="robots" content="index,follow">
+        <meta content="glover.run" property="og:site_name">
+        <meta content="Glover Practice Hack" property="og:title">
+        <meta name="description" content="Glove Practice Hack Patch tool." property="og:description">
+
         <link rel="stylesheet" type="text/css" href="./style.css">
         <title>GLover Patch Tool</title>
 
     </head>
 
     <body>
+        <div id="app">
         <header>
             <h1>
                 Glover Patch Tool
+                <hr>
             </h1>
         </header>
 
         <p>
-            <h2 id="error_message"></h2>
+            <noscript>
+                <h1 class="error_message">Glover Patch Tool requires JavaScript to work!</h1>
+            </noscript>
+            <h2 class="error_message">{{error_message}}</h2>
+            <h2 class="warning_message">{{warning_message}}</h2>
             <p>
                 Glover Practice  ROM patching tool usage:
                 <ul>
                     <li>
-                        Select a ROM file in z64 format (Only NTSC ROMS are supported)
+                        Select a ROM file (Only NTSC ROMS are supported)
                     </li>
                     <li>
                         The tool will patch the ROM (This might take a few seconds)
@@ -31,8 +45,15 @@
                 </ul>
             </p>
 
-            <input type="file" id="file-input" />
+            <p><input type="file" id="file-input" /></p>
+            <p><input type="checkbox" v-model="shouldPatchEasy">Force easy mode</input></p>
+            <p><input type="checkbox" v-model="next">Use pre-release (Get new features early!)</input></p>
+            <button type="button" id="start-patch">Patch!</button>
+            <!--<button type="button" id="start-next-patch">Patch Next (Unstable)</button>-->
         </p>
+
+        <hr>
+
         <p>
             <p>Is this legal?</p>
             Yes! The ROM file never leaves your computer.
@@ -49,12 +70,15 @@
                 <li>Start + A: Start Timer</li>
                 <li>Start + C-Left/C-Right: Store/Load Position</li>
                 <li>Start + C-Up/C-Down: Store/Restore Actors</li>
+                <li>Start + Z: Toggle input viewer</li>
             </ul>
             <h3>Controller 2</h3>
             <ul>
                 <li>Start: Open/Close menu</li>
                 <li>Navigate menu with D-Pad Up/Down and A/B</li>
                 <li>Values can be incremented/decremented with D-Pad Left/Right</li>
+                <li>C-Up: Toggle Frame Advance</li>
+                <li>C-Down: Advance a frame</li>
             </ul>
             <h3>Memory Viewer (Controller 2)</h3>
             <ul>
@@ -67,11 +91,17 @@
         </p>
 
         <footer>
+            <hr>
             (C) 2020 Lukas Krickl
             <a href="https://github.com/unlink2/glover_patch">Github</a>
+            <a href="https://github.com/unlink2/glover_patch/issues">Report a bug</a>
         </footer>
+        </div>
     </body>
 
+    <script src="./node_modules/justlog.js/dist/justlog.main.min.js"></script>
+    <script src="view.js"></script>
+    <script src="./patchrom.js"></script>
     <script src="./patcher.js"></script>
 
 

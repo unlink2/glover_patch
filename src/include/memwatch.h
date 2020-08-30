@@ -5,6 +5,8 @@
 #include "memory.h"
 #include "keyboard.h"
 
+#define MIN_RAM 0x80000000
+#define MAX_RAM 0x80800000
 #define WORDS_PER_PAGE 16
 #define BYTES_PER_LINE 4
 #define MEMWATCH_POLLING_RATE 1 // every N frames
@@ -17,7 +19,7 @@ typedef enum watch_type {
     FLOAT_WATCH
 } watch_type;
 
-#define MAX_WATCH 4
+#define MAX_WATCH 10
 
 typedef struct watch_addr {
     void *paddr;
