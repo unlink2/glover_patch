@@ -242,4 +242,22 @@ typedef struct model_data_list_t {
    model_data_t *pmodel_data; // can be swapped with any model
 } model_data_list_t;
 
+/**
+ * Object Sprite 
+ * 0x40 bytes
+ */
+typedef struct obj_sprite_t {
+   struct obj_sprite_t *pnext;
+   struct obj_sprite_t *pprev;
+   void *unknown1;
+   float xpos;
+   float ypos;
+   float zpos;
+   short xscale;
+   short yscale;
+   u32 color;
+   u32 offset;
+   BYTE_T padding[0x1C];
+} obj_sprite_t;
+
 #endif
