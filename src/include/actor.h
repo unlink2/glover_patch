@@ -43,7 +43,8 @@ typedef struct model_props_t {
 
     // seems like data between this struct and polygon ptr is related to model as well.
     // dynamic array kinda of deal? where is the damn size?
-    model_polygon_t *polygons; // pointer to polygon array offset 0x9C (what is the size though?) 
+    // Rectang has it at offset 0x8C. still no size??
+    model_polygon_t *polygons; // pointer to polygon array offset 0x9C (or 0x8C?) (what is the size though?)
 } model_props_t;
 
 /**
@@ -52,13 +53,13 @@ typedef struct model_props_t {
  */
 typedef struct model_entry_t {
     u32 unknown0;
-    char name[0xC]; // GBOdy = glover body object
+    char name[0xC]; // GBOdy = glover body object. hubs also have a 'Rectang' object loaded. good for research
     u32 offset; // offset from center or previous?
     void *unknown_ptr1;
-    model_props_t *pmodel_props; // color properties
-    WORD_T *pmodel_transforms; // position and transform?
+    model_props_t *pmodel_props; // color properties. amount of polygons stored here too?
+    WORD_T *pmodel_transforms; // position and transform.
     collision_polygon *ppositions; // relative position of polygons?
-    WORD_T *ppolygons; // i think?
+    WORD_T *ppolygons; // not polygons at all. see model_props_t
     u32 padding[3]; // not sure yet
     // 2 pointers to next object difference seems to be origin of where they attach
     struct model_entry_t *pnext1; // next object
