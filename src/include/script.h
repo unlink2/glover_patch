@@ -4,5 +4,7 @@
 #include "../../mbasic/src/utility.h"
 #include "../../mbasic/src/mbasic.h"
 
+void init_interpreter();
+
 
 #endif
