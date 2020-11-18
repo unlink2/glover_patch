@@ -545,6 +545,7 @@ void move_object_update(menudef *pmenu) {
 
 char script_input[128];
 void script_menu_select(menudef *pmenu) {
+    // TODO implement basic
     switch (pmenu->cursor) {
         case 0:
             // TODO
@@ -554,12 +555,10 @@ void script_menu_select(menudef *pmenu) {
             input_request(script_input, 128, pmenu->pkb, &script_input_request, pmenu->pgpatch);
             break;
         case 1:
-            reset_vm(&vm);
-            notify(pmenu->pgpatch, "VM Reset!", 40);
+
             break;
         case 2:
-            reset_vm(&vm);
-            set_script(&vm, "(defun 'onframe '() '(peeki32 (peeki32 0x802903B0)))", out_buffer);
+
             break;
         default:
             init_default_menu(pmenu);
@@ -675,10 +674,8 @@ void update_menu(menudef *pmenu) {
 }
 
 void script_input_request(keyboard *pkb, void *pgp) {
-    gpatch_t *pgpatch = (gpatch_t*)pgp;
     if (pkb->success) {
-        repl(&vm, pkb->pinput, out_buffer);
-        notify(pgpatch, out_buffer, 50);
+        // TODO input basic programs here
         return;
     }
 }
