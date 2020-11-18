@@ -3,7 +3,7 @@ CCLOC = gcc
 LD=mips-elf-ld
 
 INCLUDEDIR=./src/include
-MLISPINCLUDEDIR=./mlisp/src/include
+MLISPINCLUDEDIR=./mlisp/src
 SRCDIR=./src
 MLISPSRCDIR=./mlisp/src
 ODIR=./obj
