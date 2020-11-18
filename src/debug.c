@@ -570,9 +570,6 @@ void evd_serial_terminal(memwatch *pmemwatch) {
         a = parse_arg(data, "dump ");
         dump(a, response);
     } else {
-        set_script(&vm, "", out_buffer); // set script to execute every frame
-        // execute as lisp value
-        repl(&vm, data, response);
-        evd_usb_write(response, COMMAND_SIZE); // send back
+        // TODO output basic result here
     }
 }

@@ -30,9 +30,7 @@ void logic() {
     update_menu(&pmenu);
     update_keyboard(&pkb);
     evd_serial_terminal(&pmemwatch);
-    if (update_vm(&vm, out_buffer)) {
-        notify(&gpatch, out_buffer, 1);
-    }
+
 
     // update message
     if (gpatch.msg_timer > 0) {

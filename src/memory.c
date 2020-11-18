@@ -84,5 +84,4 @@ void init_mem() {
 
     *plast = 0x00;
 
-    reset_vm(&vm);
 }

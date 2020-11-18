@@ -3,9 +3,9 @@ CCLOC = gcc
 LD=mips-elf-ld
 
 INCLUDEDIR=./src/include
-MLISPINCLUDEDIR=./mlisp/src
+MBASICINCLUDEDIR=./mbasic/src
 SRCDIR=./src
-MLISPSRCDIR=./mlisp/src
+MBASICSRCDIR=./mbasic/src
 ODIR=./obj
 ODIRLOC=./obj/local
 BINDIR=./bin
@@ -21,25 +21,25 @@ MAIN = main
 TEST_MAIN = test
 MODULES = utility inputs logic render memory memwatch font8x8_basic debug rdp menu matrix keyboard playerinfo\
 		  script
-MLISP_MODULES = builtin lispvalue token utility map
+MBASIC_MODULES = basic basicmalloc interpreter keywords token utility
 
 .DEFAULT_GOAL := glover_patch
 
 DEPS=$(patsubst %,$(INCLUDEDIR)/%.h,$(MODULES))
-DEPS+=$(patsubst %,$(MLISPINCLUDEDIR)/%.h,$(MLISP_MODULES))
+DEPS+=$(patsubst %,$(MBASICINCLUDEDIR)/%.h,$(MBASIC_MODULES))
 OBJ=$(patsubst %,$(ODIR)/%.o,$(MODULES))
 OBJ+=$(patsubst %,$(ODIR)/%.o,$(MAIN))
-OBJ+=$(patsubst %,$(ODIR)/mlisp/%.o,$(MLISP_MODULES))
+OBJ+=$(patsubst %,$(ODIR)/mbasic/%.o,$(MBASIC_MODULES))
 
 TEST_OBJ=$(patsubst %,$(ODIRLOC)/%.o,$(MODULES))
 TEST_OBJ+=$(patsubst %,$(ODIRLOC)/%.o,$(TEST_MAIN))
-TEST_OBJ+=$(patsubst %,$(ODIRLOC)/mlisp/%.o,$(MLISP_MODULES))
+TEST_OBJ+=$(patsubst %,$(ODIRLOC)/mbasic/%.o,$(MBASIC_MODULES))
 # main
 
 $(ODIR)/%.o: $(SRCDIR)/%.c $(DEPS) | init
 	$(CC) -c -o  $@ $< $(CFLAGS)
 
-$(ODIR)/mlisp/%.o: $(MLISPSRCDIR)/%.c $(DEPS) | init
+$(ODIR)/mbasic/%.o: $(MBASICSRCDIR)/%.c $(DEPS) | init
 	$(CC) -c -o  $@ $< $(CFLAGS)
 
 $(BINDIR)/code.bin: $(OBJ)
@@ -58,7 +58,7 @@ $(ODIRLOC)/%.o: $(SRCDIR)/%.c $(DEPS) | init
 	$(CCLOC) -c -o $@ $< -Wall -g
 
 
-$(ODIRLOC)/mlisp/%.o: $(MLISPSRCDIR)/%.c $(DEPS) | init
+$(ODIRLOC)/mbasic/%.o: $(MBASICCSRCDIR)/%.c $(DEPS) | init
 	$(CCLOC) -c -o $@ $< -Wall -g
 
 build_test: $(TEST_OBJ)
@@ -71,8 +71,8 @@ test: build_test
 clean:
 	@echo Cleaning stuff. This make file officially is doing better than you irl.
 	rm -f $(ODIR)/*.o
-	rm -f $(ODIR)/mlisp/*.o
-	rm -f $(ODIRLOC)/mlisp/*.o
+	rm -f $(ODIR)/mbasic/*.o
+	rm -f $(ODIRLOC)/mbasic/*.o
 	rm -f $(ODIRLOC)/*.o
 	rm -f $(BINDIR)/*
 
@@ -80,8 +80,8 @@ clean:
 .PHONY: setup
 init:
 	mkdir -p $(ODIR)
-	mkdir -p $(ODIR)/mlisp
+	mkdir -p $(ODIR)/mbasic
 	mkdir -p $(BINDIR)
 	mkdir -p $(ODIRLOC)
-	mkdir -p $(ODIRLOC)/mlisp
+	mkdir -p $(ODIRLOC)/mbasic
 
