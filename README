@@ -35,7 +35,7 @@ cd glover_patch
 chmod +x ./glovepatch.py
 chmod +x ./build_gcc.sh
 mkdir rom
-git clone https://github.com/unlink2/mbasic mbasic
+git clone https://github.com/unlink2/lbasic lbasic
 ./build_gcc.sh
 
 Note that build_gcc.sh will ask for your root password twice.

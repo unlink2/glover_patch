@@ -1,16 +1,16 @@
 #ifndef __SCRIPT_H__
 #define __SCRIPT_H__
 
-#include "../../mbasic/src/utility.h"
-#include "../../mbasic/src/mbasic.h"
+#include "../../lbasic/src/utility.h"
+#include "../../lbasic/src/lbasic.h"
 
-extern int mb_msg_index;
-extern char mb_msg[128];
+extern int lb_msg_index;
+extern char lb_msg[128];
 
 void init_interpreter();
 
-mb_error run_line(char *code);
-mb_error mb_basic_update();
+lb_error run_line(char *code);
+lb_error lb_basic_update();
 
 int gp_putch(int chr);
 
