@@ -200,15 +200,17 @@ void init_move_menu(menudef *pmenu) {
 }
 
 void init_script_menu(menudef *pmenu) {
-    pmenu->size = 3;
+    pmenu->size = 4;
     pmenu->cursor = 0;
     pmenu->strings[0] = "Input code...";
     pmenu->strings[1] = "Reset VM...";
     pmenu->strings[2] = "Load Test script";
+    pmenu->strings[3] = "Run...";
 
     pmenu->type[0] = MENU_BUTTON;
     pmenu->type[1] = MENU_BUTTON;
     pmenu->type[2] = MENU_BUTTON;
+    pmenu->type[3] = MENU_BUTTON;
 
     pmenu->pactions = &script_menu_select;
     pmenu->pupdate = &script_menu_update;
@@ -555,6 +557,9 @@ void script_menu_select(menudef *pmenu) {
             input_request(script_input, 128, pmenu->pkb, &script_input_request, pmenu->pgpatch);
             break;
         case 1:
+            // remove strings from code
+            free_code();
+
             // send reset command
             run_line("reset");
             mb_memset(mb_msg, 0x00, 128);
@@ -562,13 +567,19 @@ void script_menu_select(menudef *pmenu) {
             break;
         case 2:
             // load test program
-            run_line("10 f = 1");
+            run_line("10 peek x, 0x80290190, 4");
+            run_line("20 poke 0x80290190, x+1, 4");
+            /*run_line("10 f = 1");
             run_line("20 n = 5");
             run_line("30 i = n");
             run_line("35 f = f * n");
             run_line("40 n = n - 1");
             run_line("50 if n > 1 then goto 35");
-            run_line("60 print \"Factorial of \", i, \"is\", f");
+            run_line("60 print \"Factorial of \", i, \"is\", f");*/
+            break;
+        case 3:
+            mb_memset(mb_msg, 0x00, 128);
+            mb_msg_index = 0;
             run_line("run");
             break;
         default:

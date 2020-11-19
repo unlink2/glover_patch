@@ -9,6 +9,7 @@ extern char mb_msg[128];
 
 void init_interpreter();
 
+void free_code();
 mb_error run_line(char *code);
 mb_error mb_basic_update();
 
