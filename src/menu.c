@@ -557,9 +557,6 @@ void script_menu_select(menudef *pmenu) {
             input_request(script_input, 128, pmenu->pkb, &script_input_request, pmenu->pgpatch);
             break;
         case 1:
-            // remove strings from code
-            free_code();
-
             // send reset command
             run_line("reset");
             mb_memset(mb_msg, 0x00, 128);
@@ -567,15 +564,15 @@ void script_menu_select(menudef *pmenu) {
             break;
         case 2:
             // load test program
-            run_line("10 peek x, 0x80290190, 4");
-            run_line("20 poke 0x80290190, x+1, 4");
-            /*run_line("10 f = 1");
+            //run_line("10 peek x, 0x80290190, 4");
+            //run_line("20 poke 0x80290190, x+1, 4");
+            run_line("10 f = 1");
             run_line("20 n = 5");
             run_line("30 i = n");
             run_line("35 f = f * n");
             run_line("40 n = n - 1");
             run_line("50 if n > 1 then goto 35");
-            run_line("60 print \"Factorial of \", i, \"is\", f");*/
+            run_line("60 print \"Factorial of \", i, \"is\", f");
             break;
         case 3:
             mb_memset(mb_msg, 0x00, 128);
@@ -696,8 +693,13 @@ void update_menu(menudef *pmenu) {
 }
 
 void script_input_request(keyboard *pkb, void *pgp) {
+    gpatch_t *pgpatch = (gpatch_t*)pgp;
     if (pkb->success) {
         // TODO input basic programs here
+        mb_error error = run_line(pkb->pinput);
+        if (error.error) {
+            notify(pgpatch, error.message, 50);
+        }
         return;
     }
 }
