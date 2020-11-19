@@ -1,71 +1,71 @@
 #include "include/script.h"
 #include "include/utility.h"
 #include "include/typedefs.h"
-#include "../mbasic/src/basicmalloc.h"
+#include "../lbasic/src/basicmalloc.h"
 
-mb_basic *basic = NULL;
+lb_basic *basic = NULL;
 
 #define HEAP_SIZE 256000
 
 char heap[HEAP_SIZE];
 
-int mb_msg_index = 0;
-char mb_msg[128];
+int lb_msg_index = 0;
+char lb_msg[128];
 
 void init_interpreter() {
     if (basic) {
         return;
     }
-    mb_malloc = mb_mem_malloc;
-    mb_free = mb_mem_free;
-    mb_putchar = gp_putch;
+    lb_malloc = lb_mem_malloc;
+    lb_free = lb_mem_free;
+    lb_putchar = gp_putch;
 
-    mb_mem_heap_init(heap, HEAP_SIZE);
-    mb_memset(mb_msg, 0x00, 128);
-    mb_msg_index = 0;
+    lb_mem_heap_init(heap, HEAP_SIZE);
+    lb_memset(lb_msg, 0x00, 128);
+    lb_msg_index = 0;
 
-    basic = mb_basic_init(NULL);
+    basic = lb_basic_init(NULL);
     basic->yield = 1;
     basic->yield_in = 1;
 }
 
-mb_error run_line(char *code) {
-    mb_error error;
+lb_error run_line(char *code) {
+    lb_error error;
     error.error = 0;
     s8 is_no_line;
-    mb_line *line = mb_line_init(NULL, code, &is_no_line);
+    lb_line *line = lb_line_init(NULL, code, &is_no_line);
     if (is_no_line) {
-        error = mb_basic_run_line(basic, line);
-        mb_line_free(line);
+        error = lb_basic_run_line(basic, line);
+        lb_line_free(line);
     } else {
-        s32 len = mb_strlen(code);
-        char *cpy = mb_malloc(len+1);
-        mb_strncpy(cpy, code, len);
+        s32 len = lb_strlen(code);
+        char *cpy = lb_malloc(len+1);
+        lb_strncpy(cpy, code, len);
         cpy[len] = '\0';
         line->code = cpy;
         line->free_code = 1;
-        mb_basic_insert_line(basic, line);
+        lb_basic_insert_line(basic, line);
     }
 
     return error;
 }
 
-mb_error mb_basic_update() {
-    mb_error error;
+lb_error lb_basic_update() {
+    lb_error error;
     error.error = 0;
     if (basic->running) {
-        error = mb_basic_run_prog(basic);
+        error = lb_basic_run_prog(basic);
     }
 
     if (error.error) {
-        mb_msg_index = 1;
-        mb_strncpy(mb_msg, error.message, mb_strlen(error.message));
+        lb_msg_index = 1;
+        lb_strncpy(lb_msg, error.message, lb_strlen(error.message));
     }
 
     return error;
 }
 
 int gp_putch(int chr) {
-    mb_msg[mb_msg_index++] = chr;
+    lb_msg[lb_msg_index++] = chr;
     return chr;
 }
