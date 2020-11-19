@@ -27,6 +27,15 @@ void init_interpreter() {
     basic = mb_basic_init(NULL);
 }
 
+void free_code() {
+    mb_linked_list *loop = basic->code;
+    while (loop) {
+        mb_line *l = loop->generic;
+        mb_free(l->code);
+        loop = loop->next;
+    }
+}
+
 mb_error run_line(char *code) {
     mb_error error;
     error.error = 0;
@@ -52,6 +61,11 @@ mb_error mb_basic_update() {
     error.error = 0;
     if (basic->running) {
         error = mb_basic_run_prog(basic);
+    }
+
+    if (error.error) {
+        mb_msg_index = 1;
+        mb_strncpy(mb_msg, error.message, mb_strlen(error.message));
     }
 
     return error;
