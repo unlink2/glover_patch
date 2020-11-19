@@ -25,15 +25,8 @@ void init_interpreter() {
     mb_msg_index = 0;
 
     basic = mb_basic_init(NULL);
-}
-
-void free_code() {
-    mb_linked_list *loop = basic->code;
-    while (loop) {
-        mb_line *l = loop->generic;
-        mb_free(l->code);
-        loop = loop->next;
-    }
+    basic->yield = 1;
+    basic->yield_in = 1;
 }
 
 mb_error run_line(char *code) {
@@ -50,6 +43,7 @@ mb_error run_line(char *code) {
         mb_strncpy(cpy, code, len);
         cpy[len] = '\0';
         line->code = cpy;
+        line->free_code = 1;
         mb_basic_insert_line(basic, line);
     }
 
