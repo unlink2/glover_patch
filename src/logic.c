@@ -29,8 +29,14 @@ void logic() {
     update_memwatch(&pmemwatch);
     update_menu(&pmenu);
     update_keyboard(&pkb);
+    mb_basic_update();
     evd_serial_terminal(&pmemwatch);
 
+
+    // print interpreter message
+    if (mb_msg_index) {
+        notify(&gpatch, mb_msg, 1);
+    }
 
     // update message
     if (gpatch.msg_timer > 0) {
