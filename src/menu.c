@@ -204,7 +204,7 @@ void init_script_menu(menudef *pmenu) {
     pmenu->cursor = 0;
     pmenu->strings[0] = "Input code...";
     pmenu->strings[1] = "Reset VM...";
-    pmenu->strings[2] = "Load Test script";
+    pmenu->strings[2] = "Load floor collision script...";
     pmenu->strings[3] = "Run...";
 
     pmenu->type[0] = MENU_BUTTON;
@@ -566,13 +566,11 @@ void script_menu_select(menudef *pmenu) {
             // load test program
             //run_line("10 peek x, 0x80290190, 4");
             //run_line("20 poke 0x80290190, x+1, 4");
-            run_line("10 f = 1");
-            run_line("20 n = 5");
-            run_line("30 i = n");
-            run_line("35 f = f * n");
-            run_line("40 n = n - 1");
-            run_line("50 if n > 1 then goto 35");
-            run_line("60 print \"Factorial of \", i, \"is\", f");
+            run_line("10 peek p1, 0x802903B0, 4");
+            run_line("15 if p1 == 0 then goto 40");
+            run_line("20 peek x, p1, 4");
+            run_line("30 print x");
+            run_line("40 goto 10");
             break;
         case 3:
             lb_memset(lb_msg, 0x00, 128);

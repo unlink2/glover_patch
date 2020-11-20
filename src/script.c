@@ -54,6 +54,8 @@ lb_error lb_basic_update() {
     lb_error error;
     error.error = 0;
     if (basic->running) {
+        lb_msg_index = 1;
+        lb_msg[0] = ' ';
         error = lb_basic_run_prog(basic);
     }
 
