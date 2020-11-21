@@ -21,7 +21,7 @@ MAIN = main
 TEST_MAIN = test
 MODULES = utility inputs logic render memory memwatch font8x8_basic debug rdp menu matrix keyboard playerinfo\
 		  script
-LBASIC_MODULES = basic basicmalloc interpreter keywords token utility
+LBASIC_MODULES = basic basicmalloc interpreter keywords token utility function
 
 .DEFAULT_GOAL := glover_patch
 
