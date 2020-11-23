@@ -569,7 +569,7 @@ void script_menu_select(menudef *pmenu) {
             run_line("10 peek p1, 0x802903B0, 4");
             run_line("15 if p1 == 0 then goto 40");
             run_line("20 peek x, p1, 4");
-            run_line("30 print x");
+            run_line("30 print #x x");
             run_line("40 goto 10");
             break;
         case 3:
