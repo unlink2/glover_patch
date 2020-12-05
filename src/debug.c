@@ -3,7 +3,11 @@
 #include "include/utility.h"
 #include "include/script.h"
 #include "include/logic.h"
-#include "../lbasic/src/lbasic.h"
+
+#include "../libex/src/utility.h"
+#include "../libex/src/parser.h"
+#include "../libex/src/scanner.h"
+#include "../libex/src/interpreter.h"
 
 static volatile struct pi_regs* const pir = (struct pi_regs *)0xa4600000;
 
@@ -572,10 +576,9 @@ void evd_serial_terminal(memwatch *pmemwatch) {
         dump(a, response);
     } else {
         // TODO output basic result here
-        lb_error error = run_line(data);
-        if (error.error) {
+        if (0) {
             // send error
-            evd_usb_write(error.message, COMMAND_SIZE);
+            evd_usb_write("ERROR", COMMAND_SIZE);
         } else {
             // send out buffer and clear it
             evd_usb_write(lb_msg, COMMAND_SIZE); // send back

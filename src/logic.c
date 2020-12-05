@@ -29,7 +29,6 @@ void logic() {
     update_memwatch(&pmemwatch);
     update_menu(&pmenu);
     update_keyboard(&pkb);
-    lb_basic_update();
     evd_serial_terminal(&pmemwatch);
 
 

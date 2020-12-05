@@ -1,9 +1,8 @@
 #include "include/script.h"
 #include "include/utility.h"
 #include "include/typedefs.h"
-#include "../lbasic/src/basicmalloc.h"
 
-lb_basic *basic = NULL;
+lb_interpreter *interpreter = NULL;
 
 #define HEAP_SIZE 256000
 
@@ -13,7 +12,7 @@ int lb_msg_index = 0;
 char lb_msg[128];
 
 void init_interpreter() {
-    if (basic) {
+    if (interpreter) {
         return;
     }
     lb_malloc = lb_mem_malloc;
@@ -24,48 +23,26 @@ void init_interpreter() {
     lb_memset(lb_msg, 0x00, 128);
     lb_msg_index = 0;
 
-    basic = lb_basic_init(NULL);
-    basic->yield = 1;
-    basic->yield_in = 1;
+    interpreter = lb_interpreter_init();
 }
 
-lb_error run_line(char *code) {
-    lb_error error;
-    error.error = 0;
-    s8 is_no_line;
-    lb_line *line = lb_line_init(NULL, code, &is_no_line);
-    if (is_no_line) {
-        error = lb_basic_run_line(basic, line);
-        lb_line_free(line);
-    } else {
-        s32 len = lb_strlen(code);
-        char *cpy = lb_malloc(len+1);
-        lb_strncpy(cpy, code, len);
-        cpy[len] = '\0';
-        line->code = cpy;
-        line->free_code = 1;
-        lb_basic_insert_line(basic, line);
-    }
+void run(char *code) {
+    lb_scanner *scanner = lb_scanner_init(code);
+    lb_parser *parser = lb_parser_init(lb_scanner_scan_tokens(scanner));
 
-    return error;
+    lb_linked_list *stmts = lb_parser_parse(parser);
+
+    if (parser->error.type != LB_NO_ERROR) {
+        // TODO report error
+        return;
+    }
+    lb_interpreter_interprete(interpreter, stmts);
+
+    lb_scanner_free(scanner);
+    lb_stmt_list_free(stmts);
+    lb_parser_free(parser);
 }
 
-lb_error lb_basic_update() {
-    lb_error error;
-    error.error = 0;
-    if (basic->running) {
-        lb_msg_index = 1;
-        lb_msg[0] = ' ';
-        error = lb_basic_run_prog(basic);
-    }
-
-    if (error.error) {
-        lb_msg_index = 1;
-        lb_strncpy(lb_msg, error.message, lb_strlen(error.message));
-    }
-
-    return error;
-}
 
 int gp_putch(int chr) {
     lb_msg[lb_msg_index++] = chr;
