@@ -558,24 +558,14 @@ void script_menu_select(menudef *pmenu) {
             break;
         case 1:
             // send reset command
-            run_line("reset");
             lb_memset(lb_msg, 0x00, 128);
             lb_msg_index = 0;
             break;
         case 2:
-            // load test program
-            //run_line("10 peek x, 0x80290190, 4");
-            //run_line("20 poke 0x80290190, x+1, 4");
-            run_line("10 peek p1, 0x802903B0, 4");
-            run_line("15 if p1 == 0 then goto 40");
-            run_line("20 peek x, p1, 4");
-            run_line("30 print #x x");
-            run_line("40 goto 10");
+            // run test program here
+            run("print(128);");
             break;
         case 3:
-            lb_memset(lb_msg, 0x00, 128);
-            lb_msg_index = 0;
-            run_line("run");
             break;
         default:
             init_default_menu(pmenu);
@@ -694,10 +684,6 @@ void script_input_request(keyboard *pkb, void *pgp) {
     gpatch_t *pgpatch = (gpatch_t*)pgp;
     if (pkb->success) {
         // TODO input basic programs here
-        lb_error error = run_line(pkb->pinput);
-        if (error.error) {
-            notify(pgpatch, error.message, 50);
-        }
         return;
     }
 }

@@ -1,16 +1,18 @@
 #ifndef __SCRIPT_H__
 #define __SCRIPT_H__
 
-#include "../../lbasic/src/utility.h"
-#include "../../lbasic/src/lbasic.h"
+#include "../../libex/src/utility.h"
+#include "../../libex/src/parser.h"
+#include "../../libex/src/scanner.h"
+#include "../../libex/src/interpreter.h"
+#include "../../libex/src/basicmalloc.h"
 
 extern int lb_msg_index;
 extern char lb_msg[128];
 
 void init_interpreter();
 
-lb_error run_line(char *code);
-lb_error lb_basic_update();
+void run(char *code);
 
 int gp_putch(int chr);
 
