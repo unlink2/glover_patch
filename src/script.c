@@ -33,6 +33,7 @@ void init_interpreter() {
     lb_malloc = lb_mem_malloc;
     lb_free = lb_mem_free;
     lb_fputc = gp_putch;
+    lb_realloc = lb_mem_realloc;
 
     lb_mem_heap_init(heap, HEAP_SIZE);
     lb_memset(lb_msg, 0x00, 128);
