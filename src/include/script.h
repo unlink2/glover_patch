@@ -14,6 +14,6 @@ void init_interpreter();
 
 void run(char *code);
 
-int gp_putch(int chr);
+int gp_putch(int chr, void *f);
 
 #endif
