@@ -30,6 +30,7 @@ void init_interpreter() {
     if (interpreter) {
         return;
     }
+    lb_scanner_explicitly_init_keywords();
     lb_malloc = lb_mem_malloc;
     lb_free = lb_mem_free;
     lb_fputc = gp_putch;

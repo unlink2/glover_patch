@@ -563,7 +563,7 @@ void script_menu_select(menudef *pmenu) {
             break;
         case 2:
             // run test program here
-            run("let i = 0; print(10);");
+            run("let i = peek(0x802903B0, 4); if (i != 0) { print(peek(i, 4)); }");
             break;
         case 3:
             break;
