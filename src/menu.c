@@ -563,7 +563,7 @@ void script_menu_select(menudef *pmenu) {
             break;
         case 2:
             // run test program here
-            run("print(128);");
+            run("let i = 0; print(10);");
             break;
         case 3:
             break;
@@ -684,7 +684,8 @@ void script_input_request(keyboard *pkb, void *pgp) {
     gpatch_t *pgpatch = (gpatch_t*)pgp;
     if (pkb->success) {
         // TODO input basic programs here
-        return;
+        run(pkb->pinput);
+        notify(pgpatch, lb_msg, 1);
     }
 }
 
