@@ -7,3 +7,5 @@ obj/
 gcc_build/
 node_modules/
 mlisp/
+lbasic/
+libex/

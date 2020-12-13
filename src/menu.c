@@ -200,15 +200,17 @@ void init_move_menu(menudef *pmenu) {
 }
 
 void init_script_menu(menudef *pmenu) {
-    pmenu->size = 3;
+    pmenu->size = 4;
     pmenu->cursor = 0;
     pmenu->strings[0] = "Input code...";
     pmenu->strings[1] = "Reset VM...";
-    pmenu->strings[2] = "Load Floor Collision Script";
+    pmenu->strings[2] = "Load floor collision script...";
+    pmenu->strings[3] = "Run...";
 
     pmenu->type[0] = MENU_BUTTON;
     pmenu->type[1] = MENU_BUTTON;
     pmenu->type[2] = MENU_BUTTON;
+    pmenu->type[3] = MENU_BUTTON;
 
     pmenu->pactions = &script_menu_select;
     pmenu->pupdate = &script_menu_update;
@@ -545,6 +547,7 @@ void move_object_update(menudef *pmenu) {
 
 char script_input[128];
 void script_menu_select(menudef *pmenu) {
+    // TODO implement basic
     switch (pmenu->cursor) {
         case 0:
             // TODO
@@ -554,12 +557,15 @@ void script_menu_select(menudef *pmenu) {
             input_request(script_input, 128, pmenu->pkb, &script_input_request, pmenu->pgpatch);
             break;
         case 1:
-            reset_vm(&vm);
-            notify(pmenu->pgpatch, "VM Reset!", 40);
+            // send reset command
+            lb_memset(lb_msg, 0x00, 128);
+            lb_msg_index = 0;
             break;
         case 2:
-            reset_vm(&vm);
-            set_script(&vm, "(defun 'onframe '() '(peeki32 (peeki32 0x802903B0)))", out_buffer);
+            // run test program here
+            run("let i = peek(0x802903B0, 4); if (i != 0) { print(peek(i, 4)); }");
+            break;
+        case 3:
             break;
         default:
             init_default_menu(pmenu);
@@ -677,9 +683,9 @@ void update_menu(menudef *pmenu) {
 void script_input_request(keyboard *pkb, void *pgp) {
     gpatch_t *pgpatch = (gpatch_t*)pgp;
     if (pkb->success) {
-        repl(&vm, pkb->pinput, out_buffer);
-        notify(pgpatch, out_buffer, 50);
-        return;
+        // TODO input basic programs here
+        run(pkb->pinput);
+        notify(pgpatch, lb_msg, 1);
     }
 }
 

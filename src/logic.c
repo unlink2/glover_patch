@@ -30,8 +30,11 @@ void logic() {
     update_menu(&pmenu);
     update_keyboard(&pkb);
     evd_serial_terminal(&pmemwatch);
-    if (update_vm(&vm, out_buffer)) {
-        notify(&gpatch, out_buffer, 1);
+
+
+    // print interpreter message
+    if (lb_msg_index) {
+        notify(&gpatch, lb_msg, 1);
     }
 
     // update message
