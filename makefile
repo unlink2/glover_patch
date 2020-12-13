@@ -59,7 +59,7 @@ $(ODIRLOC)/%.o: $(SRCDIR)/%.c $(DEPS) | init
 	$(CCLOC) -c -o $@ $< -Wall -g
 
 
-$(ODIRLOC)/libex/%.o: $(LIBEXCSRCDIR)/%.c $(DEPS) | init
+$(ODIRLOC)/libex/%.o: $(LIBEXSRCDIR)/%.c $(DEPS) | init
 	$(CCLOC) -c -o $@ $< -Wall -g
 
 build_test: $(TEST_OBJ)
