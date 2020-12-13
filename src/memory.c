@@ -10,7 +10,6 @@
 #include "include/logic.h"
 #include "include/utility.h"
 #include "include/script.h"
-#include "../mlisp/src/mlisp.h"
 
 WORD_T *LAST_INPUT_1;
 WORD_T *LAST_INPUT_2;
@@ -84,5 +83,5 @@ void init_mem() {
 
     *plast = 0x00;
 
-    reset_vm(&vm);
+    init_interpreter();
 }

@@ -3,9 +3,9 @@ CCLOC = gcc
 LD=mips-elf-ld
 
 INCLUDEDIR=./src/include
-MLISPINCLUDEDIR=./mlisp/src
+LIBEXINCLUDEDIR=./libex/src
 SRCDIR=./src
-MLISPSRCDIR=./mlisp/src
+LIBEXSRCDIR=./libex/src
 ODIR=./obj
 ODIRLOC=./obj/local
 BINDIR=./bin
@@ -21,25 +21,26 @@ MAIN = main
 TEST_MAIN = test
 MODULES = utility inputs logic render memory memwatch font8x8_basic debug rdp menu matrix keyboard playerinfo\
 		  script
-MLISP_MODULES = builtin lispvalue token utility map
+LIBEX_MODULES = utility token basicmalloc scanner error expr ast_printer parser interpreter object visitor stmt\
+								   map enviorment callable arraylist
 
 .DEFAULT_GOAL := glover_patch
 
 DEPS=$(patsubst %,$(INCLUDEDIR)/%.h,$(MODULES))
-DEPS+=$(patsubst %,$(MLISPINCLUDEDIR)/%.h,$(MLISP_MODULES))
+DEPS+=$(patsubst %,$(LIBEXINCLUDEDIR)/%.h,$(LIBEX_MODULES))
 OBJ=$(patsubst %,$(ODIR)/%.o,$(MODULES))
 OBJ+=$(patsubst %,$(ODIR)/%.o,$(MAIN))
-OBJ+=$(patsubst %,$(ODIR)/mlisp/%.o,$(MLISP_MODULES))
+OBJ+=$(patsubst %,$(ODIR)/libex/%.o,$(LIBEX_MODULES))
 
 TEST_OBJ=$(patsubst %,$(ODIRLOC)/%.o,$(MODULES))
 TEST_OBJ+=$(patsubst %,$(ODIRLOC)/%.o,$(TEST_MAIN))
-TEST_OBJ+=$(patsubst %,$(ODIRLOC)/mlisp/%.o,$(MLISP_MODULES))
+TEST_OBJ+=$(patsubst %,$(ODIRLOC)/libex/%.o,$(LIBEX_MODULES))
 # main
 
 $(ODIR)/%.o: $(SRCDIR)/%.c $(DEPS) | init
 	$(CC) -c -o  $@ $< $(CFLAGS)
 
-$(ODIR)/mlisp/%.o: $(MLISPSRCDIR)/%.c $(DEPS) | init
+$(ODIR)/libex/%.o: $(LIBEXSRCDIR)/%.c $(DEPS) | init
 	$(CC) -c -o  $@ $< $(CFLAGS)
 
 $(BINDIR)/code.bin: $(OBJ)
@@ -58,7 +59,7 @@ $(ODIRLOC)/%.o: $(SRCDIR)/%.c $(DEPS) | init
 	$(CCLOC) -c -o $@ $< -Wall -g
 
 
-$(ODIRLOC)/mlisp/%.o: $(MLISPSRCDIR)/%.c $(DEPS) | init
+$(ODIRLOC)/libex/%.o: $(LIBEXSRCDIR)/%.c $(DEPS) | init
 	$(CCLOC) -c -o $@ $< -Wall -g
 
 build_test: $(TEST_OBJ)
@@ -71,8 +72,8 @@ test: build_test
 clean:
 	@echo Cleaning stuff. This make file officially is doing better than you irl.
 	rm -f $(ODIR)/*.o
-	rm -f $(ODIR)/mlisp/*.o
-	rm -f $(ODIRLOC)/mlisp/*.o
+	rm -f $(ODIR)/libex/*.o
+	rm -f $(ODIRLOC)/libex/*.o
 	rm -f $(ODIRLOC)/*.o
 	rm -f $(BINDIR)/*
 
@@ -80,8 +81,8 @@ clean:
 .PHONY: setup
 init:
 	mkdir -p $(ODIR)
-	mkdir -p $(ODIR)/mlisp
+	mkdir -p $(ODIR)/libex
 	mkdir -p $(BINDIR)
 	mkdir -p $(ODIRLOC)
-	mkdir -p $(ODIRLOC)/mlisp
+	mkdir -p $(ODIRLOC)/libex
 

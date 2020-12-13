@@ -4,6 +4,11 @@
 #include "include/script.h"
 #include "include/logic.h"
 
+#include "../libex/src/utility.h"
+#include "../libex/src/parser.h"
+#include "../libex/src/scanner.h"
+#include "../libex/src/interpreter.h"
+
 static volatile struct pi_regs* const pir = (struct pi_regs *)0xa4600000;
 
 #define COMMAND_SIZE 1024
@@ -498,8 +503,8 @@ void evd_serial_terminal(memwatch *pmemwatch) {
 
     // parse args
     arg a;
-    if (is_arg(data, "print ")) {
-        a = parse_arg(data, "print ");
+    if (is_arg(data, "iprint ")) {
+        a = parse_arg(data, "iprint ");
         pevd_msg = (char*)pevd_msg_buffer;
         gmemcpy((BYTE_T*)a.value, (BYTE_T*)pevd_msg_buffer, COMMAND_SIZE);
         pevd_msg_buffer[COMMAND_SIZE+1] = '\0';
@@ -570,9 +575,11 @@ void evd_serial_terminal(memwatch *pmemwatch) {
         a = parse_arg(data, "dump ");
         dump(a, response);
     } else {
-        set_script(&vm, "", out_buffer); // set script to execute every frame
-        // execute as lisp value
-        repl(&vm, data, response);
-        evd_usb_write(response, COMMAND_SIZE); // send back
+        // TODO output basic result here
+        run(data);
+        // send out buffer and clear it
+        evd_usb_write(lb_msg, COMMAND_SIZE); // send back
+        lb_memset(lb_msg, 0x00, 128);
+        lb_msg_index = 0;
     }
 }

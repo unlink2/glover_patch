@@ -1,21 +1,19 @@
 #ifndef __SCRIPT_H__
 #define __SCRIPT_H__
 
-#include "../../mlisp/src/mlisp.h"
+#include "../../libex/src/utility.h"
+#include "../../libex/src/parser.h"
+#include "../../libex/src/scanner.h"
+#include "../../libex/src/interpreter.h"
+#include "../../libex/src/basicmalloc.h"
 
-#define VM_OUT_SIZE 128
-#define VM_CODE_SIZE 1024
+extern int lb_msg_index;
+extern char lb_msg[128];
 
-extern char vm_code_buffer[VM_CODE_SIZE];
-extern char out_buffer[VM_OUT_SIZE];
-extern ml_lispvm_t vm;
+void init_interpreter();
 
-void set_script(ml_lispvm_t *pvm, char *script, char *out_buffer);
+void run(char *code);
 
-void reset_vm(ml_lispvm_t *pvm);
-void repl(ml_lispvm_t *pvm, char *pinput, char *out_buffer);
-
-
-char update_vm(ml_lispvm_t *pvm, char *out_buffer);
+int gp_putch(int chr, void *f);
 
 #endif
