@@ -575,11 +575,14 @@ void evd_serial_terminal(memwatch *pmemwatch) {
         a = parse_arg(data, "dump ");
         dump(a, response);
     } else {
+
+#ifndef __NO_SCRIPT__
         // TODO output basic result here
         run(data);
         // send out buffer and clear it
         evd_usb_write(lb_msg, COMMAND_SIZE); // send back
         lb_memset(lb_msg, 0x00, 128);
         lb_msg_index = 0;
+#endif
     }
 }

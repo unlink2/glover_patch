@@ -2,6 +2,7 @@
 #include "include/utility.h"
 #include "include/typedefs.h"
 
+#ifndef __NO_SCRIPT__
 lb_interpreter *interpreter = NULL;
 
 #define HEAP_SIZE 256000
@@ -85,3 +86,5 @@ int gp_putch(int chr, void *f) {
     lb_msg[lb_msg_index++] = chr;
     return chr;
 }
+
+#endif

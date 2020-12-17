@@ -200,12 +200,18 @@ void init_move_menu(menudef *pmenu) {
 }
 
 void init_script_menu(menudef *pmenu) {
+#ifndef __NO_SCRIPT__
     pmenu->size = 4;
     pmenu->cursor = 0;
     pmenu->strings[0] = "Input code...";
     pmenu->strings[1] = "Reset VM...";
     pmenu->strings[2] = "Load floor collision script...";
     pmenu->strings[3] = "Run...";
+#else
+    pmenu->size = 1;
+    pmenu->cursor = 0;
+    pmenu->strings[0] = "No-script-build";
+#endif
 
     pmenu->type[0] = MENU_BUTTON;
     pmenu->type[1] = MENU_BUTTON;
@@ -549,6 +555,8 @@ char script_input[128];
 void script_menu_select(menudef *pmenu) {
     // TODO implement basic
     switch (pmenu->cursor) {
+
+#ifndef __NO_SCRIPT__
         case 0:
             // TODO
             pmenu->flags = 0x00;
@@ -567,6 +575,7 @@ void script_menu_select(menudef *pmenu) {
             break;
         case 3:
             break;
+#endif
         default:
             init_default_menu(pmenu);
             break;
@@ -681,12 +690,14 @@ void update_menu(menudef *pmenu) {
 }
 
 void script_input_request(keyboard *pkb, void *pgp) {
+#ifndef __NO_SCRIPT__
     gpatch_t *pgpatch = (gpatch_t*)pgp;
     if (pkb->success) {
         // TODO input basic programs here
         run(pkb->pinput);
         notify(pgpatch, lb_msg, 1);
     }
+#endif
 }
 
 
