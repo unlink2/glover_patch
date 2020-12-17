@@ -1,6 +1,11 @@
 #ifndef __SCRIPT_H__
 #define __SCRIPT_H__
 
+// uncomment to build without script interface
+// #define __NO_SCRIPT__
+
+#ifndef __NO_SCRIPT__
+
 #include "../../libex/src/utility.h"
 #include "../../libex/src/parser.h"
 #include "../../libex/src/scanner.h"
@@ -15,5 +20,7 @@ void init_interpreter();
 void run(char *code);
 
 int gp_putch(int chr, void *f);
+
+#endif
 
 #endif

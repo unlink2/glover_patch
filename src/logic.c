@@ -32,10 +32,12 @@ void logic() {
     evd_serial_terminal(&pmemwatch);
 
 
+#ifndef __NO_SCRIPT__
     // print interpreter message
     if (lb_msg_index) {
         notify(&gpatch, lb_msg, 1);
     }
+#endif
 
     // update message
     if (gpatch.msg_timer > 0) {

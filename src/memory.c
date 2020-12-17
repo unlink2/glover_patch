@@ -83,5 +83,7 @@ void init_mem() {
 
     *plast = 0x00;
 
+#ifndef __NO_SCRIPT__
     init_interpreter();
+#endif
 }
