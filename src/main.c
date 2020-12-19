@@ -1,9 +1,9 @@
-#include "include/utility.h"
-#include "include/logic.h"
-#include "include/render.h"
-#include "include/memory.h"
-#include "include/font8x8_basic.h"
-#include "include/rdp.h"
+#include "utility.h"
+#include "logic.h"
+#include "render.h"
+#include "memory.h"
+#include "font8x8_basic.h"
+#include "rdp.h"
 
 enum START_MODE {
     START_LOGIC,

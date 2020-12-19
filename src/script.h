@@ -6,11 +6,11 @@
 
 #ifndef __NO_SCRIPT__
 
-#include "../../libex/src/utility.h"
-#include "../../libex/src/parser.h"
-#include "../../libex/src/scanner.h"
-#include "../../libex/src/interpreter.h"
-#include "../../libex/src/basicmalloc.h"
+#include "../libex/src/utility.h"
+#include "../libex/src/parser.h"
+#include "../libex/src/scanner.h"
+#include "../libex/src/interpreter.h"
+#include "../libex/src/basicmalloc.h"
 
 extern int lb_msg_index;
 extern char lb_msg[128];

@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "include/fla2.h"
+#include "../src/fla2.h"
 
 
 

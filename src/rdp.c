@@ -1,5 +1,5 @@
-#include "include/rdp.h"
-#include "include/memory.h"
+#include "rdp.h"
+#include "memory.h"
 
 WORD_T *get_pbuffer() {
     get_ptr(WORD_T, pbufferptr, RDP_DL_BUFFER_PTR, 1);

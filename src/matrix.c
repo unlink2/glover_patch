@@ -1,4 +1,4 @@
-#include "include/matrix.h"
+#include "matrix.h"
 
 matrix3 projection = {
     {

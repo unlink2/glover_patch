@@ -8,15 +8,15 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "include/memory.h"
-#include "include/typedefs.h"
-#include "include/utility.h"
-#include "include/memwatch.h"
-#include "include/render.h"
-#include "include/font8x8_basic.h"
-#include "include/actor.h"
-#include "include/savefile.h"
-#include "include/matrix.h"
+#include "memory.h"
+#include "typedefs.h"
+#include "utility.h"
+#include "memwatch.h"
+#include "render.h"
+#include "font8x8_basic.h"
+#include "actor.h"
+#include "savefile.h"
+#include "matrix.h"
 
 /**
  * This is a somewhat incomplete unit test file

@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "include/fla2.h"
+#include "../src/fla2.h"
 
 static void test_dec_fla2(void **state) {
     unsigned char input[112] = {

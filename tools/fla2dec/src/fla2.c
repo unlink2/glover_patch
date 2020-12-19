@@ -1,6 +1,6 @@
 // c implemnentation of decompress.py
 // based on https://github.com/jombo23/N64-Tools
-
+#include "fla2.h"
 
 int dec_fla2(unsigned char *pdata, int *compressed_size, int dec_s, unsigned char *poutput) {
     if (dec_s == 0) {

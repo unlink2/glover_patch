@@ -1,12 +1,12 @@
-#include "include/logic.h"
-#include "include/inputs.h"
-#include "include/memwatch.h"
-#include "include/debug.h"
-#include "include/menu.h"
-#include "include/actor.h"
-#include "include/debug.h"
-#include "include/playerinfo.h"
-#include "include/script.h"
+#include "logic.h"
+#include "inputs.h"
+#include "memwatch.h"
+#include "debug.h"
+#include "menu.h"
+#include "actor.h"
+#include "debug.h"
+#include "playerinfo.h"
+#include "script.h"
 
 // x y and z coordinates
 float gpos_bac[3];
