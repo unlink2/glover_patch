@@ -134,6 +134,10 @@ typedef struct model_data_t {
 // model act_shad_t
 // 0x40 size
 typedef struct act_shad {
+    /**
+     * act_shad+4 has something to do with ball state
+     * 2 bytes for flags. rightmost bit == 1 attached to ball?
+     */
     char padding[0x40];
 } act_shad_t;
 
