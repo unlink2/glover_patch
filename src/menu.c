@@ -1,13 +1,13 @@
-#include "include/render.h"
-#include "include/menu.h"
-#include "include/utility.h"
-#include "include/font8x8_basic.h"
-#include "include/inputs.h"
-#include "include/logic.h"
-#include "include/debug.h"
-#include "include/utility.h"
-#include "include/actor.h"
-#include "include/script.h"
+#include "render.h"
+#include "menu.h"
+#include "utility.h"
+#include "font8x8_basic.h"
+#include "inputs.h"
+#include "logic.h"
+#include "debug.h"
+#include "utility.h"
+#include "actor.h"
+#include "script.h"
 
 #define CHEATS_LEN 26
 char *cheat_names[CHEATS_LEN];

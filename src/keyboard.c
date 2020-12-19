@@ -1,8 +1,8 @@
-#include "include/keyboard.h"
-#include "include/render.h"
-#include "include/font8x8_basic.h"
-#include "include/inputs.h"
-#include "include/rdp.h"
+#include "keyboard.h"
+#include "render.h"
+#include "font8x8_basic.h"
+#include "inputs.h"
+#include "rdp.h"
 
 keyboard pkb;
 

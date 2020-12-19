@@ -1,4 +1,4 @@
-#include "include/utility.h"
+#include "utility.h"
 
 #ifdef UNIT_TESTS
 

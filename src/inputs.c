@@ -1,4 +1,4 @@
-#include "include/inputs.h"
+#include "inputs.h"
 
 BOOLEAN read_button(unsigned int button, WORD_T *pcontroller) {
     // if the controller is not connected it will

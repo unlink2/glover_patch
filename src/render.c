@@ -1,12 +1,12 @@
-#include "include/render.h"
-#include "include/memwatch.h"
-#include "include/utility.h"
-#include "include/font8x8_basic.h"
-#include "include/debug.h"
-#include "include/rdp.h"
-#include "include/menu.h"
-#include "include/matrix.h"
-#include "include/keyboard.h"
+#include "render.h"
+#include "memwatch.h"
+#include "utility.h"
+#include "font8x8_basic.h"
+#include "debug.h"
+#include "rdp.h"
+#include "menu.h"
+#include "matrix.h"
+#include "keyboard.h"
 
 u8 render_step = 0; // 0 or 1
 WORD_T *rdp_start_next = NULL;

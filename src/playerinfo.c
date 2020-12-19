@@ -1,5 +1,5 @@
-#include "include/playerinfo.h"
-#include "include/actor.h"
+#include "playerinfo.h"
+#include "actor.h"
 
 void update_playerinfo(playerinfo *ppi, memwatch *pmw) {
     if (!(ppi->flags & 0x80)) {

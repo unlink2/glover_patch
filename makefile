@@ -2,7 +2,7 @@ CC=mips-elf-gcc
 CCLOC = gcc
 LD=mips-elf-ld
 
-INCLUDEDIR=./src/include
+INCLUDEDIR=./src
 LIBEXINCLUDEDIR=./libex/src
 SRCDIR=./src
 LIBEXSRCDIR=./libex/src

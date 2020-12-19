@@ -1,13 +1,15 @@
-#include "include/debug.h"
-#include "include/render.h"
-#include "include/utility.h"
-#include "include/script.h"
-#include "include/logic.h"
+#include "debug.h"
+#include "render.h"
+#include "utility.h"
+#include "script.h"
+#include "logic.h"
 
+#ifndef __NO_SCRIPT__
 #include "../libex/src/utility.h"
 #include "../libex/src/parser.h"
 #include "../libex/src/scanner.h"
 #include "../libex/src/interpreter.h"
+#endif
 
 static volatile struct pi_regs* const pir = (struct pi_regs *)0xa4600000;
 

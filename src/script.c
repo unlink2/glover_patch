@@ -1,6 +1,6 @@
-#include "include/script.h"
-#include "include/utility.h"
-#include "include/typedefs.h"
+#include "script.h"
+#include "utility.h"
+#include "typedefs.h"
 
 #ifndef __NO_SCRIPT__
 lb_interpreter *interpreter = NULL;
