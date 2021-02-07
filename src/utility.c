@@ -136,6 +136,7 @@ void str_reverse(char *pstr, int len) {
 
 int to_decstr(WORD_T value, char *pstr, WORD_T size) {
     int i = 0;
+    int org_value = value;
     while (value) {
         pstr[i] = (value % 10) + '0';
         i++;
@@ -145,6 +146,12 @@ int to_decstr(WORD_T value, char *pstr, WORD_T size) {
     while (i < size) {
         pstr[i++] = '0';
     }
+
+    if (org_value < 0) {
+        pstr[i] = '-';
+        i++;
+    }
+
     str_reverse(pstr, i);
     pstr[i] = '\0';
     return i;

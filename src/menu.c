@@ -7,6 +7,7 @@
 #include "debug.h"
 #include "utility.h"
 #include "actor.h"
+#include "mainmenu.h"
 
 #define CHEATS_LEN 26
 char *cheat_names[CHEATS_LEN];
@@ -15,52 +16,6 @@ menudef pmenu;
 
 void put_bool(BOOLEAN expr, char *pstr) {
     pstr[1] = expr ? 'x' : ' ';
-}
-
-void init_default_menu(menudef *pmenu) {
-    get_ptr(char, string_buffer, SCREEN_BUFFER, 0x20*0x10);
-    pmenu->pstr = string_buffer;
-    pmenu->size = 15;
-    pmenu->cursor = 0;
-    pmenu->strings[0] = "Memory Monitor";
-    pmenu->strings[1] = "Memory Monitor ASCII";
-    pmenu->strings[2] = "Save Position";
-    pmenu->strings[3] = "Load Position";
-    pmenu->strings[4] = "Save Actors     ";
-    pmenu->strings[5] = "Load Actors     ";
-    pmenu->strings[6] = "Toggle Timer";
-    pmenu->strings[7] = "Level Select";
-    pmenu->strings[8] = "Toggle Collision";
-    pmenu->strings[9] = "Fog";
-    pmenu->strings[10] = "Other...";
-    pmenu->strings[11] = "FPS:            ";
-    pmenu->strings[12] = "Init ED...";
-    pmenu->strings[13] = "Clear watch...";
-    pmenu->strings[14] = "Move Object...";
-
-    pmenu->type[0] = MENU_BUTTON;
-    pmenu->type[1] = MENU_BUTTON;
-    pmenu->type[2] = MENU_BUTTON;
-    pmenu->type[3] = MENU_BUTTON;
-    pmenu->type[4] = MENU_VALUE_HWORD;
-    pmenu->type[5] = MENU_VALUE_HWORD;
-    pmenu->type[6] = MENU_BUTTON;
-    pmenu->type[7] = MENU_BUTTON;
-    pmenu->type[8] = MENU_BUTTON;
-    pmenu->type[9] = MENU_BUTTON;
-    pmenu->type[10] = MENU_BUTTON;
-    pmenu->type[11] = MENU_VALUE_HWORD;
-    pmenu->type[12] = MENU_BUTTON;
-    pmenu->type[13] = MENU_BUTTON;
-    pmenu->type[14] = MENU_BUTTON;
-    pmenu->type[15] = MENU_BUTTON;
-
-    pmenu->pvalue[4] = &pmenu->pgpatch->restore_slot;
-    pmenu->pvalue[5] = &pmenu->pgpatch->restore_slot;
-    pmenu->pvalue[11] = (void*)FRAME_RATE_1;
-
-    pmenu->pactions = &main_menu_select;
-    pmenu->pupdate = &main_menu_update;
 }
 
 u8 cheat_num = 0;
@@ -197,187 +152,7 @@ void init_move_menu(menudef *pmenu) {
     pmenu->pupdate = &move_object_update;
 }
 
-void main_menu_select(menudef *pmenu) {
-    switch(pmenu->cursor) {
-        case 0:
-            pmenu->pmemwatch->flags = pmenu->pmemwatch->flags ^ 0x80;
-            // not ascii mode
-            pmenu->pmemwatch->flags = pmenu->pmemwatch->flags & 0b11011111;
-            pmenu->flags = 0x00;
-            break;
-        case 1:
-            // ascii mode
-            pmenu->pmemwatch->flags = pmenu->pmemwatch->flags ^ 0b10100000;
-            pmenu->flags = 0x00;
-            break;
-        case 2:
-            store_glover_pos();
-            break;
-        case 3:
-            restore_glover_pos();
-            break;
-        case 4:
-            clone_actors(NULL, pmenu->pgpatch->restore_slot);
-            break;
-        case 5:
-            restore_actors(NULL, pmenu->pgpatch->restore_slot);
-            break;
-        case 6:
-            // enable_timer();
-            toggle_timer(pmenu->pgpatch);
-            break;
-        case 7:
-            level_select();
-            break;
-        case 8:
-            toggle_collision();
-            break;
-        case 9:
-            toggle_fog();
-            break;
-        case 10:
-            init_glover_menu(pmenu);
-            break;
-        case 12:
-            evd_init();
-            break;
-        case 13:
-            clear_all_watch(pmenu->pmemwatch);
-            break;
-        case 14:
-            init_move_menu(pmenu);
-            break;
-        default:
-            pmenu->flags = 0x00;
-            pmenu->cursor = 0;
-            break;
-    }
-}
 
-
-void main_menu_update(menudef *pmenu) {
-    // put framerate number into framerate string
-    HWORD_T *ptr = (HWORD_T*)pmenu->pvalue[11];
-    char *str = pmenu->strings[11];
-    to_hexstr(*ptr, str+5, 2);
-
-    pmenu->pgpatch->restore_slot = pmenu->pgpatch->restore_slot & MAX_RESTORE_SLOTS;
-    // restore to hex
-    to_hexstr((WORD_T)pmenu->pgpatch->restore_slot, pmenu->strings[5]+gstrlen("Load Actors "), 1);
-    to_hexstr((WORD_T)pmenu->pgpatch->restore_slot, pmenu->strings[4]+gstrlen("Save Actors "), 1);
-}
-
-void glover_menu_select(menudef *pmenu) {
-    switch(pmenu->cursor) {
-        case 0:
-            pmenu->pgpatch->infinite_lives = !pmenu->pgpatch->infinite_lives;
-            put_bool(pmenu->pgpatch->infinite_lives, pmenu->strings[0]);
-            break;
-        case 1:
-            pmenu->pgpatch->infinite_hp = !pmenu->pgpatch->infinite_hp;
-            put_bool(pmenu->pgpatch->infinite_hp, pmenu->strings[1]);
-            break;
-        case 2:
-            trigger_al(pmenu);
-            break;
-        case 3:
-            pmenu->pgpatch->lock_pos = !pmenu->pgpatch->lock_pos;
-            store_glover_pos();
-            break;
-        case 4:
-            store_glover_pos();
-            restore_glover_pos();
-            break;
-        case 5:
-            pmenu->pgpatch->infinite_jump = !pmenu->pgpatch->infinite_jump;
-            break;
-        case 6:
-            pmenu->pgpatch->cutscene_skip = !pmenu->pgpatch->cutscene_skip;
-            break;
-        case 7: {
-            void (*trigger_cheat)(int, int, int) = TRIGGER_CHEAT;
-            trigger_cheat((int)(*(u8*)(pmenu->pvalue[7])), 1, 8); // TODO what do other inputs do?
-            break; }
-        case 8: {
-            pmenu->pgpatch->lockrng = !pmenu->pgpatch->lockrng;
-
-            // start of rng function
-            get_ptr(u32, rngval, RNG_FUNC, 1);
-            if (pmenu->pgpatch->lockrng) {
-                pmenu->strings[8] = "Unlock RNG";
-                rngval[0] = 0x03E00008; // jr ra
-                rngval[1] = 0x00000000; // nop
-                //rngval[0] = 0x3C04801E; // lui a0, 801E
-                //rngval[1] = 0x3484D3F0; // ori a0, D3F0
-                //rngval[2] = 0x8C820000; // lw v0, 00(a0)
-                //rngval[3] = 0x03E00008; // jr ra
-                //rngval[4] = 0x00000000; // nop
-            } else {
-                pmenu->strings[8] = "Lock RNG";
-                rngval[0] = 0x14800003; // original code
-                rngval[1] = 0x27BDFFF8;
-                //rngval[2] = 0x08051C1C;
-                //rngval[3] = 0x00001021;
-                //rngval[4] = 0x3C03801F;
-            }
-            break; }
-        case 9: {
-            void (*load_map)(int) = LOAD_MAP;
-            // void (*fade)() = FADE;
-            void (*init_load)(int) = INIT_LOAD;
-            //fade();
-            init_load(1);
-            load_map((int)(*(u8*)(pmenu->pvalue[9])));
-            break; }
-        case 10: {
-            get_ptr(u8, debug_graph, DEBUG_GRAPH, 1);
-            *debug_graph = !*debug_graph;
-            break; }
-        case 11: {
-            pmenu->pgpatch->disable_pause = !pmenu->pgpatch->disable_pause;
-            // do it here instead to not cause issues in the title screen
-            get_ptr(BYTE_T, nopause, DISABLE_PAUSE_FLAG, 1);
-            *nopause = 0x00;
-            break; }
-        case 12:
-            pmenu->pgpatch->auto_timer = !pmenu->pgpatch->auto_timer;
-            if (pmenu->pgpatch->auto_timer) {
-                pmenu->strings[12] = "Disable Auto TImer";
-            } else {
-                pmenu->strings[12] = "Auto Timer";
-            }
-            break;
-        case 13:
-            pmenu->pgpatch->use_igt = !pmenu->pgpatch->use_igt;
-            if (pmenu->pgpatch->use_igt) {
-                pmenu->strings[13] = "Use Custom Timer";
-            } else {
-                pmenu->strings[13] = "Use IGT";
-            }
-            break;
-        case 14:
-            pmenu->pgpatch->pi.flags ^= 0x80;
-            clear_all_watch(pmenu->pmemwatch);
-            update_playerinfo(&pmenu->pgpatch->pi, pmenu->pmemwatch);
-            break;
-        case 15: {
-            get_ptr(WORD_T, store_ball, BALL_STORAGE, 1);
-            *store_ball = 0x2A;
-            break; }
-        case 16: {
-            get_ptr(BYTE_T, enable_gravity, ENABLE_GRAVITY, 1);
-            *enable_gravity = !*enable_gravity;
-            put_bool(*enable_gravity, pmenu->strings[16]);
-            break; }
-	case 17: {
-	    get_ptr(glover_actor, pglover, GLOVER_ACTOR, 1);  
-	    pglover->actor_flags ^= 0x0000C000;
-	    break; }
-        default:
-            init_default_menu(pmenu);
-            break;
-    }
-}
 
 void glover_menu_update(menudef *pmenu) {
     /*if (pmenu->pgpatch->infinite_hp) {
@@ -627,4 +402,114 @@ void update_menu(menudef *pmenu) {
     }
 }
 
+void glover_menu_select(menudef *pmenu) {
+    switch(pmenu->cursor) {
+        case 0:
+            pmenu->pgpatch->infinite_lives = !pmenu->pgpatch->infinite_lives;
+            put_bool(pmenu->pgpatch->infinite_lives, pmenu->strings[0]);
+            break;
+        case 1:
+            pmenu->pgpatch->infinite_hp = !pmenu->pgpatch->infinite_hp;
+            put_bool(pmenu->pgpatch->infinite_hp, pmenu->strings[1]);
+            break;
+        case 2:
+            trigger_al(pmenu);
+            break;
+        case 3:
+            pmenu->pgpatch->lock_pos = !pmenu->pgpatch->lock_pos;
+            store_glover_pos();
+            break;
+        case 4:
+            store_glover_pos();
+            restore_glover_pos();
+            break;
+        case 5:
+            pmenu->pgpatch->infinite_jump = !pmenu->pgpatch->infinite_jump;
+            break;
+        case 6:
+            pmenu->pgpatch->cutscene_skip = !pmenu->pgpatch->cutscene_skip;
+            break;
+        case 7: {
+            void (*trigger_cheat)(int, int, int) = TRIGGER_CHEAT;
+            trigger_cheat((int)(*(u8*)(pmenu->pvalue[7])), 1, 8); // TODO what do other inputs do?
+            break; }
+        case 8: {
+            pmenu->pgpatch->lockrng = !pmenu->pgpatch->lockrng;
 
+            // start of rng function
+            get_ptr(u32, rngval, RNG_FUNC, 1);
+            if (pmenu->pgpatch->lockrng) {
+                pmenu->strings[8] = "Unlock RNG";
+                rngval[0] = 0x03E00008; // jr ra
+                rngval[1] = 0x00000000; // nop
+                //rngval[0] = 0x3C04801E; // lui a0, 801E
+                //rngval[1] = 0x3484D3F0; // ori a0, D3F0
+                //rngval[2] = 0x8C820000; // lw v0, 00(a0)
+                //rngval[3] = 0x03E00008; // jr ra
+                //rngval[4] = 0x00000000; // nop
+            } else {
+                pmenu->strings[8] = "Lock RNG";
+                rngval[0] = 0x14800003; // original code
+                rngval[1] = 0x27BDFFF8;
+                //rngval[2] = 0x08051C1C;
+                //rngval[3] = 0x00001021;
+                //rngval[4] = 0x3C03801F;
+            }
+            break; }
+        case 9: {
+            void (*load_map)(int) = LOAD_MAP;
+            // void (*fade)() = FADE;
+            void (*init_load)(int) = INIT_LOAD;
+            //fade();
+            init_load(1);
+            load_map((int)(*(u8*)(pmenu->pvalue[9])));
+            break; }
+        case 10: {
+            get_ptr(u8, debug_graph, DEBUG_GRAPH, 1);
+            *debug_graph = !*debug_graph;
+            break; }
+        case 11: {
+            pmenu->pgpatch->disable_pause = !pmenu->pgpatch->disable_pause;
+            // do it here instead to not cause issues in the title screen
+            get_ptr(BYTE_T, nopause, DISABLE_PAUSE_FLAG, 1);
+            *nopause = 0x00;
+            break; }
+        case 12:
+            pmenu->pgpatch->auto_timer = !pmenu->pgpatch->auto_timer;
+            if (pmenu->pgpatch->auto_timer) {
+                pmenu->strings[12] = "Disable Auto TImer";
+            } else {
+                pmenu->strings[12] = "Auto Timer";
+            }
+            break;
+        case 13:
+            pmenu->pgpatch->use_igt = !pmenu->pgpatch->use_igt;
+            if (pmenu->pgpatch->use_igt) {
+                pmenu->strings[13] = "Use Custom Timer";
+            } else {
+                pmenu->strings[13] = "Use IGT";
+            }
+            break;
+        case 14:
+            pmenu->pgpatch->pi.flags ^= 0x80;
+            clear_all_watch(pmenu->pmemwatch);
+            update_playerinfo(&pmenu->pgpatch->pi, pmenu->pmemwatch);
+            break;
+        case 15: {
+            get_ptr(WORD_T, store_ball, BALL_STORAGE, 1);
+            *store_ball = 0x2A;
+            break; }
+        case 16: {
+            get_ptr(BYTE_T, enable_gravity, ENABLE_GRAVITY, 1);
+            *enable_gravity = !*enable_gravity;
+            put_bool(*enable_gravity, pmenu->strings[16]);
+            break; }
+	case 17: {
+	    get_ptr(glover_actor, pglover, GLOVER_ACTOR, 1);
+	    pglover->actor_flags ^= 0x0000C000;
+	    break; }
+        default:
+            init_default_menu(pmenu);
+            break;
+    }
+}

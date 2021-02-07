@@ -9,6 +9,7 @@
 #include "keyboard.h"
 #include "logic.h"
 #include "utility.h"
+#include "mainmenu.h"
 
 WORD_T *LAST_INPUT_1;
 WORD_T *LAST_INPUT_2;
