@@ -1,8 +1,5 @@
 #!/bin/sh
 
-# clone git repo for mipsr so we can link to it with custom settings
-git clone https://github.com/unlink2/mipslisp mlisp
-
 # arch to build
 export TARGET=mips-elf
 # location after install

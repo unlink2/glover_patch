@@ -43,10 +43,17 @@ int gstrncmp(char *ps1, char *ps2, unsigned int max_len) {
     return diff;
 }
 
-void gmemcpy(BYTE_T *psrc, BYTE_T *pdest, unsigned int size) {
-    for (int i = 0; i < size; i++) {
-        pdest[i] = psrc[i];
+void *gmemcpy(void *src, void *dest, unsigned int n) {
+    return _gmemcpy(dest, src, n);
+}
+
+void *_gmemcpy(void *dest, void *src, unsigned int n) {
+    char *dp = dest;
+    const char *sp = src;
+    while (n--) {
+        *dp++ = *sp++;
     }
+    return dest;
 }
 
 void gmemset(BYTE_T *ptr, unsigned char value, unsigned int size) {

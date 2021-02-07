@@ -7,7 +7,6 @@
 #include "debug.h"
 #include "utility.h"
 #include "actor.h"
-#include "script.h"
 
 #define CHEATS_LEN 26
 char *cheat_names[CHEATS_LEN];
@@ -21,7 +20,7 @@ void put_bool(BOOLEAN expr, char *pstr) {
 void init_default_menu(menudef *pmenu) {
     get_ptr(char, string_buffer, SCREEN_BUFFER, 0x20*0x10);
     pmenu->pstr = string_buffer;
-    pmenu->size = 16;
+    pmenu->size = 15;
     pmenu->cursor = 0;
     pmenu->strings[0] = "Memory Monitor";
     pmenu->strings[1] = "Memory Monitor ASCII";
@@ -38,7 +37,6 @@ void init_default_menu(menudef *pmenu) {
     pmenu->strings[12] = "Init ED...";
     pmenu->strings[13] = "Clear watch...";
     pmenu->strings[14] = "Move Object...";
-    pmenu->strings[15] = "Script...";
 
     pmenu->type[0] = MENU_BUTTON;
     pmenu->type[1] = MENU_BUTTON;
@@ -199,29 +197,6 @@ void init_move_menu(menudef *pmenu) {
     pmenu->pupdate = &move_object_update;
 }
 
-void init_script_menu(menudef *pmenu) {
-#ifndef __NO_SCRIPT__
-    pmenu->size = 4;
-    pmenu->cursor = 0;
-    pmenu->strings[0] = "Input code...";
-    pmenu->strings[1] = "Reset VM...";
-    pmenu->strings[2] = "Load floor collision script...";
-    pmenu->strings[3] = "Run...";
-#else
-    pmenu->size = 1;
-    pmenu->cursor = 0;
-    pmenu->strings[0] = "No-script-build";
-#endif
-
-    pmenu->type[0] = MENU_BUTTON;
-    pmenu->type[1] = MENU_BUTTON;
-    pmenu->type[2] = MENU_BUTTON;
-    pmenu->type[3] = MENU_BUTTON;
-
-    pmenu->pactions = &script_menu_select;
-    pmenu->pupdate = &script_menu_update;
-}
-
 void main_menu_select(menudef *pmenu) {
     switch(pmenu->cursor) {
         case 0:
@@ -271,9 +246,6 @@ void main_menu_select(menudef *pmenu) {
             break;
         case 14:
             init_move_menu(pmenu);
-            break;
-        case 15:
-            init_script_menu(pmenu);
             break;
         default:
             pmenu->flags = 0x00;
@@ -551,40 +523,6 @@ void move_object_update(menudef *pmenu) {
     }
 }
 
-char script_input[128];
-void script_menu_select(menudef *pmenu) {
-    // TODO implement basic
-    switch (pmenu->cursor) {
-
-#ifndef __NO_SCRIPT__
-        case 0:
-            // TODO
-            pmenu->flags = 0x00;
-            init_keyboard(&pkb);
-            gmemset((BYTE_T*)script_input, 0, 128);
-            input_request(script_input, 128, pmenu->pkb, &script_input_request, pmenu->pgpatch);
-            break;
-        case 1:
-            // send reset command
-            lb_memset(lb_msg, 0x00, 128);
-            lb_msg_index = 0;
-            break;
-        case 2:
-            // run test program here
-            run("let i = peek(0x802903B0, 4); if (i != 0) { print(peek(i, 4)); }");
-            break;
-        case 3:
-            break;
-#endif
-        default:
-            init_default_menu(pmenu);
-            break;
-    }
-}
-
-void script_menu_update(menudef *pmenu) {
-}
-
 void render_menu(menudef *pmenu) {
     if ((pmenu->flags & 0x80) == 0) {
         return;
@@ -687,17 +625,6 @@ void update_menu(menudef *pmenu) {
             *ptr = *ptr + 1;
         }
     }
-}
-
-void script_input_request(keyboard *pkb, void *pgp) {
-#ifndef __NO_SCRIPT__
-    gpatch_t *pgpatch = (gpatch_t*)pgp;
-    if (pkb->success) {
-        // TODO input basic programs here
-        run(pkb->pinput);
-        notify(pgpatch, lb_msg, 1);
-    }
-#endif
 }
 
 

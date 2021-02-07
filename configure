@@ -1,0 +1,10 @@
+#!/bin/sh
+
+git clone https://github.com/ARM9/bass.git && cd bass/bass && make && sudo make install
+cd ../../
+chmod +x ./glovepatch.py
+chmod +x ./build_gcc.sh
+mkdir rom
+./build_gcc.sh
+
+echo "Don't forget to add '/usr/local/mips-elf/bin' to your path!"

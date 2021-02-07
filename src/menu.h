@@ -55,7 +55,6 @@ void put_bool(BOOLEAN, char *);
 void init_default_menu(menudef *);
 void init_glover_menu(menudef *);
 void init_move_menu(menudef *);
-void init_script_menu(menudef *);
 
 void main_menu_select(menudef *);
 void main_menu_update(menudef *);
@@ -66,13 +65,8 @@ void glover_menu_select(menudef *);
 void move_object_update(menudef *);
 void move_object_select(menudef *);
 
-void script_menu_select(menudef *);
-void script_menu_update(menudef *);
-
 void render_menu(menudef *);
 
 void update_menu(menudef *);
-
-void script_input_request(keyboard *pkb, void *pgp);
 
 #endif
