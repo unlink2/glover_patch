@@ -8,6 +8,8 @@
 #include "debug.h"
 #include "utility.h"
 #include "actor.h"
+#include "othermenu.h"
+#include "objmenu.h"
 
 enum MAIN_MENU_ENTRIES {
     ENTRY_MEM_MON = 0,
