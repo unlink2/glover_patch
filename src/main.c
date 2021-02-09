@@ -41,6 +41,7 @@ int __start(enum START_MODE mode) {
             logic();
             break;
         case START_RENDERING:
+            // logic();
             render();
             break;
         case START_DMA:
