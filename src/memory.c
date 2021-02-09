@@ -25,18 +25,8 @@ void init_mem() {
     LAST_INPUT_1 = &last_input1;
     LAST_INPUT_2 = &last_input2;
 
-    // zero all ram
+    init_gpatch(&gpatch);
 
-    gmemset((BYTE_T*)&gpatch, 0x00, sizeof(gpatch));
-    gpatch.frame_advance = 0x00;
-    gpatch.infinite_hp = FALSE;
-    gpatch.infinite_lives = FALSE;
-    gpatch.lock_pos = FALSE;
-    gpatch.infinite_jump = FALSE;
-    gpatch.cutscene_skip = FALSE;
-    gpatch.lockrng = FALSE;
-    gpatch.resume_restore = FALSE;
-    gpatch.restore_slot = 0;
     // zero struct
     gmemset((BYTE_T*)&pmemwatch, 0x00, sizeof(memwatch));
     init_memwatch(&pmemwatch);

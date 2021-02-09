@@ -5,6 +5,7 @@
 #include "utility.h"
 #include "savefile.h"
 #include "playerinfo.h"
+#include "task.h"
 
 #define MSG_TIME 10
 
@@ -48,6 +49,8 @@ typedef struct gpatch_t {
     u16 msg_timer;
     playerinfo pi;
 } gpatch_t;
+
+void init_gpatch(gpatch_t *gpatch);
 
 extern gpatch_t gpatch;
 

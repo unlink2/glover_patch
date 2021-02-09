@@ -18,7 +18,7 @@ CFLAGS=-Wall -nostdlib -nodefaultlibs -fno-builtin -EB -g -fno-pic -mabi=eabi -f
 MAIN = main
 TEST_MAIN = test
 MODULES = utility inputs logic render memory memwatch font8x8_basic debug rdp menu matrix keyboard playerinfo\
-		  mainmenu othermenu objmenu
+		  mainmenu othermenu objmenu task
 
 .DEFAULT_GOAL := glover_patch
 
