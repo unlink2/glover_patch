@@ -180,7 +180,7 @@ void glover_menu_select(menudef *pmenu) {
             void (*init_load)(int) = INIT_LOAD;
             //fade();
             init_load(1);
-            load_map((int)(*(u8*)(pmenu->pvalue[9])));
+            load_map((int)(*(u8*)(pmenu->pvalue[ENTRY_LOAD_MAP])));
             break; }
         case ENTRY_DEBUG_GRAPH: {
             get_ptr(u8, debug_graph, DEBUG_GRAPH, 1);
