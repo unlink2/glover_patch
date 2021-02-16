@@ -29,6 +29,7 @@ void init_gpatch(gpatch_t *gpatch) {
     gpatch->lockrng = FALSE;
     gpatch->resume_restore = FALSE;
     gpatch->restore_slot = 0;
+    gpatch->use_igt = 1;
 }
 
 /*

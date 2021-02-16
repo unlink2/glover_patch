@@ -30,6 +30,7 @@ enum OTHER_MENU_ENTRIES {
     ENTRY_DEBUG_GRAPH,
     ENTRY_DISABLE_PAUSE,
     ENTRY_AUTO_TIMER,
+    ENTRY_FIX_TIMER,
     ENTRY_IGT,
     ENTRY_PLAYER,
     ENTRY_STORE_BALL,
@@ -38,7 +39,7 @@ enum OTHER_MENU_ENTRIES {
 };
 
 void init_glover_menu(menudef *pmenu) {
-    pmenu->size = 18;
+    pmenu->size = 19;
     pmenu->cursor = 0;
     pmenu->strings[ENTRY_INF_LIVES] = "[ ] Infinite Lives";
     pmenu->strings[ENTRY_INF_HEALTH] = "[ ] Infinite Health";
@@ -53,17 +54,18 @@ void init_glover_menu(menudef *pmenu) {
     pmenu->strings[ENTRY_DEBUG_GRAPH] = "Debug Graph";
     pmenu->strings[ENTRY_DISABLE_PAUSE] = "Disable Pause Menu";
     pmenu->strings[ENTRY_AUTO_TIMER] = "Autostart timer";
-    pmenu->strings[ENTRY_IGT] = "Use IGT";
+    pmenu->strings[ENTRY_IGT] = "Use Custom Timer";
     pmenu->strings[ENTRY_PLAYER] = "Player Info";
     pmenu->strings[ENTRY_STORE_BALL] = "Store Ball";
     pmenu->strings[ENTRY_GRAVITY] = "[ ] Gravity";
     pmenu->strings[ENTRY_STICKY] = "Toggle Sticky";
+    pmenu->strings[ENTRY_FIX_TIMER] = "Fix timer";
 
     // set bool values
-    put_bool(pmenu->pgpatch->infinite_lives, pmenu->strings[0]);
-    put_bool(pmenu->pgpatch->infinite_hp, pmenu->strings[1]);
+    put_bool(pmenu->pgpatch->infinite_lives, pmenu->strings[ENTRY_INF_LIVES]);
+    put_bool(pmenu->pgpatch->infinite_hp, pmenu->strings[ENTRY_INF_HEALTH]);
     get_ptr(BYTE_T, enable_gravity, ENABLE_GRAVITY, 1);
-    put_bool(*enable_gravity, pmenu->strings[16]);
+    put_bool(*enable_gravity, pmenu->strings[ENTRY_GRAVITY]);
 
     pmenu->type[ENTRY_INF_LIVES] = MENU_BUTTON;
     pmenu->type[ENTRY_INF_HEALTH] = MENU_BUTTON;
@@ -83,9 +85,10 @@ void init_glover_menu(menudef *pmenu) {
     pmenu->type[ENTRY_GRAVITY] = MENU_BUTTON;
     pmenu->type[ENTRY_STICKY] = MENU_BUTTON;
     pmenu->type[ENTRY_SUMMON_BALL] = MENU_BUTTON;
+    pmenu->type[ENTRY_FIX_TIMER] = MENU_BUTTON;
 
-    pmenu->pvalue[7] = &cheat_num;
-    pmenu->pvalue[9] = &map_id;
+    pmenu->pvalue[ENTRY_CHEAT] = &cheat_num;
+    pmenu->pvalue[ENTRY_LOAD_MAP] = &map_id;
 
     pmenu->pactions = &glover_menu_select;
     pmenu->pupdate = &glover_menu_update;
@@ -226,6 +229,10 @@ void glover_menu_select(menudef *pmenu) {
            get_ptr(glover_actor, pglover, GLOVER_ACTOR, 1);
            pglover->actor_flags ^= 0x0000C000;
            break; }
+        case ENTRY_FIX_TIMER: {
+                get_ptr(HWORD_T, timer_offset, TIMER_IGT_OFFSET, 1);
+                *timer_offset = TIMER_IGT_OFFSET_DEFAULT;
+            break; }
         default:
             init_default_menu(pmenu);
             break;

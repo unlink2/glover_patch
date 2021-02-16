@@ -68,6 +68,10 @@ extern WORD_T *LAST_INPUT_2;
 
 #define DISABLE_INPUT_TIMER (HWORD_T*)0x8028FBF4
 
+// offset is 4 seconds by default.
+#define TIMER_IGT_OFFSET_DEFAULT 4;
+#define TIMER_IGT_OFFSET (HWORD_T*)0x801E76D4
+
 #define __OS_DISABLE_INT (WORD_T*)0x801C6F70 // function ptr void ()
 #define __OS_RESTORE_INT (WORD_T*)0x801C6F90 // function ptr void ()
 #define __OS_GET_CURRENT_FRAMEBUFFER (WORD_T*)0x801CE910 // function ptr WORDL_T *()
