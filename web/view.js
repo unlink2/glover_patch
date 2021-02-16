@@ -5,6 +5,18 @@ const app = new Vue({
         warning_message: '',
         shouldPatchEasy: true,
         next: false,
-        SETTINGS
+        SETTINGS,
+
+        controller1ImgLoaded: false,
+        controller2ImgLoaded: false,
+        controllerMemoryImgLoaded: false
+    },
+    methods: {
+        onController1ImgLoad() {
+        },
+        onController2ImgLoad() {
+        },
+        onControllerMemoryImgLoad() {
+        }
     }
 });
