@@ -4,6 +4,7 @@ const app = new Vue({
         error_message: '',
         warning_message: '',
         shouldPatchEasy: true,
-        next: false
+        next: false,
+        SETTINGS
     }
 });

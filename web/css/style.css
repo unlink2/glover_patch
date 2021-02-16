@@ -1,0 +1,85 @@
+/* The side navigation menu */
+.sidebar {
+    margin: 0;
+    padding: 0;
+    width: 200px;
+    background-color: #f1f1f1;
+    position: fixed;
+    height: 100%;
+    overflow: auto;
+}
+
+/* Sidebar links */
+.sidebar a {
+    display: block;
+    color: black;
+    padding: 16px;
+    text-decoration: none;
+}
+
+/* Active/current link */
+.sidebar a.active {
+    background-color: #4CAF50;
+    color: white;
+}
+
+/* Links on mouse-over */
+.sidebar a:hover:not(.active) {
+    background-color: #555;
+    color: white;
+}
+
+/* Page content. The value of the margin-left property should match the value of the sidebar's width property */
+.content {
+    margin-left: 200px;
+    padding: 1px 16px;
+}
+
+.footer {
+    margin-left: 210px;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    text-align: left;
+}
+
+img{
+    max-width:100%;
+    max-height:100%
+}
+
+/* On screens that are less than 700px wide, make the sidebar into a topbar */
+@media screen and (max-width: 700px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+    .sidebar a {float: left;}
+    .content {
+        margin-left: 0;
+    }
+    .footer {
+        margin-left: 0;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        text-align: left;
+    }
+}
+
+/* On screens that are less than 400px, display the bar vertically, instead of horizontally */
+@media screen and (max-width: 400px) {
+    .sidebar a {
+        text-align: center;
+        float: none;
+    }
+}
+
+.error_message {
+    color: red;
+}
+
+.warning_message {
+    color: orange;
+}

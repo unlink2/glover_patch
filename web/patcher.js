@@ -113,4 +113,4 @@ let error = (message) => {
 
 document.getElementById('file-input').addEventListener('change', onFilePick, false);
 document.getElementById('start-patch').addEventListener('click', onStable);
-document.getElementById('start-next-patch').addEventListener('click', onNext);
+// document.getElementById('start-next-patch').addEventListener('click', onNext);

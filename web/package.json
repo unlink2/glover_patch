@@ -12,6 +12,7 @@
     "author": "Lukas Krickl",
     "license": "MIT",
     "dependencies": {
+        "http-server": "^0.12.3",
         "justlog.js": "^0.1.0",
         "vue": "^2.6.11"
     },
