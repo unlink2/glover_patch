@@ -12,7 +12,7 @@
 #include "objmenu.h"
 
 enum MAIN_MENU_ENTRIES {
-    ENTRY_MEM_MON = 0,
+    ENTRY_MEM_MON,
     ENTRY_ASCII_MON,
     ENTRY_SAVE_POS,
     ENTRY_LOAD_POS,
