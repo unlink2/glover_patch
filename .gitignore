@@ -11,3 +11,4 @@ lbasic/
 libex/
 _site/
 .jekyll-cache
+.jekyll-metadata
