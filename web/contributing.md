@@ -10,7 +10,7 @@ To add information to any page simply get the [glover repository](https://github
 [fork it](https://github.com/login?return_to=%2Funlink2%2Fglover_patch)
 and navigate to the [web subdirectory](https://github.com/unlink2/glover_patch/tree/master/web).
 
-In there you will find .md files (like [wiki.md](https://github.com/unlink2/glover_patch/blob/master/web/wiki.md))
+In there you will find .md files (like [contributing.md](https://github.com/unlink2/glover_patch/blob/master/web/contributing.md))
 Simply edit those and submit a [pull request](https://github.com/unlink2/glover_patch/pulls).
 
 That's it! Once the pull request has been approved the page will go live automatically!
