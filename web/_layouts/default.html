@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="./node_modules/vue/dist/vue.min.js"></script>
+        <meta charset="UTF-8">
+
+        <meta name="keywords" content="Glover, Nintendo 64, speedrunning, practice hack, N64, patch, romhack">
+        <meta name="robots" content="index,follow">
+        <meta content="glover.run" property="og:site_name">
+        <meta content="Glover Practice Hack" property="og:title">
+        <meta name="description" content="Glove Practice Hack Patch tool." property="og:description">
+
+        <link rel="stylesheet" type="text/css" href="./css/style.css">
+        <title>{{ page.title }}</title>
+    </head>
+
+    <body>
+        <div id="app">
+            <div class="sidebar">
+                <header>
+                    <a href=".">
+                        <h1>
+                            Glover.run
+                        </h1>
+                    </a>
+                </header>
+                <a href="gloverpatch.html">Patch Tool</a>
+                <a href="index.html">Wiki</a>
+                <a :href="SETTINGS.githubUrl">Github</a>
+                <a :href="SETTINGS.bugReportUrl">Report a bug</a>
+                <a :href="SETTINGS.personalSite">Personal Homepage</a>
+            </div>
+
+            <div class="content">
+                {{ content }}
+            </div>
+
+            <footer class="footer">
+                <hr>
+                <p>
+                {% raw %}
+                Contact <a :href="'mailto:'+SETTINGS.contactEmail">{{SETTINGS.contactEmail}}</a>
+                {% endraw %}
+            </footer>
+        </div>
+
+        <script src="./node_modules/justlog.js/dist/justlog.main.min.js"></script>
+        <script src="env.js"></script>
+        <script src="view.js"></script>
+        <script src="./patchrom.js"></script>
+        <script src="./patcher.js"></script>
+    </body>
+
+</html>
