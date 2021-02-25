@@ -1,15 +1,8 @@
 #include "debug.h"
 #include "render.h"
 #include "utility.h"
-#include "script.h"
 #include "logic.h"
 
-#ifndef __NO_SCRIPT__
-#include "../libex/src/utility.h"
-#include "../libex/src/parser.h"
-#include "../libex/src/scanner.h"
-#include "../libex/src/interpreter.h"
-#endif
 
 static volatile struct pi_regs* const pir = (struct pi_regs *)0xa4600000;
 
@@ -576,15 +569,5 @@ void evd_serial_terminal(memwatch *pmemwatch) {
     } else if (is_arg(data, "dump ")) {
         a = parse_arg(data, "dump ");
         dump(a, response);
-    } else {
-
-#ifndef __NO_SCRIPT__
-        // TODO output basic result here
-        run(data);
-        // send out buffer and clear it
-        evd_usb_write(lb_msg, COMMAND_SIZE); // send back
-        lb_memset(lb_msg, 0x00, 128);
-        lb_msg_index = 0;
-#endif
     }
 }

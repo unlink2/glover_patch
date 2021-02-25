@@ -9,7 +9,7 @@
 #include "keyboard.h"
 #include "logic.h"
 #include "utility.h"
-#include "script.h"
+#include "mainmenu.h"
 
 WORD_T *LAST_INPUT_1;
 WORD_T *LAST_INPUT_2;
@@ -25,18 +25,8 @@ void init_mem() {
     LAST_INPUT_1 = &last_input1;
     LAST_INPUT_2 = &last_input2;
 
-    // zero all ram
+    init_gpatch(&gpatch);
 
-    gmemset((BYTE_T*)&gpatch, 0x00, sizeof(gpatch));
-    gpatch.frame_advance = 0x00;
-    gpatch.infinite_hp = FALSE;
-    gpatch.infinite_lives = FALSE;
-    gpatch.lock_pos = FALSE;
-    gpatch.infinite_jump = FALSE;
-    gpatch.cutscene_skip = FALSE;
-    gpatch.lockrng = FALSE;
-    gpatch.resume_restore = FALSE;
-    gpatch.restore_slot = 0;
     // zero struct
     gmemset((BYTE_T*)&pmemwatch, 0x00, sizeof(memwatch));
     init_memwatch(&pmemwatch);
@@ -62,28 +52,9 @@ void init_mem() {
     get_ptr(BYTE_T, ext_level, LEVEL_SELECT, 1);
     *ext_level = 0x30;
 
-    // init some data
-    // TODO
-    /*get_ptr(HWORD_T, pfont, FONT8X8, 0x4000);
-    get_ptr(WORD_T, pbuffer, RDP_DL_BUFFER, RDP_DL_SIZE);
-    get_ptr(WORD_T, pbuffer_memwatch, RDP_DL_BUFFER_MEMWATCH, RDP_DL_SIZE);
-    get_ptr(WORD_T, pbuffer_keyboard, RDP_DL_BUFFER_KEYBOARD, RDP_DL_SIZE);
-    if (plast != 0) {
-        decompress_font((WORD_T*)font8x8_basic, pfont, 0x000F, 0xFFFF);
-        // clear rdp buffer once as well
-        gmemset((BYTE_T*)pbuffer, 0x00, RDP_DL_SIZE*sizeof(WORD_T));
-        gmemset((BYTE_T*)pbuffer_memwatch, 0x00, RDP_DL_SIZE*sizeof(WORD_T));
-        gmemset((BYTE_T*)pbuffer_keyboard, 0x00, RDP_DL_SIZE*sizeof(WORD_T));
-
-    }*/
-
     // evd_init();
     // evd_write_msg(0x21);
     pevd_msg = NULL;
 
     *plast = 0x00;
-
-#ifndef __NO_SCRIPT__
-    init_interpreter();
-#endif
 }

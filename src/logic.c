@@ -6,7 +6,6 @@
 #include "actor.h"
 #include "debug.h"
 #include "playerinfo.h"
-#include "script.h"
 
 // x y and z coordinates
 float gpos_bac[3];
@@ -17,6 +16,22 @@ u8 lastmap[MAX_RESTORE_SLOTS+2];
 
 gpatch_t gpatch;
 
+void init_gpatch(gpatch_t *gpatch) {
+    // zero all ram
+
+    gmemset((BYTE_T*)gpatch, 0x00, sizeof(gpatch));
+    gpatch->frame_advance = 0x00;
+    gpatch->infinite_hp = FALSE;
+    gpatch->infinite_lives = FALSE;
+    gpatch->lock_pos = FALSE;
+    gpatch->infinite_jump = FALSE;
+    gpatch->cutscene_skip = FALSE;
+    gpatch->lockrng = FALSE;
+    gpatch->resume_restore = FALSE;
+    gpatch->restore_slot = 0;
+    gpatch->use_igt = 1;
+}
+
 /*
  * Set message
  */
@@ -25,27 +40,23 @@ void notify(gpatch_t *pgpatch, const char *message, u16 timer) {
     pgpatch->msg_timer = timer;
 }
 
-void logic() {
+void update_external() {
     update_memwatch(&pmemwatch);
     update_menu(&pmenu);
     update_keyboard(&pkb);
     evd_serial_terminal(&pmemwatch);
+}
 
-
-#ifndef __NO_SCRIPT__
-    // print interpreter message
-    if (lb_msg_index) {
-        notify(&gpatch, lb_msg, 1);
-    }
-#endif
-
+void update_message() {
     // update message
     if (gpatch.msg_timer > 0) {
         gpatch.msg_timer--;
     } else {
         gpatch.message = NULL;
     }
+}
 
+void update_flags() {
     // TODO hacky way to prevent crash
     // Toggle menu once
     if (gpatch.menu_toggle == 0) {
@@ -103,9 +114,9 @@ void logic() {
             }
         }
     }
+}
 
-    update_timer(&gpatch);
-
+void update_inputs() {
     // only trigger this code if start is held
     if (read_button(START_INPUT, CONTROLLER_1)) {
         get_ptr(BYTE_T, pause_anim, PAUSE_MENU_ANIMATION, 1);
@@ -168,8 +179,6 @@ void logic() {
         pglover->ypos -= 2.0f;
     }
 
-
-
     frame_advance();
 
     get_ptr(save_file, file1, FILE1_START, 7);
@@ -178,6 +187,17 @@ void logic() {
     // store last input values
     store_inputs(CONTROLLER_2, LAST_INPUT_2);
     store_inputs(CONTROLLER_1, LAST_INPUT_1);
+
+}
+
+void logic() {
+    update_external();
+    update_message();
+    update_flags();
+
+    update_timer(&gpatch);
+
+    update_inputs();
 }
 
 // uses the game auto start conditions as igt (less accurate than my solution but now

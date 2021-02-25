@@ -9,6 +9,7 @@ node_modules/
 mlisp/
 lbasic/
 libex/
+bass/
 _site/
 .jekyll-cache
 .jekyll-metadata

@@ -43,10 +43,17 @@ int gstrncmp(char *ps1, char *ps2, unsigned int max_len) {
     return diff;
 }
 
-void gmemcpy(BYTE_T *psrc, BYTE_T *pdest, unsigned int size) {
-    for (int i = 0; i < size; i++) {
-        pdest[i] = psrc[i];
+void *gmemcpy(void *src, void *dest, unsigned int n) {
+    return _gmemcpy(dest, src, n);
+}
+
+void *_gmemcpy(void *dest, void *src, unsigned int n) {
+    char *dp = dest;
+    const char *sp = src;
+    while (n--) {
+        *dp++ = *sp++;
     }
+    return dest;
 }
 
 void gmemset(BYTE_T *ptr, unsigned char value, unsigned int size) {
@@ -129,6 +136,7 @@ void str_reverse(char *pstr, int len) {
 
 int to_decstr(WORD_T value, char *pstr, WORD_T size) {
     int i = 0;
+    int org_value = value;
     while (value) {
         pstr[i] = (value % 10) + '0';
         i++;
@@ -138,6 +146,12 @@ int to_decstr(WORD_T value, char *pstr, WORD_T size) {
     while (i < size) {
         pstr[i++] = '0';
     }
+
+    if (org_value < 0) {
+        pstr[i] = '-';
+        i++;
+    }
+
     str_reverse(pstr, i);
     pstr[i] = '\0';
     return i;

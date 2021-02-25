@@ -32,7 +32,8 @@ int gstrncmp(char *, char *, unsigned int);
 
 void gstrcpy(char *, char *);
 
-void gmemcpy(BYTE_T *, BYTE_T *, unsigned int);
+void *gmemcpy(void *src, void *dest, unsigned int n);
+void *_gmemcpy(void *dest, void *src, unsigned int n);
 void gmemset(BYTE_T *, unsigned char, unsigned int);
 
 /**

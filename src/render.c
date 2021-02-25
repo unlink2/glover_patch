@@ -7,6 +7,7 @@
 #include "menu.h"
 #include "matrix.h"
 #include "keyboard.h"
+#include "logic.h"
 
 u8 render_step = 0; // 0 or 1
 WORD_T *rdp_start_next = NULL;
