@@ -17,3 +17,11 @@ That's it! Once the pull request has been approved the page will go live automat
 
 Markdown is very simple and is pretty much just *fancy text* so don't be afraid of submitting a pull request even
 if you do not know how to write code :)
+
+## How to write code
+
+To install all the tools required to develop actual code please refer to the [readme](https://github.com/unlink2/glover_patch/blob/master/README).
+
+Once you have done that simply fork the repository and implement your feature of choice.
+In general you should be able to research how the game does things using a debugger.
+The hack has full access to the N64s hardware and can do anything you want.
