@@ -1,36 +1,10 @@
 ---
-title: Glover Wiki
 layout: default
+title: Glover.run
 ---
+# Glover.run
 
-# Glover Documentation
+This is the home of the Glover practice hack.
 
-On this page all findings about Glover will be documented.
-
-## RNG Code
-
-```c
-uint get_random(uint bounds) {
-    uint result;
-
-    if (bounds == 0) {
-        result = 0;
-    }
-    else {
-        rng_seed = (i32)((uint)rng_seed ^ (int)rng_seed << 1);
-        if ((int)rng_seed < 0) {
-            if (rng_seed == (i32)0x80000000) {
-                rng_seed = (i32)0x0;
-            }
-        }
-        else {
-            rng_seed = rng_seed + 1;
-        }
-        result = (uint)rng_seed % bounds;
-        if (bounds == 0) {
-            trap(0x1c00);
-        }
-    }
-    return result;
-}
-```
+On here you will find all the [documentation](wiki.html) about how Glover works (WIP) and
+a [patch tool](gloverpatch.html) to get the practice hack.
