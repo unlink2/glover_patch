@@ -7,7 +7,8 @@ typedef struct save_file {
     u32 score;
     u8 unknown_1;
     u8 difficulty; // 00 = easy, 01 == normal
-    u16 castle_progress;
+    u8 ball_counter;
+    u8 hub_progress;
     u32 unknown_2;
     u32 settings; // sound, etc 
 } save_file;

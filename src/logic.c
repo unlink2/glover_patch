@@ -345,7 +345,8 @@ void complete_file(save_file *pfile) {
         // difficulty and castle progress
         pfile->unknown_1 = 0x0A;
         pfile->difficulty = 0x00;
-        pfile->castle_progress = 0x0606;
+        pfile->hub_progress = 0x06;
+        pfile->ball_counter = 0x06;
         // pfile[4] = 0x0A000606;
 
         // unknown
