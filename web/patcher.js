@@ -2,6 +2,11 @@
  * Port of patch script to javascript for web patcher
  */
 
+const ERROR_ID = 'error-message';
+const WARNING_ID = 'warning-message';
+const NEXT_CHECK_ID = 'get-next';
+const PATCH_EASY_ID = 'force-easy';
+
 /**
  * File selected by file picker
  */
@@ -44,7 +49,7 @@ let downloadFile = (data, filename, mime) => {
 }
 
 let onStable = async () => {
-    settings.next = app.next;
+    settings.next = document.getElementById(`${NEXT_CHECK_ID}`).checked;
     onStart();
 }
 
@@ -61,8 +66,7 @@ let onStart = async () => {
     }
 
     // get settings props
-    settings.shouldPatchEasy = app.shouldPatchEasy;
-
+    settings.shouldPatchEasy = document.getElementById(PATCH_EASY_ID).checked;
     const cksum_offset = [0x10, 0x14]
     let content = new DataView(await readFile(e));
     if (e.target.files[0].size > 16000000) {
@@ -95,22 +99,23 @@ let onFilePick = async (e) => {
 }
 
 let clearErr = () => {
-    app.warning_message = '';
-    app.error_message = '';
+    document.getElementById(WARNING_ID).innerText = '';
+    document.getElementById(ERROR_ID).innerText = '';
 }
 
 let warning = (message) => {
     logger.warning(message);
 
-    app.warning_message = message;
+    document.getElementById(WARNING_ID).innerText = message;
 }
 
 let error = (message) => {
     logger.error(message);
 
-    app.error_message = message;
+    document.getElementById(ERROR_ID).innerText = message;
 }
 
 document.getElementById('file-input').addEventListener('change', onFilePick, false);
 document.getElementById('start-patch').addEventListener('click', onStable);
+document.getElementById(PATCH_EASY_ID).checked = true;
 // document.getElementById('start-next-patch').addEventListener('click', onNext);

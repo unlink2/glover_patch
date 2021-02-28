@@ -2,14 +2,13 @@
 layout: default
 title: Glover Patch Tool
 ---
-{% raw %}
 <p>
 <h1>Glover Patch Tool</h1>
 <noscript>
     <h1 class="error_message">Glover Patch Tool requires JavaScript to work!</h1>
 </noscript>
-<h2 class="error_message">{{error_message}}</h2>
-<h2 class="warning_message">{{warning_message}}</h2>
+<h2 id="error-message" class="error_message"></h2>
+<h2 id="warning-message" class="warning_message"></h2>
 <p>
 Glover Practice ROM patching tool usage:
 <ul>
@@ -26,8 +25,8 @@ Glover Practice ROM patching tool usage:
 </p>
 
 <p><input type="file" id="file-input" /></p>
-<p><input type="checkbox" v-model="shouldPatchEasy">Force easy mode</input></p>
-<p><input type="checkbox" v-model="next">Use pre-release (Get new features early!)</input></p>
+<p><input type="checkbox" id="force-easy" v-model="shouldPatchEasy">Force easy mode</input></p>
+<p><input type="checkbox" id="get-next" v-model="next">Use pre-release (Get new features early!)</input></p>
 <button type="button" id="start-patch">Patch!</button>
 <!--<button type="button" id="start-next-patch">Patch Next (Unstable)</button>-->
 </p>
@@ -62,4 +61,3 @@ Glover Practice ROM patching tool usage:
     <li>A: Follows a pointer</li>
 </ul>
 </p>
-{% endraw %}

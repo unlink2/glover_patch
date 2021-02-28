@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <script src="/node_modules/vue/dist/vue.min.js"></script>
         <meta charset="UTF-8">
 
         <meta name="keywords" content="Glover, Nintendo 64, speedrunning, practice hack, N64, patch, romhack">
@@ -27,9 +26,9 @@
                 <a href="/gloverpatch.html">Patch Tool</a>
                 <a href="/wiki.html">Wiki</a>
                 <a href="/contributing.html">How to contribute</a>
-                <a :href="SETTINGS.githubUrl">Github</a>
-                <a :href="SETTINGS.bugReportUrl">Report a bug</a>
-                <a :href="SETTINGS.personalSite">Personal Homepage</a>
+                <a href="{{site.data.env.githubUrl}}">Github</a>
+                <a href="{{site.data.env.bugReportUrl}}">Report a bug</a>
+                <a href="{{site.data.env.personalSite}}">Personal Homepage</a>
             </div>
 
             <div class="content">
@@ -39,15 +38,11 @@
             <footer class="footer">
                 <hr>
                 <p>
-                {% raw %}
-                Contact <a :href="'mailto:'+SETTINGS.contactEmail">{{SETTINGS.contactEmail}}</a>
-                {% endraw %}
+                Contact <a href="{{site.data.env.mailToLink}}">{{site.data.env.contactEmail}}</a>
             </footer>
         </div>
 
         <script src="/node_modules/justlog.js/dist/justlog.main.min.js"></script>
-        <script src="/env.js"></script>
-        <script src="/view.js"></script>
         <script src="/patchrom.js"></script>
         <script src="/patcher.js"></script>
     </body>
