@@ -6,6 +6,7 @@
 #include "savefile.h"
 #include "playerinfo.h"
 #include "task.h"
+#include "frametimer.h"
 
 #define MSG_TIME 10
 
@@ -44,6 +45,8 @@ typedef struct gpatch_t {
     BOOLEAN reset_now; // reset timer now!
     BOOLEAN use_igt; // use igt for auto timer
     char timer_str[64];
+
+    frametimer_t frametimer;
 
     char *message;
     u16 msg_timer;

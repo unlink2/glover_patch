@@ -35,11 +35,12 @@ enum OTHER_MENU_ENTRIES {
     ENTRY_PLAYER,
     ENTRY_STORE_BALL,
     ENTRY_GRAVITY,
-    ENTRY_STICKY
+    ENTRY_STICKY,
+    ENTRY_FRAMETIMER
 };
 
 void init_glover_menu(menudef *pmenu) {
-    pmenu->size = 19;
+    pmenu->size = 20;
     pmenu->cursor = 0;
     pmenu->strings[ENTRY_INF_LIVES] = "[ ] Infinite Lives";
     pmenu->strings[ENTRY_INF_HEALTH] = "[ ] Infinite Health";
@@ -60,6 +61,7 @@ void init_glover_menu(menudef *pmenu) {
     pmenu->strings[ENTRY_GRAVITY] = "[ ] Gravity";
     pmenu->strings[ENTRY_STICKY] = "Toggle Sticky";
     pmenu->strings[ENTRY_FIX_TIMER] = "Fix timer";
+    pmenu->strings[ENTRY_FRAMETIMER] = "Frame Timer                ";
 
     // set bool values
     put_bool(pmenu->pgpatch->infinite_lives, pmenu->strings[ENTRY_INF_LIVES]);
@@ -86,9 +88,11 @@ void init_glover_menu(menudef *pmenu) {
     pmenu->type[ENTRY_STICKY] = MENU_BUTTON;
     pmenu->type[ENTRY_SUMMON_BALL] = MENU_BUTTON;
     pmenu->type[ENTRY_FIX_TIMER] = MENU_BUTTON;
+    pmenu->type[ENTRY_FRAMETIMER] = MENU_VALUE_HWORD;
 
     pmenu->pvalue[ENTRY_CHEAT] = &cheat_num;
     pmenu->pvalue[ENTRY_LOAD_MAP] = &map_id;
+    pmenu->pvalue[ENTRY_FRAMETIMER] = &pmenu->pgpatch->frametimer.max;
 
     pmenu->pactions = &glover_menu_select;
     pmenu->pupdate = &glover_menu_update;
@@ -268,4 +272,7 @@ void glover_menu_update(menudef *pmenu) {
 
     // map id to string
     to_hexstr((WORD_T)map_id, pmenu->strings[ENTRY_LOAD_MAP]+gstrlen("Load Map "), 1);
+
+    // frame timer to string
+    to_hexstr((WORD_T)pmenu->pgpatch->frametimer.max, pmenu->strings[ENTRY_FRAMETIMER]+gstrlen("Frame Timer "), 2);
 }

@@ -30,6 +30,8 @@ void init_gpatch(gpatch_t *gpatch) {
     gpatch->resume_restore = FALSE;
     gpatch->restore_slot = 0;
     gpatch->use_igt = 1;
+
+    init_frametimer(&gpatch->frametimer);
 }
 
 /*
@@ -114,6 +116,9 @@ void update_flags() {
             }
         }
     }
+
+    // frame timer metronome
+    gpatch.frametimer.task.update(&gpatch.frametimer);
 }
 
 void update_inputs() {

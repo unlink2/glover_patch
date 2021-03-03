@@ -36,6 +36,7 @@ void render() {
         clear_rdp_buffer();
         // clear rdp buffer once as well
         set_pbuffer(pbuffer);
+        gpatch.frametimer.font = pfont;
     }
 
     // render step selects which half of the dl buffer to point to (RDP_DL_SIZE/2)
@@ -60,6 +61,7 @@ void render() {
     render_keyboard(&pkb);
     render_inputs(&pkb);
 
+    gpatch.frametimer.task.render(&gpatch.frametimer);
 
     // render message
     if (gpatch.message) {
