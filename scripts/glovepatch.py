@@ -7,9 +7,10 @@ from pathlib import Path
 
 VIRTUAL_TO_ROM = 0x800ff000
 
-def patch_rom(rom_path, payload_path, entry_code_path, out_path):
+def patch_rom(rom_path, payload_path, c_code_path, entry_code_path, out_path):
     rom = list(Path(rom_path).read_bytes())
     payload = list(Path(payload_path).read_bytes())
+    c_code = list(Path(c_code_path).read_bytes())
     entry_code = list(Path(entry_code_path).read_bytes())
 
     jump = [0x3C, 0x1F, 0xB0, 0x78, 0x03, 0xE0, 0xF8, 0x09] # code that jumps to payload
@@ -18,10 +19,11 @@ def patch_rom(rom_path, payload_path, entry_code_path, out_path):
     jump_address = 0x40370
     render_inject = 0x8017FF10-VIRTUAL_TO_ROM
     payload_address = 0x780000
+    c_code_address = 0x780200
     force_easy_ball = 0x3A6D0 # nop this address to always make ball behave like easy mode
 
     for i in range(0, len(jump)):
-        rom[jump_address+i] = jump_ram[i]
+        # rom[jump_address+i] = jump_ram[i]
         rom[render_inject+i] = jump_ram[i]
 
     # need to nop the call right after render_inject
@@ -30,6 +32,9 @@ def patch_rom(rom_path, payload_path, entry_code_path, out_path):
 
     for i in range(0, len(payload)):
         rom[payload_address+i] = payload[i]
+
+    for i in range(0, len(c_code)):
+        rom[c_code_address+i] = c_code[i]
 
     for i in range(0, len(entry_code)):
         rom[entry_inject+i] = entry_code[i]
@@ -53,7 +58,7 @@ def patch_rom(rom_path, payload_path, entry_code_path, out_path):
     f.close()
 
 if __name__ == '__main__':
-    if len(sys.argv) < 4:
-        print("Usage: glovepatch.py <glover_rom> <binary to inject> <entry code> <output>")
+    if len(sys.argv) < 5:
+        print("Usage: glovepatch.py <glover_rom> <binary to inject> <c code binary> <entry code> <output>")
         sys.exit(0)
-    patch_rom(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
+    patch_rom(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5])

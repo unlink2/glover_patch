@@ -5,6 +5,8 @@
 #![feature(asm)]
 #![feature(global_asm)]
 #![feature(naked_functions)]
+
+extern crate ultrars;
 use core::panic::PanicInfo;
 /**
  * Barebones sample
@@ -13,11 +15,7 @@ use core::panic::PanicInfo;
 #[naked]
 pub unsafe extern "C" fn _start() -> ! {
     asm!(r#"
-        nop
-        jal main
-        nop
-        b _start
-        nop
+        b main
     "#,
     options(noreturn));
 }

@@ -24,7 +24,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ENTRY(_start)
 
 SECTIONS {
-    . = 0x80400000;
+    . = 0x80400200;
     __boot_start = .;
 
     .boot : {

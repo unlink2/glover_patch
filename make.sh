@@ -11,4 +11,5 @@
 mkdir -p target/mips-bin/
 mkdir -p rom/
 bass entry.s -sym ./target/mips-bin/entry.sym
-python3 ./scripts/glovepatch.py ./rom/glover_base_ntsc.z64 target/mips-none-eabi/debug/payload.bin target/mips-bin/entry.bin ./rom/glover_patched.z64
+bass payload.s -sym ./target/mips-bin/payload.sym
+python3 ./scripts/glovepatch.py ./rom/glover_base_ntsc.z64 target/mips-bin/payload.bin target/mips-none-eabi/debug/payload.bin target/mips-bin/entry.bin ./rom/glover_patched.z64
