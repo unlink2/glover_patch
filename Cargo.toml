@@ -3,7 +3,10 @@ members = ["patch"]
 
 [profile.dev]
 panic = "abort"
+opt-level = 3
+overflow-checks = false
 
 [profile.release]
 panic = "abort"
+
 

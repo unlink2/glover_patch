@@ -7,6 +7,8 @@
 #![feature(naked_functions)]
 
 extern crate ultrars;
+pub mod update;
+pub mod memory;
 use core::panic::PanicInfo;
 /**
  * Barebones sample
@@ -20,8 +22,14 @@ pub unsafe extern "C" fn _start() -> ! {
     options(noreturn));
 }
 
+static mut GLOBALSTATE: Option<update::InjectState> = None;
+
 #[no_mangle]
 pub unsafe extern "C" fn main() -> () {
+	match &mut GLOBALSTATE {
+		Some(state) => state.update(),
+		None => GLOBALSTATE = Some(update::InjectState::new())
+	}
     return ();
 }
 

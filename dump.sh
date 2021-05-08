@@ -10,7 +10,7 @@ fi
 
 
 rust-objcopy -O binary --only-section=.text --only-section=.rodata --only-section=.bss --only-section=.data --only-section=.boot "./target/mips-none-eabi/$target/payload" "./target/mips-none-eabi/$target/payload.bin"
-rust-objdump -d "target/mips-none-eabi/$target/payload" > "target/mips-none-eabi/$target/payload.sym"
+rust-objdump -S "target/mips-none-eabi/$target/payload" > "target/mips-none-eabi/$target/payload.sym"
 rust-size "target/mips-none-eabi/$target/payload"
 rust-objdump -h "target/mips-none-eabi/$target/payload"
 rust-objdump -Ct "target/mips-none-eabi/$target/payload"
