@@ -1,6 +1,6 @@
 arch n64.cpu
 endian msb
-output "./bin/entry.bin", create
+output "./target/mips-bin/entry.bin", create
 
 origin $00000000
 base $80100000

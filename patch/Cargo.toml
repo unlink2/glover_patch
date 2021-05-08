@@ -1,0 +1,12 @@
+[package]
+name = "glover-patch"
+version = "0.1.0"
+authors = ["Lukas Krickl <lukas@krickl.dev>"]
+
+[[bin]]
+name = "payload"
+path = "src/main.rs"
+
+[dependencies]
+ultra-rs = {path = "../../ultra-rs/core"}
+

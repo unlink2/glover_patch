@@ -1,0 +1,37 @@
+{
+  "arch": "mips",
+  "cpu": "mips3",
+  "data-layout": "E-m:m-p:32:32-i8:8:32-i16:16:32-i64:64-n32-S64",
+  "eliminate-frame-pointer": false,
+  "env": "unknown",
+  "features": "+mips3,+gp64,+fpxx,+nooddspreg",
+  "emit-debug-gdb-scripts": false,
+  "os": "none",
+  "panic-strategy": "abort",
+  "executables": true,
+  "is-builtin": false,
+  "linker": "rust-lld",
+  "linker-flavor": "ld.lld",
+  "llvm-target": "mips-none-eabi",
+  "max-atomic-width": 32,
+  "panic-strategy": "abort",
+  "relocation-model": "static",
+  "target-endian": "big",
+  "target-pointer-width": "32",
+  "relocation-model": "static",
+  "target-c-int-width": "32",
+  "pre-link-args": {
+	  "ld.lld": [
+		  "-Tlinker/linker.ld"
+	  ]
+  },
+  "unsupported-abis": [
+    "stdcall",
+    "fastcall",
+    "vectorcall",
+    "thiscall",
+    "win64",
+    "sysv64"
+  ]
+}
+

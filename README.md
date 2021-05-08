@@ -25,32 +25,6 @@ I tested this with Debian GNU/Linux WSL.
 
 ### Initial Build
 
-After WSL is set up run the following commands:
-```bash
-sudo apt update
-sudo apt install gcc g++ make python3 git coreutils build-essential wget texinfo libgmp-dev libmpfr-dev libmpc-dev
-git clone https://github.com/unlink2/glover_patch
-cd glover_patch
-chmod +x configure.sh
-./configure
-./build_gcc.sh
-```
-
-Note that configure.sh will ask for your root password twice.
-
-After gcc is built make sure to add it to your PATH like this:
-
-export PATH=$PATH:/usr/local/mips-elf/bin
-
-To open the current folder in the Windows Filebrowser type:
-
-explorer.exe .
-
-Now you can browse the glover patch folder that contains almost everything you need to patch the rom.
-Navigate to glover\rom and copy a NTSC rom of glover into it. The filename must be "glover_base_ntsc.z64".
-Once done go back to WSL and run the last command:
-
-make
-
-Now inside of the rom folder you will find a file called glover_patched.z64. This is the final patched rom.
+# TODO
+Install rustup and cargo-binutils
 
