@@ -8,5 +8,5 @@ name = "payload"
 path = "src/main.rs"
 
 [dependencies]
-ultra-rs = {path = "../../ultra-rs/core"}
+ultra-rs = { git = "https://github.com/unlink2/ultra-rs" }
 
