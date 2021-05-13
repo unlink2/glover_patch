@@ -4,22 +4,23 @@ use self::ultrars::rdp::*;
 use self::ultrars::font::*;
 use self::ultrars::menu::*;
 use super::memory::*;
+use super::ultrars::memory::SharedPtrCell;
 
-fn open_menu(entry: &mut Entry<Trigger>, trigger: Trigger) -> Option<usize> {
+fn open_menu(entry: &mut Entry<SharedPtrCell<Trigger>>, trigger: SharedPtrCell<Trigger>) -> Option<usize> {
     unsafe {
         *IS_PAUSED = 1;
     }
     return None;
 }
 
-fn close_menu(entry: &mut Entry<Trigger>, trigger: Trigger) -> Option<usize> {
+fn close_menu(entry: &mut Entry<SharedPtrCell<Trigger>>, trigger: SharedPtrCell<Trigger>) -> Option<usize> {
     unsafe {
         *IS_PAUSED = 0;
     }
     return None;
 }
 
-fn update_menu(entry: &mut Entry<Trigger>, trigger: Trigger) -> Option<usize> {
+fn update_menu(entry: &mut Entry<SharedPtrCell<Trigger>>, trigger: SharedPtrCell<Trigger>) -> Option<usize> {
     unsafe {
         *IS_PAUSED = 1;
     }
@@ -39,14 +40,14 @@ impl Trigger {
     }
 }
 
-pub struct InjectState<'a> {
+pub struct InjectState {
     controller1: InputHandler,
     controller2: InputHandler,
     rdp_ctxt: RdpFontRendererContext,
     font: Font,
     start_timer: u16,
     trigger: Trigger,
-    menu: Menu<Trigger>,
+    menu: Menu<SharedPtrCell<Trigger>>,
 }
 
 impl InjectState {
@@ -90,9 +91,11 @@ impl InjectState {
     }
 
     pub fn update_menu(&mut self) {
+        let trigger_cell = SharedPtrCell::new(&mut self.trigger);
+
         if self.controller1.read_button(Button::LInput, false)
             && self.controller1.read_button(Button::RInput, false) {
-            self.menu.toggle(self.trigger);
+            self.menu.toggle(trigger_cell);
         }
 
         // cursor
@@ -104,11 +107,11 @@ impl InjectState {
             }
 
             if self.controller1.read_button(Button::AInput, true) {
-                self.menu.activate(self.trigger);
+                self.menu.activate(trigger_cell);
             }
         }
 
-        self.menu.update(self.trigger);
+        self.menu.update(trigger_cell);
 
         self.rdp_ctxt.update();
 
