@@ -9,6 +9,7 @@
 extern crate ultrars;
 pub mod update;
 pub mod memory;
+pub mod mainmenu;
 use self::memory::*;
 use core::panic::PanicInfo;
 

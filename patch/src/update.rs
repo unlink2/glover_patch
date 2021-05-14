@@ -4,23 +4,24 @@ use self::ultrars::rdp::*;
 use self::ultrars::font::*;
 use self::ultrars::menu::*;
 use super::memory::*;
+use super::mainmenu::*;
 use super::ultrars::memory::SharedPtrCell;
 
-fn open_menu(entry: &mut Entry<SharedPtrCell<Trigger>>, trigger: SharedPtrCell<Trigger>) -> Option<usize> {
+fn open_menu(_entry: &mut Entry<SharedPtrCell<Trigger>>, _trigger: SharedPtrCell<Trigger>) -> Option<usize> {
     unsafe {
         *IS_PAUSED = 1;
     }
     return None;
 }
 
-fn close_menu(entry: &mut Entry<SharedPtrCell<Trigger>>, trigger: SharedPtrCell<Trigger>) -> Option<usize> {
+fn close_menu(_entry: &mut Entry<SharedPtrCell<Trigger>>, _trigger: SharedPtrCell<Trigger>) -> Option<usize> {
     unsafe {
         *IS_PAUSED = 0;
     }
     return None;
 }
 
-fn update_menu(entry: &mut Entry<SharedPtrCell<Trigger>>, trigger: SharedPtrCell<Trigger>) -> Option<usize> {
+fn update_menu(_entry: &mut Entry<SharedPtrCell<Trigger>>, _trigger: SharedPtrCell<Trigger>) -> Option<usize> {
     unsafe {
         *IS_PAUSED = 1;
     }
@@ -28,14 +29,24 @@ fn update_menu(entry: &mut Entry<SharedPtrCell<Trigger>>, trigger: SharedPtrCell
 }
 
 #[derive(Copy, Clone)]
+pub enum MenuType {
+    MainMenu,
+
+}
+
+#[derive(Copy, Clone)]
 pub struct Trigger {
-    pub menu_active: bool
+    pub load_menu: bool,
+    pub menu_type: MenuType,
+    pub toggle: bool
 }
 
 impl Trigger {
     pub fn new() -> Self {
         Self {
-            menu_active: false
+            load_menu: true,
+            menu_type: MenuType::MainMenu,
+            toggle: false
         }
     }
 }
@@ -62,14 +73,7 @@ impl InjectState {
                 196608),
             font: Font::new(&FONT8X8_BASIC, 0x80525C30 as *mut u16, 0x000F, 0xFFFF),
             trigger: Trigger::new(),
-            menu: Menu::new(10, 10,
-                Entry::new("open", no_op, open_menu),
-                Entry::new("close", no_op, close_menu),
-                Entry::new("back", no_op, no_op),
-                Entry::new("update", no_op, update_menu),
-                &[Entry::new("Test", no_op, no_op),
-                  Entry::new("Test", no_op, no_op),
-                  Entry::new("Test", no_op, no_op)])
+            menu: InjectState::build_menu(MenuType::MainMenu)
         }
     }
 
@@ -92,10 +96,17 @@ impl InjectState {
 
     pub fn update_menu(&mut self) {
         let trigger_cell = SharedPtrCell::new(&mut self.trigger);
+        if self.trigger.load_menu {
+            self.trigger.toggle = self.menu.active;
+            self.menu = InjectState::build_menu(self.trigger.menu_type);
+            self.trigger.load_menu = false;
+        }
 
-        if self.controller1.read_button(Button::LInput, false)
-            && self.controller1.read_button(Button::RInput, false) {
+        if (self.controller1.read_button(Button::LInput, false)
+            && self.controller1.read_button(Button::RInput, false))
+            || self.trigger.toggle {
             self.menu.toggle(trigger_cell);
+            self.trigger.toggle = false;
         }
 
         // cursor
@@ -123,4 +134,18 @@ impl InjectState {
 		*DISABLE_INPUT_TIMER = 0x00;
 		*GAME_MODE = 0x02;
 	}
+
+    fn build_menu(menu_type: MenuType) -> Menu<SharedPtrCell<Trigger>> {
+        match menu_type {
+            MenuType::MainMenu => Menu::new(10, 10,
+                Entry::new("open", no_op, open_menu),
+                Entry::new("close", no_op, close_menu),
+                Entry::new("back", no_op, no_op),
+                Entry::new("update", no_op, update_menu),
+
+                &[Entry::new("Level Select...", no_op, level_select_action),
+                  Entry::new("1", no_op, no_op),
+                  Entry::new("2", no_op, no_op)])
+        }
+    }
 }
