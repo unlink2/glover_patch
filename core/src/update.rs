@@ -14,9 +14,10 @@ fn open_menu(_entry: &mut Entry<SharedPtrCell<Trigger>>, _trigger: SharedPtrCell
     return None;
 }
 
-fn close_menu(_entry: &mut Entry<SharedPtrCell<Trigger>>, _trigger: SharedPtrCell<Trigger>) -> Option<usize> {
+fn close_menu(_entry: &mut Entry<SharedPtrCell<Trigger>>, mut trigger: SharedPtrCell<Trigger>) -> Option<usize> {
     unsafe {
         *IS_PAUSED = 0;
+        trigger.as_mut().toggle = true;
     }
     return None;
 }
@@ -120,6 +121,10 @@ impl InjectState {
             if self.controller1.read_button(Button::AInput, true) {
                 self.menu.activate(trigger_cell);
             }
+
+            if self.controller1.read_button(Button::BInput, true) {
+                self.menu.back(trigger_cell);
+            }
         }
 
         self.menu.update(trigger_cell);
@@ -140,7 +145,7 @@ impl InjectState {
             MenuType::MainMenu => Menu::new(10, 10,
                 Entry::new("open", no_op, open_menu),
                 Entry::new("close", no_op, close_menu),
-                Entry::new("back", no_op, no_op),
+                Entry::new("back", no_op, close_menu),
                 Entry::new("update", no_op, update_menu),
 
                 &[Entry::new("Level Select...", no_op, level_select_action),
