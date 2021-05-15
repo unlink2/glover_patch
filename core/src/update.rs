@@ -3,6 +3,9 @@ use self::ultrars::input::*;
 use self::ultrars::rdp::*;
 use self::ultrars::font::*;
 use self::ultrars::menu::*;
+use self::ultrars::math::*;
+use super::actor::*;
+use super::camera::*;
 use super::memory::*;
 use super::mainmenu::*;
 use super::ultrars::memory::SharedPtrCell;
@@ -39,7 +42,10 @@ pub enum MenuType {
 pub struct Trigger {
     pub load_menu: bool,
     pub menu_type: MenuType,
-    pub toggle: bool
+    pub toggle: bool,
+    pub glover_pos: Vector3<f32>,
+    pub camera_pos: Vector3<f32>,
+    pub ball_pos: Vector3<f32>
 }
 
 impl Trigger {
@@ -47,7 +53,10 @@ impl Trigger {
         Self {
             load_menu: true,
             menu_type: MenuType::MainMenu,
-            toggle: false
+            toggle: false,
+            glover_pos: Vector3::new(0.0, 0.0, 0.0),
+            camera_pos: Vector3::new(0.0, 0.0, 0.0),
+            ball_pos: Vector3::new(0.0, 0.0, 0.0)
         }
     }
 }

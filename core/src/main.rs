@@ -10,6 +10,8 @@ extern crate ultrars;
 pub mod update;
 pub mod memory;
 pub mod mainmenu;
+pub mod actor;
+pub mod camera;
 use self::memory::*;
 use core::panic::PanicInfo;
 
