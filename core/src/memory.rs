@@ -13,3 +13,9 @@ pub const BALL_ACTOR: *mut Actor = 0x8029F978 as *mut Actor;
 
 pub const HEALTH: *mut i32 = 0x802902D8 as *mut i32;
 pub const LIVES: *mut i32 = 0x8029F978 as *mut i32;
+
+// puts fn ptr
+pub type PutsXy = fn(u32, *const [char], u32);
+pub const PUTS_XY: usize = 0x8014666C;
+pub const PUTS_X_POS: *mut i32 = 0x801ED394 as *mut i32;
+pub const PUTS_Y_POS: *mut i32 = 0x801ED398 as *mut i32;

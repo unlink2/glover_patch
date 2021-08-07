@@ -9,6 +9,7 @@ use super::camera::*;
 use super::memory::*;
 use super::mainmenu::*;
 use super::ultrars::memory::SharedPtrCell;
+use crate::ultrars::render::RenderContext;
 
 fn open_menu(_entry: &mut Entry<SharedPtrCell<Trigger>>, _trigger: SharedPtrCell<Trigger>) -> Option<usize> {
     unsafe {
@@ -101,6 +102,12 @@ impl InjectState {
         self.controller1.update();
         self.controller2.update();
 
+
+        self.rdp_ctxt.puts("Hello",100,100,&self.font);
+        //self.rdp_ctxt.puts("World",100,110,&self.font);
+        //self.rdp_ctxt.puts("Entry",100,120,&self.font);
+        //self.rdp_ctxt.puts("Next",100,130,&self.font);
+        //self.rdp_ctxt.update();
         self.update_menu();
     }
 
