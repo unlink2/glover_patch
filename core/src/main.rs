@@ -16,27 +16,15 @@ pub mod renderer;
 use self::memory::*;
 use core::panic::PanicInfo;
 
-/**
- * Barebones sample
- */
-#[no_mangle]
-#[naked]
-#[link_section = ".boot"]
-pub unsafe extern "C" fn _start() -> ! {
-    asm!(r#"
-        b main
-        nop
-    "#,
-    options(noreturn));
-}
 
 static mut GLOBALSTATE: Option<update::InjectState> = None;
 
 #[no_mangle]
-pub unsafe extern "C" fn main() {
+#[link_section = ".boot"]
+pub unsafe extern "C" fn _start() {
     // check if game is running
     if *CURRENT_MAP == 0xFF {
-        return ();
+        return;
     }
 
 	match &mut GLOBALSTATE {
@@ -44,7 +32,6 @@ pub unsafe extern "C" fn main() {
 		None => GLOBALSTATE = Some(update::InjectState::new())
 	}
 }
-
 
 /// This function is called on panic.
 #[panic_handler]
