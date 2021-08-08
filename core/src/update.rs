@@ -4,12 +4,15 @@ use self::ultrars::rdp::*;
 use self::ultrars::font::*;
 use self::ultrars::menu::*;
 use self::ultrars::math::*;
+use self::ultrars::interrupt::IntFn;
 use super::actor::*;
 use super::camera::*;
 use super::memory::*;
 use super::mainmenu::*;
 use super::ultrars::memory::SharedPtrCell;
+use super::memory::{ENABLE_INTERRUPT, DISABLE_INTERRUPT};
 use crate::ultrars::render::RenderContext;
+use core::ffi::c_void;
 
 fn open_menu(_entry: &mut Entry<SharedPtrCell<Trigger>>, _trigger: SharedPtrCell<Trigger>) -> Option<usize> {
     unsafe {
@@ -74,6 +77,10 @@ pub struct InjectState {
 
 impl InjectState {
     pub fn new() -> Self {
+        // use built-in interupt enable/disable functions
+        let di = unsafe { core::mem::transmute::<*const c_void, IntFn>(DISABLE_INTERRUPT) };
+        let ei = unsafe { core::mem::transmute::<*const c_void, IntFn>(DISABLE_INTERRUPT) };
+
         Self {
             start_timer: 0,
             controller1: InputHandler::new(CONTROLLER1),
@@ -81,13 +88,25 @@ impl InjectState {
             // TODO hard coded ptr is bad ok?
             rdp_ctxt: RdpFontRendererContext::new(
                 0x80529D40 as *mut u32,
-                196608),
+                196608,
+                di,
+                ei
+            ),
             font: Font::new(&FONT8X8_BASIC, 0x80525C30 as *mut u16, 0x000F, 0xFFFF),
             trigger: Trigger::new(),
             menu: InjectState::build_menu(MenuType::MainMenu)
         }
     }
 
+    /// render pushes the next frame to
+    /// the framebuffer
+    /// it should not do anything else!
+    pub unsafe fn render(&mut self) {
+        self.rdp_ctxt.update();
+    }
+
+    /// update sets up the next frame and handles the general
+    /// logic
     pub unsafe fn update(&mut self) {
         if self.start_timer < 2 {
             self.start_timer += 1;
@@ -103,11 +122,6 @@ impl InjectState {
         self.controller2.update();
 
 
-        self.rdp_ctxt.puts("Hello",100,100,&self.font);
-        //self.rdp_ctxt.puts("World",100,110,&self.font);
-        //self.rdp_ctxt.puts("Entry",100,120,&self.font);
-        //self.rdp_ctxt.puts("Next",100,130,&self.font);
-        //self.rdp_ctxt.update();
         self.update_menu();
     }
 
@@ -144,8 +158,6 @@ impl InjectState {
         }
 
         self.menu.update(trigger_cell);
-
-        self.rdp_ctxt.update();
 
         self.menu.draw(&mut self.rdp_ctxt, &mut self.font);
     }

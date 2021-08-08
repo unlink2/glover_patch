@@ -21,16 +21,18 @@ static mut GLOBALSTATE: Option<update::InjectState> = None;
 
 #[no_mangle]
 #[link_section = ".boot"]
-pub unsafe extern "C" fn _start() {
+pub unsafe extern "C" fn _start(arg: usize) -> () {
     // check if game is running
     if *CURRENT_MAP == 0xFF {
         return;
     }
 
 	match &mut GLOBALSTATE {
-		Some(state) => state.update(),
+		Some(state) => if arg == 1 { state.render(); } else { state.update(); },
 		None => GLOBALSTATE = Some(update::InjectState::new())
 	}
+
+    return;
 }
 
 /// This function is called on panic.

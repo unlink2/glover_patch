@@ -1,5 +1,6 @@
 use super::actor::*;
 use super::camera::*;
+use core::ffi::c_void;
 
 pub const GAME_MODE: *mut u8 = 0x801E7530 as *mut u8;
 pub const DISABLE_INPUT_TIMER: *mut u16 = 0x8028FBF4 as *mut u16;
@@ -19,3 +20,6 @@ pub type PutsXy = fn(u32, *const [char], u32);
 pub const PUTS_XY: usize = 0x8014666C;
 pub const PUTS_X_POS: *mut i32 = 0x801ED394 as *mut i32;
 pub const PUTS_Y_POS: *mut i32 = 0x801ED398 as *mut i32;
+
+pub const DISABLE_INTERRUPT: *const c_void = 0x801C6F70 as *const c_void;
+pub const ENABLE_INTERRUPT: *const c_void = 0x801C6F90 as *const c_void;
