@@ -13,6 +13,7 @@ pub mod mainmenu;
 pub mod actor;
 pub mod camera;
 pub mod renderer;
+pub mod actions;
 use self::memory::*;
 use core::panic::PanicInfo;
 

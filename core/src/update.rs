@@ -11,35 +11,15 @@ use super::memory::*;
 use super::mainmenu::*;
 use super::ultrars::memory::SharedPtrCell;
 use super::memory::{ENABLE_INTERRUPT, DISABLE_INTERRUPT};
+use super::actions::*;
 use crate::ultrars::render::RenderContext;
 use core::ffi::c_void;
 
-fn open_menu(_entry: &mut Entry<SharedPtrCell<Trigger>>, _trigger: SharedPtrCell<Trigger>) -> Option<usize> {
-    unsafe {
-        *IS_PAUSED = 1;
-    }
-    return None;
-}
-
-fn close_menu(_entry: &mut Entry<SharedPtrCell<Trigger>>, mut trigger: SharedPtrCell<Trigger>) -> Option<usize> {
-    unsafe {
-        *IS_PAUSED = 0;
-        trigger.as_mut().toggle = true;
-    }
-    return None;
-}
-
-fn update_menu(_entry: &mut Entry<SharedPtrCell<Trigger>>, _trigger: SharedPtrCell<Trigger>) -> Option<usize> {
-    unsafe {
-        *IS_PAUSED = 1;
-    }
-    return None;
-}
 
 #[derive(Copy, Clone)]
 pub enum MenuType {
     MainMenu,
-
+    CheatMenu,
 }
 
 #[derive(Copy, Clone)]
@@ -49,7 +29,9 @@ pub struct Trigger {
     pub toggle: bool,
     pub glover_pos: Vector3<f32>,
     pub camera_pos: Vector3<f32>,
-    pub ball_pos: Vector3<f32>
+    pub ball_pos: Vector3<f32>,
+    pub inf_lives: bool,
+    pub inf_hp: bool
 }
 
 impl Trigger {
@@ -60,7 +42,19 @@ impl Trigger {
             toggle: false,
             glover_pos: Vector3::new(0.0, 0.0, 0.0),
             camera_pos: Vector3::new(0.0, 0.0, 0.0),
-            ball_pos: Vector3::new(0.0, 0.0, 0.0)
+            ball_pos: Vector3::new(0.0, 0.0, 0.0),
+            inf_lives: false,
+            inf_hp: false
+        }
+    }
+
+    pub fn update(&mut self) {
+        if self.inf_lives {
+            unsafe { *LIVES = 5 }
+        }
+
+        if self.inf_hp {
+            unsafe { *HEALTH = 3 }
         }
     }
 }
@@ -94,7 +88,7 @@ impl InjectState {
             ),
             font: Font::new(&FONT8X8_BASIC, 0x80525C30 as *mut u16, 0x000F, 0xFFFF),
             trigger: Trigger::new(),
-            menu: InjectState::build_menu(MenuType::MainMenu)
+            menu: InjectState::build_menu(MenuType::MainMenu, &Trigger::new())
         }
     }
 
@@ -123,13 +117,15 @@ impl InjectState {
 
 
         self.update_menu();
+
+        self.trigger.update();
     }
 
     pub fn update_menu(&mut self) {
         let trigger_cell = SharedPtrCell::new(&mut self.trigger);
         if self.trigger.load_menu {
             self.trigger.toggle = self.menu.active;
-            self.menu = InjectState::build_menu(self.trigger.menu_type);
+            self.menu = InjectState::build_menu(self.trigger.menu_type, &self.trigger);
             self.trigger.load_menu = false;
         }
 
@@ -166,9 +162,10 @@ impl InjectState {
 		*DISABLE_PAUSE_FLAG = 0x00;
 		*DISABLE_INPUT_TIMER = 0x00;
 		*GAME_MODE = 0x02;
+        *PAUSE_FLAG = 0x00;
 	}
 
-    fn build_menu(menu_type: MenuType) -> Menu<SharedPtrCell<Trigger>> {
+    fn build_menu(menu_type: MenuType, trigger: &Trigger) -> Menu<SharedPtrCell<Trigger>> {
         match menu_type {
             MenuType::MainMenu => Menu::new(10, 10,
                 Entry::new("open", no_op, open_menu),
@@ -177,8 +174,14 @@ impl InjectState {
                 Entry::new("update", no_op, update_menu),
 
                 &[Entry::new("Level Select...", no_op, level_select_action),
-                  Entry::new("1", no_op, no_op),
-                  Entry::new("2", no_op, no_op)])
+                  Entry::new("Cheats...", no_op, cheats_action)]),
+            MenuType::CheatMenu => Menu::new(10, 10,
+                Entry::new("open", no_op, open_menu),
+                Entry::new("close", no_op, close_menu),
+                Entry::new("back", no_op, main_action),
+                Entry::new("update", no_op, update_menu),
+                &[Entry::checkbox("Inf Lives", no_op, lives_cheat_action, trigger.inf_lives),
+                Entry::checkbox("Inf Health", no_op, hp_cheat_action, trigger.inf_hp)])
         }
     }
 }

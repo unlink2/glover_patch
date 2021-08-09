@@ -1,5 +1,6 @@
 # Glover Speedrun Practice Hack
 
+![](https://github.com/unlink2/glover_patch/actions/workflows/build.yml/badge.svg)
 
 ## Easy Install:
 

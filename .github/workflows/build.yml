@@ -1,0 +1,31 @@
+
+name: Build
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install Binutils
+      run: cargo install cargo-binutils
+    - name: Add llvm tools
+      run: rustup component add llvm-tools-preview
+    - name: Use nightly
+      run: rustup default nightly
+
+    - name: Build
+      run: ./build.sh
+    - name: Dump
+      run: ./dump.sh

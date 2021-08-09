@@ -12,6 +12,7 @@ pub fn level_select_action(_entry: &mut Entry<SharedPtrCell<Trigger>>, mut trigg
         *DISABLE_PAUSE_FLAG = 0x00;
         *DISABLE_INPUT_TIMER = 0x00;
         *GAME_MODE = 0x02;
+        *PAUSE_FLAG = 0x00;
     }
     let t = trigger.as_mut();
     t.toggle = true;
