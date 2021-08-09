@@ -23,7 +23,7 @@ def patch_rom(rom_path, payload_path, c_code_path, entry_code_path, out_path):
     force_easy_ball = 0x3A6D0 # nop this address to always make ball behave like easy mode
 
     for i in range(0, len(jump)):
-        # rom[jump_address+i] = jump_ram[i]
+        rom[jump_address+i] = jump_ram[i]
         rom[render_inject+i] = jump_ram[i]
 
     # need to nop the call right after render_inject

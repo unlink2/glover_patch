@@ -64,10 +64,10 @@ render_inject:
     nop
 
     // jump to cde in update mode
-    la a0, 0x00
-    la ra, C_CODE_START
-    jalr ra
-    nop
+    // la a0, 0x00
+    // la ra, C_CODE_START
+    // jalr ra
+    // nop
 
     // load return address
     la ra, RENDER_RA

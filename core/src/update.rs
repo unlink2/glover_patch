@@ -4,7 +4,7 @@ use self::ultrars::rdp::*;
 use self::ultrars::font::*;
 use self::ultrars::menu::*;
 use self::ultrars::math::*;
-use self::ultrars::interrupt::IntFn;
+use self::ultrars::interrupt::{EnableIntFn, DisableIntFn};
 use super::actor::*;
 use super::camera::*;
 use super::memory::*;
@@ -72,8 +72,8 @@ pub struct InjectState {
 impl InjectState {
     pub fn new() -> Self {
         // use built-in interupt enable/disable functions
-        let di = unsafe { core::mem::transmute::<*const c_void, IntFn>(DISABLE_INTERRUPT) };
-        let ei = unsafe { core::mem::transmute::<*const c_void, IntFn>(DISABLE_INTERRUPT) };
+        let di = unsafe { core::mem::transmute::<*const c_void, DisableIntFn>(DISABLE_INTERRUPT) };
+        let ei = unsafe { core::mem::transmute::<*const c_void, EnableIntFn>(ENABLE_INTERRUPT) };
 
         Self {
             start_timer: 0,
@@ -81,10 +81,10 @@ impl InjectState {
             controller2: InputHandler::new(CONTROLLER2),
             // TODO hard coded ptr is bad ok?
             rdp_ctxt: RdpFontRendererContext::new(
-                0x80529D40 as *mut u32,
+                0x80500000 as *mut u32,
                 196608,
-                di,
-                ei
+                ei,
+                di
             ),
             font: Font::new(&FONT8X8_BASIC, 0x80525C30 as *mut u16, 0x000F, 0xFFFF),
             trigger: Trigger::new(),
@@ -115,7 +115,7 @@ impl InjectState {
         self.controller1.update();
         self.controller2.update();
 
-
+        self.rdp_ctxt.puts("Hello World", 100, 100, &self.font);
         self.update_menu();
 
         self.trigger.update();
