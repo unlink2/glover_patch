@@ -81,12 +81,12 @@ impl InjectState {
             controller2: InputHandler::new(CONTROLLER2),
             // TODO hard coded ptr is bad ok?
             rdp_ctxt: RdpFontRendererContext::new(
-                0x80500000 as *mut u32,
-                196608,
+                0x80550000 as *mut u32,
+                0x40000,
                 ei,
                 di
             ),
-            font: Font::new(&FONT8X8_BASIC, 0x80525C30 as *mut u16, 0x000F, 0xFFFF),
+            font: Font::new(&FONT8X8_BASIC, 0x80500000 as *mut u16, 0x000F, 0xFFFF),
             trigger: Trigger::new(),
             menu: InjectState::build_menu(MenuType::MainMenu, &Trigger::new())
         }
