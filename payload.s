@@ -50,16 +50,16 @@ not_render_mode:
 // inject location during rendering
 // must be pretty fast, only do actual rendering here
 render_inject:
-    // jump to c code in rendering mode
-    la a0, 0x01
-    la ra, C_CODE_START
-    jalr ra
-    nop
-
     // call swap buffer function (new inject)
     lw  v0, 0x0014(s8)
     lw  a0, 0x000C(v0)
     la ra, 0x801CF070
+    jalr ra
+    nop
+
+    // jump to c code in rendering mode
+    la a0, 0x01
+    la ra, C_CODE_START
     jalr ra
     nop
 
