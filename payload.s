@@ -75,8 +75,8 @@ render_inject:
     jalr ra
     nop
 
-    bal save_registers
-    nop
+    // bal save_registers
+    // nop
 
     // jump to c code in rendering mode
     la a0, 0x01
