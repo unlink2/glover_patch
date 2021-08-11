@@ -1,5 +1,4 @@
-extern crate ultrars;
-use self::ultrars::math::*;
+use super::ultrars::math::*;
 
 #[repr(C)]
 #[derive(Copy, Clone)]

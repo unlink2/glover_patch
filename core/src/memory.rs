@@ -1,5 +1,4 @@
 use super::actor::*;
-use super::camera::*;
 use core::ffi::c_void;
 
 pub const GAME_MODE: *mut u8 = 0x801E7530 as *mut u8;

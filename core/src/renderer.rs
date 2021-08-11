@@ -1,6 +1,5 @@
 use super::ultrars::render::RenderContext;
 use super::ultrars::font::GenericFont;
-use super::memory::{PUTS_Y_POS, PUTS_X_POS, PUTS_XY, PutsXy};
 
 pub struct GRendererContext;
 
@@ -9,12 +8,12 @@ impl RenderContext for GRendererContext {
     fn update(&mut self) {
     }
 
-    fn puts(&mut self, s: &str, x: i32, y: i32, font: &dyn GenericFont) {
+    fn puts(&mut self, _s: &str, _x: i32, _y: i32, _font: &dyn GenericFont) {
     }
 
-    fn cputs(&mut self, s: &[char], x: i32, y: i32, font: &dyn GenericFont) {
+    fn cputs(&mut self, _s: &[char], _x: i32, _y: i32, _font: &dyn GenericFont) {
     }
 
-    fn draw_char(&mut self, c: char, x: i32, y: i32, font: &dyn GenericFont) {
+    fn draw_char(&mut self, _c: char, _x: i32, _y: i32, _font: &dyn GenericFont) {
     }
 }

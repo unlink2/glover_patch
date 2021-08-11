@@ -1,8 +1,4 @@
-extern crate ultrars;
-use self::ultrars::input::*;
-use self::ultrars::rdp::*;
-use self::ultrars::font::*;
-use self::ultrars::menu::*;
+use super::ultrars::menu::*;
 use super::update::*;
 use super::memory::*;
 use super::ultrars::memory::SharedPtrCell;
@@ -20,3 +16,23 @@ pub fn level_select_action(_entry: &mut Entry<SharedPtrCell<Trigger>>, mut trigg
 }
 
 
+pub fn cheats_action(_entry: &mut Entry<SharedPtrCell<Trigger>>, mut trigger: SharedPtrCell<Trigger>) -> Option<usize> {
+    let trigger = trigger.as_mut();
+    trigger.menu_type = MenuType::CheatMenu;
+    trigger.load_menu = true;
+    return None;
+}
+
+pub fn gdb_action(_entry: &mut Entry<SharedPtrCell<Trigger>>, mut trigger: SharedPtrCell<Trigger>) -> Option<usize> {
+    let trigger = trigger.as_mut();
+    trigger.menu_type = MenuType::GdbMenu;
+    trigger.load_menu = true;
+    return None;
+}
+
+pub fn main_action(_entry: &mut Entry<SharedPtrCell<Trigger>>, mut trigger: SharedPtrCell<Trigger>) -> Option<usize> {
+    let trigger = trigger.as_mut();
+    trigger.menu_type = MenuType::MainMenu;
+    trigger.load_menu = true;
+    return None;
+}
