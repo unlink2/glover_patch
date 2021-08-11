@@ -119,7 +119,7 @@ impl InjectState {
         self.controller1.update();
         self.controller2.update();
 
-        self.render_ctxt.puts("Hello World", 100, 100, &self.font);
+        self.render_ctxt.puts("Hello World", 100, 100);
         self.update_menu();
 
         self.trigger.update();
@@ -159,7 +159,7 @@ impl InjectState {
 
         self.menu.update(trigger_cell);
 
-        self.menu.draw(&mut self.render_ctxt, &mut self.font);
+        self.menu.draw(&mut self.render_ctxt);
     }
 
     unsafe fn level_select(&self) {

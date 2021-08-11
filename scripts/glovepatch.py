@@ -16,19 +16,13 @@ def patch_rom(rom_path, payload_path, c_code_path, entry_code_path, out_path):
     jump = [0x3C, 0x1F, 0xB0, 0x78, 0x03, 0xE0, 0xF8, 0x09] # code that jumps to payload
     jump_ram = [0x3C, 0x1F, 0x80, 0x40, 0x03, 0xE0, 0xF8, 0x09]
     entry_inject = 0x1000
-    jump_address = 0x40370
-    render_inject = 0x8017FF10-VIRTUAL_TO_ROM
+    jump_address = 0x40370 # 0x8013F370
     payload_address = 0x780000
     c_code_address = 0x780200
     force_easy_ball = 0x3A6D0 # nop this address to always make ball behave like easy mode
 
     for i in range(0, len(jump)):
-        # rom[jump_address+i] = jump_ram[i]
-        rom[render_inject+i] = jump_ram[i]
-
-    # need to nop the call right after render_inject
-    for i in range(8, 12):
-        rom[render_inject+i] = 0x00
+        rom[jump_address+i] = jump_ram[i]
 
     for i in range(0, len(payload)):
         rom[payload_address+i] = payload[i]

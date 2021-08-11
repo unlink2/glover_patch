@@ -8,12 +8,12 @@ impl RenderContext for GRendererContext {
     fn update(&mut self) {
     }
 
-    fn puts(&mut self, _s: &str, _x: i32, _y: i32, _font: &dyn GenericFont) {
+    fn puts(&mut self, _s: &str, _x: i32, _y: i32) {
     }
 
-    fn cputs(&mut self, _s: &[char], _x: i32, _y: i32, _font: &dyn GenericFont) {
+    fn cputs(&mut self, _s: &[char], _x: i32, _y: i32) {
     }
 
-    fn draw_char(&mut self, _c: char, _x: i32, _y: i32, _font: &dyn GenericFont) {
+    fn draw_char(&mut self, _c: char, _x: i32, _y: i32) {
     }
 }

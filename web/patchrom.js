@@ -52,13 +52,13 @@ let patch = async (rom, settings, payload_path=PAYLOAD_PATH, code_path=CODE_PATH
 
     for (let i = 0; i < jump.length; i++) {
         rom.setUint8(jump_address+i, jump_ram[i]);
-        rom.setUint8(render_inject+i, jump_ram[i]);
+        // rom.setUint8(render_inject+i, jump_ram[i]);
     }
 
     // need to nop the call right after render_inject
-    for (let i = 8; i < 12; i++) {
+    /* for (let i = 8; i < 12; i++) {
         rom.setUint8(render_inject+i, 0x00);
-    }
+    }*/
 
     for (let i = 0; i < payload.buffer.byteLength; i++) {
         rom.setUint8(payload_address+i, payload.getUint8(i));
