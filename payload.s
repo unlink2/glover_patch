@@ -18,14 +18,14 @@ section_code:
     // bal save_registers
     // nop
 
-    // jump to c code in rendering mode
-    la a0, 0x01
-    la ra, C_CODE_START
-    jalr ra
-    nop
 
     // jump to c code in logic mode
     la a0, 0x00
+    la ra, C_CODE_START
+    jalr ra
+    nop
+    // jump to c code in rendering mode
+    la a0, 0x01
     la ra, C_CODE_START
     jalr ra
     nop

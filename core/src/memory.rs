@@ -23,3 +23,9 @@ pub const PUTS_Y_POS: *mut i32 = 0x801ED398 as *mut i32;
 
 pub const DISABLE_INTERRUPT: *const c_void = 0x801C6F70 as *const c_void;
 pub const ENABLE_INTERRUPT: *const c_void = 0x801C6F90 as *const c_void;
+
+
+// text is is stored in a linked list, to inject our own text we simply
+// add on to the existing list
+// the head object is always at this address
+pub const TEXT_LL_HEAD: *const c_void = 0x80284800 as *const c_void;

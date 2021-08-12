@@ -62,17 +62,17 @@ impl Trigger {
     }
 }
 
-pub struct InjectState {
+pub struct InjectState<'a> {
     controller1: InputHandler,
     controller2: InputHandler,
-    render_ctxt: GRendererContext,
+    render_ctxt: GRendererContext<'a>,
     font: NoneFont,
     start_timer: u16,
     trigger: Trigger,
     menu: Menu<SharedPtrCell<Trigger>>,
 }
 
-impl InjectState {
+impl InjectState<'_> {
     pub fn new() -> Self {
         // use built-in interupt enable/disable functions
         let di = unsafe { core::mem::transmute::<*const c_void, DisableIntFn>(DISABLE_INTERRUPT) };
@@ -82,7 +82,7 @@ impl InjectState {
             start_timer: 0,
             controller1: InputHandler::new(CONTROLLER1),
             controller2: InputHandler::new(CONTROLLER2),
-            render_ctxt: GRendererContext,
+            render_ctxt: GRendererContext::new(),
             // TODO hard coded ptr is bad ok?
             /* render_ctxt: RdpFontRendererContext::new(
                 0x80550000 as *mut u32,
@@ -100,7 +100,8 @@ impl InjectState {
     /// the framebuffer
     /// it should not do anything else!
     pub unsafe fn render(&mut self) {
-        self.render_ctxt.update();
+        self.menu.draw(&mut self.render_ctxt);
+        self.render_ctxt.draw();
     }
 
     /// update sets up the next frame and handles the general
@@ -158,8 +159,6 @@ impl InjectState {
         }
 
         self.menu.update(trigger_cell);
-
-        self.menu.draw(&mut self.render_ctxt);
     }
 
     unsafe fn level_select(&self) {
