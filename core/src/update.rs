@@ -1,26 +1,26 @@
-use super::ultrars::input::*;
-use super::ultrars::rdp::*;
-use super::ultrars::font::*;
-use super::ultrars::menu::*;
-use super::ultrars::math::*;
-use super::ultrars::interrupt::{EnableIntFn, DisableIntFn};
-use super::memory::*;
-use super::mainmenu::*;
-use super::ultrars::memory::SharedPtrCell;
-use super::memory::{ENABLE_INTERRUPT, DISABLE_INTERRUPT};
 use super::actions::*;
-use crate::ultrars::render::RenderContext;
-use super::renderer::GRendererContext;
-use core::ffi::c_void;
 use super::cheatsmenu::*;
 use super::gdbmenu::*;
+use super::mainmenu::*;
+use super::memory::*;
+use super::memory::{DISABLE_INTERRUPT, ENABLE_INTERRUPT};
+use super::renderer::GRendererContext;
+use super::ultrars::font::*;
+use super::ultrars::input::*;
+use super::ultrars::interrupt::{DisableIntFn, EnableIntFn};
+use super::ultrars::math::*;
+use super::ultrars::memory::SharedPtrCell;
+use super::ultrars::menu::*;
+use super::ultrars::rdp::*;
 use super::ultrars::usb::Usb;
+use crate::ultrars::render::RenderContext;
+use core::ffi::c_void;
 
 #[derive(Copy, Clone)]
 pub enum MenuType {
     MainMenu,
     CheatMenu,
-    GdbMenu
+    GdbMenu,
 }
 
 #[derive(Copy, Clone)]
@@ -33,7 +33,7 @@ pub struct Trigger {
     pub ball_pos: Vector3<f32>,
     pub inf_lives: bool,
     pub inf_hp: bool,
-    pub usb: Usb
+    pub usb: Usb,
 }
 
 impl Trigger {
@@ -47,7 +47,7 @@ impl Trigger {
             ball_pos: Vector3::new(0.0, 0.0, 0.0),
             inf_lives: false,
             inf_hp: false,
-            usb: Usb::new()
+            usb: Usb::new(),
         }
     }
 
@@ -92,7 +92,7 @@ impl InjectState<'_> {
             ),*/
             font: NoneFont, // Font::new(&FONT8X8_BASIC, 0x80500000 as *mut u16, 0x000F, 0xFFFF),
             trigger: Trigger::new(),
-            menu: InjectState::build_menu(MenuType::MainMenu, &Trigger::new())
+            menu: InjectState::build_menu(MenuType::MainMenu, &Trigger::new()),
         }
     }
 
@@ -113,9 +113,10 @@ impl InjectState<'_> {
         }
 
         if self.controller1.read_button(Button::StartInput, false)
-			&& self.controller1.read_button(Button::BInput, false) {
-			self.level_select();
-		}
+            && self.controller1.read_button(Button::BInput, false)
+        {
+            self.level_select();
+        }
 
         self.controller1.update();
         self.controller2.update();
@@ -135,7 +136,8 @@ impl InjectState<'_> {
 
         if (self.controller1.read_button(Button::LInput, false)
             && self.controller1.read_button(Button::RInput, false))
-            || self.trigger.toggle {
+            || self.trigger.toggle
+        {
             self.menu.toggle(trigger_cell);
             self.trigger.toggle = false;
         }
@@ -161,38 +163,56 @@ impl InjectState<'_> {
     }
 
     unsafe fn level_select(&self) {
-		*DISABLE_PAUSE_FLAG = 0x00;
-		*DISABLE_INPUT_TIMER = 0x00;
-		*GAME_MODE = 0x02;
+        *DISABLE_PAUSE_FLAG = 0x00;
+        *DISABLE_INPUT_TIMER = 0x00;
+        *GAME_MODE = 0x02;
         *PAUSE_FLAG = 0x00;
-	}
+    }
 
     fn build_menu(menu_type: MenuType, trigger: &Trigger) -> Menu<SharedPtrCell<Trigger>> {
         let x = 10;
         let y = 60;
         match menu_type {
-            MenuType::MainMenu => Menu::new(x, y,
+            MenuType::MainMenu => Menu::new(
+                x,
+                y,
                 Entry::new("open", no_op, open_menu),
                 Entry::new("close", no_op, close_menu),
                 Entry::new("back", no_op, close_menu),
                 Entry::new("update", no_op, update_menu),
-
-                &[Entry::new("Level Select...", no_op, level_select_action),
-                  Entry::new("Cheats...", no_op, cheats_action),
-                  Entry::new("Gdb...", no_op, gdb_action)]),
-            MenuType::CheatMenu => Menu::new(x, y,
+                &[
+                    Entry::new("Level Select...", no_op, level_select_action),
+                    Entry::new("Monitor...", no_op, monitor_action),
+                    Entry::new("Cheats...", no_op, cheats_action),
+                    Entry::new("Gdb...", no_op, gdb_action),
+                ],
+            ),
+            MenuType::CheatMenu => Menu::new(
+                x,
+                y,
                 Entry::new("open", no_op, open_menu),
                 Entry::new("close", no_op, close_menu),
                 Entry::new("back", no_op, main_action),
                 Entry::new("update", no_op, update_menu),
-                &[Entry::checkbox("Inf Lives", no_op, lives_cheat_action, trigger.inf_lives),
-                Entry::checkbox("Inf Health", no_op, hp_cheat_action, trigger.inf_hp)]),
-            MenuType::GdbMenu => Menu::new(x, y,
+                &[
+                    Entry::checkbox("Inf Lives", no_op, lives_cheat_action, trigger.inf_lives),
+                    Entry::checkbox("Inf Health", no_op, hp_cheat_action, trigger.inf_hp),
+                ],
+            ),
+            MenuType::GdbMenu => Menu::new(
+                x,
+                y,
                 Entry::new("open", no_op, open_menu),
                 Entry::new("close", no_op, close_menu),
                 Entry::new("back", no_op, main_action),
                 Entry::new("update", no_op, update_menu),
-                &[Entry::checkbox("Enable Gdb...", no_op, enable_gdb_action, trigger.usb.inited)]),
+                &[Entry::checkbox(
+                    "Enable Gdb...",
+                    no_op,
+                    enable_gdb_action,
+                    trigger.usb.inited,
+                )],
+            ),
         }
     }
 }

@@ -1,8 +1,8 @@
-use super::ultrars::render::RenderContext;
+use super::memory::TEXT_LL_HEAD;
 use super::ultrars::color::Color;
+use super::ultrars::render::RenderContext;
 use core::ffi::c_void;
 use core::ptr::null;
-use super::memory::TEXT_LL_HEAD;
 
 #[repr(C)]
 struct TextDrawObject {
@@ -37,7 +37,6 @@ impl TextDrawObject {
     }
 }
 
-
 pub struct GRendererContext<'a> {
     buffer: &'a mut [TextDrawObject],
     current: usize,
@@ -45,11 +44,9 @@ pub struct GRendererContext<'a> {
 
 impl GRendererContext<'_> {
     pub fn new() -> Self {
-        let buffer = unsafe { core::slice::from_raw_parts_mut(0x80550000 as *mut TextDrawObject, 100) };
-        let mut s = Self {
-            current: 0,
-            buffer,
-        };
+        let buffer =
+            unsafe { core::slice::from_raw_parts_mut(0x80550000 as *mut TextDrawObject, 100) };
+        let mut s = Self { current: 0, buffer };
 
         s.link();
         s
@@ -63,7 +60,9 @@ impl GRendererContext<'_> {
 
     fn link(&mut self) {
         unsafe {
-            let link = core::mem::transmute::<*const c_void, fn(*const TextDrawObject, u8)>(super::memory::INSERT_TEXT_LL);
+            let link = core::mem::transmute::<*const c_void, fn(*const TextDrawObject, u8)>(
+                super::memory::INSERT_TEXT_LL,
+            );
             for b in self.buffer.iter_mut() {
                 *b = TextDrawObject::new(0, 0, 0.75, 0.75, Color::new(0xFF, 0xFF, 0xFF, 0xFE));
                 (link)(b, 1);
@@ -75,13 +74,13 @@ impl GRendererContext<'_> {
     // font does not have lower case letters
     fn adjust_char(c: u8) -> u8 {
         if c >= b'a' && c <= b'z' {
-            c-32
+            c - 32
         } else {
             match c {
                 b'>' => b'C',
                 b']' => b' ',
                 b'[' => b' ',
-                _ => c
+                _ => c,
             }
         }
     }
@@ -102,8 +101,11 @@ impl RenderContext for GRendererContext<'_> {
     fn puts(&mut self, s: &str, x: i32, y: i32) {
         self.insert(x, y);
         unsafe {
-            super::ultrars::memory::umemset(self.buffer[self.current].text.as_ptr() as *mut u8,
-            0 ,self.buffer[self.current].text.len());
+            super::ultrars::memory::umemset(
+                self.buffer[self.current].text.as_ptr() as *mut u8,
+                0,
+                self.buffer[self.current].text.len(),
+            );
         }
         for (i, c) in s.as_bytes().iter().enumerate() {
             self.buffer[self.current].text[i] = Self::adjust_char(*c);
@@ -115,14 +117,16 @@ impl RenderContext for GRendererContext<'_> {
     fn cputs(&mut self, s: &[char], x: i32, y: i32) {
         self.insert(x, y);
         unsafe {
-            super::ultrars::memory::umemset(self.buffer[self.current].text.as_ptr() as *mut u8,
-            0 ,self.buffer[self.current].text.len());
+            super::ultrars::memory::umemset(
+                self.buffer[self.current].text.as_ptr() as *mut u8,
+                0,
+                self.buffer[self.current].text.len(),
+            );
         }
 
         for (i, c) in s.iter().enumerate() {
             self.buffer[self.current].text[i] = Self::adjust_char(*c as u8);
         }
-
 
         self.current += 1;
     }

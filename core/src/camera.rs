@@ -5,5 +5,5 @@ use super::ultrars::math::*;
 pub struct Camera {
     buffer: [u8; 52],
     position: Vector3<f32>,
-    padding: [u8; 416]
+    padding: [u8; 416],
 }

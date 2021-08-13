@@ -44,7 +44,7 @@ let patch = async (rom, settings, payload_path=PAYLOAD_PATH, code_path=CODE_PATH
     let jump = [0x3C, 0x1F, 0xB0, 0x78, 0x03, 0xE0, 0xF8, 0x09]; // code that jumps to payload
     let jump_ram = [0x3C, 0x1F, 0x80, 0x40, 0x03, 0xE0, 0xF8, 0x09];
     let entry_inject = 0x1000;
-    let jump_address = 0x40370;
+    let jump_address = 0x8013E85C - VIRTUAL_TO_ROM;
     let render_inject = 0x8017FF10-VIRTUAL_TO_ROM;
     let payload_address = 0x780000;
     let c_code_address = 0x780200;

@@ -10,7 +10,7 @@ pub struct Actor {
     pub prev: *mut Actor,
     unknown_1: [u32; 7],
     visible: u32, // actor will render if nonzero. usually set to
-    flags: u32, // some flags for actors, e.g. for glover the 0th byte == 05 is on ball
+    flags: u32,   // some flags for actors, e.g. for glover the 0th byte == 05 is on ball
     ptrs: ActorPtrs,
     unknown_2: u32,
     position: Vector3<f32>,
@@ -28,20 +28,20 @@ pub struct Actor {
     scale: Vector3<u32>,
 
     model_data: u32, // TODO make this a pointer to struct
-    anim: u32, // TODO make this ptr PAct_Anim.t
-    objbank: u32, // TODO make ptr, ObjBank.mp
-    act_shad: u32, // TODO make ptr
-    collision: u32, // TODO make ptr
-    col: u32, // TODO ptr
+    anim: u32,       // TODO make this ptr PAct_Anim.t
+    objbank: u32,    // TODO make ptr, ObjBank.mp
+    act_shad: u32,   // TODO make ptr
+    collision: u32,  // TODO make ptr
+    col: u32,        // TODO ptr
 
     unknown_7: [u32; 2],
     unknown_ptr_1: *mut u32, // 40 size?
-    unknown_ptr_2: *mut u32
+    unknown_ptr_2: *mut u32,
 }
 
 #[repr(C)]
 #[derive(Copy, Clone)]
 union ActorPtrs {
     pub ball_attached: *mut Actor,
-    pub unused: u32
+    pub unused: u32,
 }
