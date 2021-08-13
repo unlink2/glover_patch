@@ -3,18 +3,14 @@ use super::cheatsmenu::*;
 use super::gdbmenu::*;
 use super::mainmenu::*;
 use super::memory::*;
-use super::memory::{DISABLE_INTERRUPT, ENABLE_INTERRUPT};
 use super::renderer::GRendererContext;
-use super::ultrars::font::*;
 use super::ultrars::input::*;
-use super::ultrars::interrupt::{DisableIntFn, EnableIntFn};
 use super::ultrars::math::*;
 use super::ultrars::memory::SharedPtrCell;
 use super::ultrars::menu::*;
-use super::ultrars::rdp::*;
+use super::ultrars::monitor::*;
 use super::ultrars::usb::Usb;
 use crate::ultrars::render::RenderContext;
-use core::ffi::c_void;
 
 #[derive(Copy, Clone)]
 pub enum MenuType {
@@ -34,6 +30,7 @@ pub struct Trigger {
     pub inf_lives: bool,
     pub inf_hp: bool,
     pub usb: Usb,
+    pub monitor: bool,
 }
 
 impl Trigger {
@@ -48,6 +45,7 @@ impl Trigger {
             inf_lives: false,
             inf_hp: false,
             usb: Usb::new(),
+            monitor: false,
         }
     }
 
@@ -66,33 +64,21 @@ pub struct InjectState<'a> {
     controller1: InputHandler,
     controller2: InputHandler,
     render_ctxt: GRendererContext<'a>,
-    font: NoneFont,
     start_timer: u16,
     trigger: Trigger,
-    menu: Menu<SharedPtrCell<Trigger>>,
+    menu: MenuFocus<SharedPtrCell<Trigger>>,
 }
 
 impl InjectState<'_> {
     pub fn new() -> Self {
         // use built-in interupt enable/disable functions
-        let di = unsafe { core::mem::transmute::<*const c_void, DisableIntFn>(DISABLE_INTERRUPT) };
-        let ei = unsafe { core::mem::transmute::<*const c_void, EnableIntFn>(ENABLE_INTERRUPT) };
-
         Self {
             start_timer: 0,
             controller1: InputHandler::new(CONTROLLER1),
             controller2: InputHandler::new(CONTROLLER2),
             render_ctxt: GRendererContext::new(),
-            // TODO hard coded ptr is bad ok?
-            /* render_ctxt: RdpFontRendererContext::new(
-                0x80550000 as *mut u32,
-                0x40000,
-                ei,
-                di
-            ),*/
-            font: NoneFont, // Font::new(&FONT8X8_BASIC, 0x80500000 as *mut u16, 0x000F, 0xFFFF),
             trigger: Trigger::new(),
-            menu: InjectState::build_menu(MenuType::MainMenu, &Trigger::new()),
+            menu: MenuFocus::Menu(InjectState::build_menu(MenuType::MainMenu, &Trigger::new())),
         }
     }
 
@@ -112,6 +98,17 @@ impl InjectState<'_> {
             return;
         }
 
+        if self.trigger.monitor {
+            self.menu = MenuFocus::Monitor(Monitor::new(
+                20,
+                60,
+                Entry::new("open", no_op, open_menu),
+                Entry::new("close", no_op, close_menu),
+                Entry::new("back", no_op, main_action),
+            ));
+            self.trigger.monitor = false;
+        }
+
         if self.controller1.read_button(Button::StartInput, false)
             && self.controller1.read_button(Button::BInput, false)
         {
@@ -121,16 +118,15 @@ impl InjectState<'_> {
         self.controller1.update();
         self.controller2.update();
 
-        self.update_menu();
+        // update menus
 
-        self.trigger.update();
-    }
-
-    pub fn update_menu(&mut self) {
         let trigger_cell = SharedPtrCell::new(&mut self.trigger);
         if self.trigger.load_menu {
-            self.trigger.toggle = self.menu.active;
-            self.menu = InjectState::build_menu(self.trigger.menu_type, &self.trigger);
+            self.trigger.toggle = self.menu.active();
+            self.menu = MenuFocus::Menu(InjectState::build_menu(
+                self.trigger.menu_type,
+                &self.trigger,
+            ));
             self.trigger.load_menu = false;
         }
 
@@ -142,24 +138,47 @@ impl InjectState<'_> {
             self.trigger.toggle = false;
         }
 
-        // cursor
-        if self.menu.active {
-            if self.controller1.read_button(Button::DpadUp, true) {
-                self.menu.dec_cursor();
-            } else if self.controller1.read_button(Button::DpadDown, true) {
-                self.menu.inc_cursor();
-            }
-
-            if self.controller1.read_button(Button::AInput, true) {
-                self.menu.activate(trigger_cell);
-            }
-
-            if self.controller1.read_button(Button::BInput, true) {
-                self.menu.back(trigger_cell);
-            }
+        match &mut self.menu {
+            MenuFocus::Menu(_) => self.update_menu(),
+            MenuFocus::Monitor(_) => self.update_monitor(),
         }
 
         self.menu.update(trigger_cell);
+
+        self.trigger.update();
+    }
+
+    pub fn update_monitor(&mut self) {
+        let trigger_cell = SharedPtrCell::new(&mut self.trigger);
+        if let MenuFocus::Monitor(monitor) = &mut self.menu {
+            if monitor.active {
+                if self.controller1.read_button(Button::BInput, true) {
+                    monitor.back(trigger_cell);
+                }
+            }
+        }
+    }
+
+    pub fn update_menu(&mut self) {
+        let trigger_cell = SharedPtrCell::new(&mut self.trigger);
+        if let MenuFocus::Menu(menu) = &mut self.menu {
+            // cursor
+            if menu.active {
+                if self.controller1.read_button(Button::DpadUp, true) {
+                    menu.dec_cursor();
+                } else if self.controller1.read_button(Button::DpadDown, true) {
+                    menu.inc_cursor();
+                }
+
+                if self.controller1.read_button(Button::AInput, true) {
+                    menu.activate(trigger_cell);
+                }
+
+                if self.controller1.read_button(Button::BInput, true) {
+                    menu.back(trigger_cell);
+                }
+            }
+        }
     }
 
     unsafe fn level_select(&self) {
@@ -170,7 +189,7 @@ impl InjectState<'_> {
     }
 
     fn build_menu(menu_type: MenuType, trigger: &Trigger) -> Menu<SharedPtrCell<Trigger>> {
-        let x = 10;
+        let x = 20;
         let y = 60;
         match menu_type {
             MenuType::MainMenu => Menu::new(

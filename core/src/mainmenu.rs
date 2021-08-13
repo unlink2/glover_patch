@@ -52,5 +52,6 @@ pub fn monitor_action(
     _entry: &mut Entry<SharedPtrCell<Trigger>>,
     mut trigger: SharedPtrCell<Trigger>,
 ) -> Option<usize> {
+    trigger.as_mut().monitor = !trigger.as_mut().monitor;
     return None;
 }
