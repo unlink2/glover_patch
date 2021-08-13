@@ -29,3 +29,4 @@ pub const ENABLE_INTERRUPT: *const c_void = 0x801C6F90 as *const c_void;
 // add on to the existing list
 // the head object is always at this address
 pub const TEXT_LL_HEAD: *const c_void = 0x80284800 as *const c_void;
+pub const INSERT_TEXT_LL: *const c_void = 0x80145B98 as *const c_void;

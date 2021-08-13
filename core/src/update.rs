@@ -120,7 +120,6 @@ impl InjectState<'_> {
         self.controller1.update();
         self.controller2.update();
 
-        self.render_ctxt.puts("Hello World", 100, 100);
         self.update_menu();
 
         self.trigger.update();
@@ -170,7 +169,7 @@ impl InjectState<'_> {
 
     fn build_menu(menu_type: MenuType, trigger: &Trigger) -> Menu<SharedPtrCell<Trigger>> {
         let x = 10;
-        let y = 10;
+        let y = 60;
         match menu_type {
             MenuType::MainMenu => Menu::new(x, y,
                 Entry::new("open", no_op, open_menu),
