@@ -82,8 +82,8 @@ impl RenderContext for GRendererContext<'_> {
 
         if self.current > 0 {
             unsafe {
-                self.buffer[self.current-1].next = (*(*head).next).next;
-                self.buffer[0].prev = (*head).next;
+                self.buffer[self.current-1].next = (*head).next;
+                self.buffer[0].prev = head;
 
                 // (*head).next = &self.buffer[0] as *const TextDrawObject;
             }
