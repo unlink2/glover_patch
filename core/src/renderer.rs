@@ -142,6 +142,28 @@ impl RenderContext for GRendererContext<'_> {
         self.current += 1;
     }
 
+    fn putsu8(&mut self, s: &[u8], x: isize, y: isize) {
+        self.insert(x, y);
+        unsafe {
+            super::ultrars::memory::umemset(
+                self.buffer[self.current].text.as_ptr() as *mut u8,
+                0,
+                self.buffer[self.current].text.len(),
+            );
+        }
+
+        for (i, c) in s.iter().enumerate() {
+            if *c == b'\0' {
+                break;
+            } else {
+                self.buffer[self.current].text[i] = Self::adjust_char(*c as u8);
+            }
+        }
+        self.set_color();
+
+        self.current += 1;
+    }
+
     fn set_color(&mut self, color: Color) -> bool {
         self.next_color = color;
         true
