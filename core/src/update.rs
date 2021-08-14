@@ -155,6 +155,28 @@ impl InjectState<'_> {
                 if self.controller1.read_button(Button::BInput, true) {
                     monitor.back(trigger_cell);
                 }
+
+                if self.controller1.read_button(Button::DpadUp, true) {
+                    monitor.up();
+                } else if self.controller1.read_button(Button::DpadDown, true) {
+                    monitor.down();
+                } else if self.controller1.read_button(Button::DpadRight, true) {
+                    monitor.right();
+                } else if self.controller1.read_button(Button::DpadLeft, true) {
+                    monitor.left();
+                }
+
+                if self.controller1.read_button(Button::CUInput, true) {
+                    monitor.inc_value();
+                } else if self.controller1.read_button(Button::CDInput, true) {
+                    monitor.dec_value();
+                }
+
+                if self.controller1.read_button(Button::CRInput, true) {
+                    monitor.inc_addr();
+                } else if self.controller1.read_button(Button::CLInput, true) {
+                    monitor.dec_addr();
+                }
             }
         }
     }

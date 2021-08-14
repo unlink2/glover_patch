@@ -1,4 +1,3 @@
-use super::memory::TEXT_LL_HEAD;
 use super::ultrars::color::Color;
 use super::ultrars::render::RenderContext;
 use core::ffi::c_void;
@@ -9,8 +8,8 @@ struct TextDrawObject {
     next: *const TextDrawObject,
     prev: *const TextDrawObject,
     text: [u8; 0x40],
-    pos_x: i32,
-    pos_y: i32,
+    pos_x: isize,
+    pos_y: isize,
     scale_x: f32,
     scale_y: f32,
     color: Color,
@@ -20,7 +19,7 @@ struct TextDrawObject {
 }
 
 impl TextDrawObject {
-    pub fn new(pos_x: i32, pos_y: i32, scale_x: f32, scale_y: f32, color: Color) -> Self {
+    pub fn new(pos_x: isize, pos_y: isize, scale_x: f32, scale_y: f32, color: Color) -> Self {
         Self {
             next: null() as *const TextDrawObject,
             prev: null() as *const TextDrawObject,
@@ -40,19 +39,24 @@ impl TextDrawObject {
 pub struct GRendererContext<'a> {
     buffer: &'a mut [TextDrawObject],
     current: usize,
+    next_color: Color,
 }
 
 impl GRendererContext<'_> {
     pub fn new() -> Self {
         let buffer =
             unsafe { core::slice::from_raw_parts_mut(0x80550000 as *mut TextDrawObject, 100) };
-        let mut s = Self { current: 0, buffer };
+        let mut s = Self {
+            current: 0,
+            buffer,
+            next_color: Color::new(0xFF, 0xFF, 0xFF, 0xFE),
+        };
 
         s.link();
         s
     }
 
-    fn insert(&mut self, x: i32, y: i32) {
+    fn insert(&mut self, x: isize, y: isize) {
         let mut b = &mut self.buffer[self.current];
         b.pos_x = x;
         b.pos_y = y;
@@ -84,6 +88,11 @@ impl GRendererContext<'_> {
             }
         }
     }
+
+    fn set_color(&mut self) {
+        self.buffer[self.current].color = self.next_color;
+        self.next_color = Color::new(0xFF, 0xFF, 0xFF, 0xFE);
+    }
 }
 
 /// TODO render context for internal font renderer
@@ -98,7 +107,7 @@ impl RenderContext for GRendererContext<'_> {
         self.current = 0;
     }
 
-    fn puts(&mut self, s: &str, x: i32, y: i32) {
+    fn puts(&mut self, s: &str, x: isize, y: isize) {
         self.insert(x, y);
         unsafe {
             super::ultrars::memory::umemset(
@@ -110,11 +119,12 @@ impl RenderContext for GRendererContext<'_> {
         for (i, c) in s.as_bytes().iter().enumerate() {
             self.buffer[self.current].text[i] = Self::adjust_char(*c);
         }
+        self.set_color();
 
         self.current += 1;
     }
 
-    fn cputs(&mut self, s: &[char], x: i32, y: i32) {
+    fn cputs(&mut self, s: &[char], x: isize, y: isize) {
         self.insert(x, y);
         unsafe {
             super::ultrars::memory::umemset(
@@ -127,7 +137,13 @@ impl RenderContext for GRendererContext<'_> {
         for (i, c) in s.iter().enumerate() {
             self.buffer[self.current].text[i] = Self::adjust_char(*c as u8);
         }
+        self.set_color();
 
         self.current += 1;
+    }
+
+    fn set_color(&mut self, color: Color) -> bool {
+        self.next_color = color;
+        true
     }
 }
