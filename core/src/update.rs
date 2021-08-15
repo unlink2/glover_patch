@@ -180,6 +180,10 @@ impl InjectState<'_> {
 
                 if self.controller1.read_button(Button::ZInput, true) {
                     monitor.addr_input();
+                } else if self.controller1.read_button(Button::StartInput, true) {
+                    monitor.enter();
+                } else if self.controller1.read_button(Button::AInput, true) {
+                    monitor.select();
                 }
             }
         }
