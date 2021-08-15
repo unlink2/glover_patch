@@ -10,7 +10,7 @@ use super::ultrars::memory::SharedPtrCell;
 use super::ultrars::menu::*;
 use super::ultrars::monitor::*;
 use super::ultrars::usb::Usb;
-use crate::ultrars::render::RenderContext;
+use crate::ultrars::render::{Drawable, RenderContext, Widget};
 
 #[derive(Copy, Clone)]
 pub enum MenuType {
