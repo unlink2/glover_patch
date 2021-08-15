@@ -177,6 +177,10 @@ impl InjectState<'_> {
                 } else if self.controller1.read_button(Button::CLInput, true) {
                     monitor.dec_addr();
                 }
+
+                if self.controller1.read_button(Button::ZInput, true) {
+                    monitor.addr_input();
+                }
             }
         }
     }
