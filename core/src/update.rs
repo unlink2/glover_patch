@@ -185,6 +185,10 @@ impl InjectState<'_> {
                 } else if self.controller1.read_button(Button::AInput, true) {
                     monitor.select();
                 }
+
+                if self.controller1.read_button(Button::LInput, true) {
+                    monitor.toggle_ascii();
+                }
             }
         }
     }

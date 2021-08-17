@@ -75,20 +75,6 @@ impl GRendererContext<'_> {
         }
     }
 
-    // font does not have lower case letters
-    fn adjust_char(c: u8) -> u8 {
-        if c >= b'a' && c <= b'z' {
-            c - 32
-        } else {
-            match c {
-                b'>' => b'C',
-                b']' => b' ',
-                b'[' => b' ',
-                _ => c,
-            }
-        }
-    }
-
     fn set_color(&mut self) {
         self.buffer[self.current].color = self.next_color;
         self.next_color = Color::new(0xFF, 0xFF, 0xFF, 0xFE);
@@ -117,7 +103,7 @@ impl RenderContext for GRendererContext<'_> {
             );
         }
         for (i, c) in s.as_bytes().iter().enumerate() {
-            self.buffer[self.current].text[i] = Self::adjust_char(*c);
+            self.buffer[self.current].text[i] = self.convert(*c);
         }
         self.set_color();
 
@@ -135,7 +121,7 @@ impl RenderContext for GRendererContext<'_> {
         }
 
         for (i, c) in s.iter().enumerate() {
-            self.buffer[self.current].text[i] = Self::adjust_char(*c as u8);
+            self.buffer[self.current].text[i] = self.convert(*c as u8);
         }
         self.set_color();
 
@@ -156,7 +142,7 @@ impl RenderContext for GRendererContext<'_> {
             if *c == b'\0' {
                 break;
             } else {
-                self.buffer[self.current].text[i] = Self::adjust_char(*c as u8);
+                self.buffer[self.current].text[i] = self.convert(*c as u8);
             }
         }
         self.set_color();
@@ -167,5 +153,19 @@ impl RenderContext for GRendererContext<'_> {
     fn set_color(&mut self, color: Color) -> bool {
         self.next_color = color;
         true
+    }
+
+    // font does not have lower case letters
+    fn convert(&self, c: u8) -> u8 {
+        if c >= b'a' && c <= b'z' {
+            c - 32
+        } else {
+            match c {
+                b'>' => b'C',
+                b']' => b' ',
+                b'[' => b' ',
+                _ => c,
+            }
+        }
     }
 }
