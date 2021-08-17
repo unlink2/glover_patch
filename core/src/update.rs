@@ -11,6 +11,7 @@ use super::ultrars::menu::*;
 use super::ultrars::monitor::*;
 use super::ultrars::usb::Usb;
 use crate::ultrars::render::{Drawable, RenderContext, Widget};
+use crate::ultrars::timer::Timer;
 
 #[derive(Copy, Clone)]
 pub enum MenuType {
@@ -31,6 +32,7 @@ pub struct Trigger {
     pub inf_hp: bool,
     pub usb: Usb,
     pub monitor: bool,
+    pub timer: bool,
 }
 
 impl Trigger {
@@ -46,6 +48,7 @@ impl Trigger {
             inf_hp: false,
             usb: Usb::new(),
             monitor: false,
+            timer: false,
         }
     }
 
@@ -67,6 +70,7 @@ pub struct InjectState<'a> {
     start_timer: u16,
     trigger: Trigger,
     menu: MenuFocus<SharedPtrCell<Trigger>>,
+    timer: Timer<SharedPtrCell<Trigger>>,
 }
 
 impl InjectState<'_> {
@@ -79,6 +83,7 @@ impl InjectState<'_> {
             render_ctxt: GRendererContext::new(),
             trigger: Trigger::new(),
             menu: MenuFocus::Menu(InjectState::build_menu(MenuType::MainMenu, &Trigger::new())),
+            timer: Timer::new(140, 200),
         }
     }
 
@@ -87,6 +92,7 @@ impl InjectState<'_> {
     /// it should not do anything else!
     pub unsafe fn render(&mut self) {
         self.menu.draw(&mut self.render_ctxt);
+        self.timer.draw(&mut self.render_ctxt);
         self.render_ctxt.draw();
     }
 
@@ -108,6 +114,7 @@ impl InjectState<'_> {
             ));
             self.trigger.monitor = false;
         }
+        self.timer.active = self.trigger.timer;
 
         if self.controller1.read_button(Button::StartInput, false)
             && self.controller1.read_button(Button::BInput, false)
@@ -144,6 +151,8 @@ impl InjectState<'_> {
         }
 
         self.menu.update(trigger_cell);
+
+        self.timer.set(*IN_GAME_TIME);
 
         self.trigger.update();
     }
@@ -237,6 +246,7 @@ impl InjectState<'_> {
                     Entry::new("Level Select...", no_op, level_select_action),
                     Entry::new("Monitor...", no_op, monitor_action),
                     Entry::new("Cheats...", no_op, cheats_action),
+                    Entry::checkbox("Timer", no_op, timer_action, trigger.timer),
                     Entry::new("Gdb...", no_op, gdb_action),
                 ],
             ),

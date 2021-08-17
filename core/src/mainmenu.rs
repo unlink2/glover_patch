@@ -55,3 +55,15 @@ pub fn monitor_action(
     trigger.as_mut().monitor = !trigger.as_mut().monitor;
     return None;
 }
+
+pub fn timer_action(
+    entry: &mut Entry<SharedPtrCell<Trigger>>,
+    mut trigger: SharedPtrCell<Trigger>,
+) -> Option<usize> {
+    let prev = trigger.as_ref().timer;
+    trigger.as_mut().timer = !prev;
+
+    entry.set_checkbox(!prev);
+
+    return None;
+}
