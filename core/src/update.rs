@@ -10,6 +10,8 @@ use super::ultrars::memory::SharedPtrCell;
 use super::ultrars::menu::*;
 use super::ultrars::monitor::*;
 use super::ultrars::usb::Usb;
+use crate::actor::Actor;
+use crate::ultrars::clone::{CloneContext, CloneHeader};
 use crate::ultrars::render::{Drawable, RenderContext, Widget};
 use crate::ultrars::timer::Timer;
 
@@ -33,6 +35,9 @@ pub struct Trigger {
     pub usb: Usb,
     pub monitor: bool,
     pub timer: bool,
+    pub infite_jump: bool,
+    pub save_state: bool,
+    pub load_state: bool,
 }
 
 impl Trigger {
@@ -49,6 +54,9 @@ impl Trigger {
             usb: Usb::new(),
             monitor: false,
             timer: false,
+            infite_jump: false,
+            save_state: false,
+            load_state: false,
         }
     }
 
@@ -59,6 +67,10 @@ impl Trigger {
 
         if self.inf_hp {
             unsafe { *HEALTH = 3 }
+        }
+
+        if self.infite_jump {
+            unsafe { *INFINITE_DOUBLE_JUMP = 0 }
         }
     }
 }
@@ -71,6 +83,7 @@ pub struct InjectState<'a> {
     trigger: Trigger,
     menu: MenuFocus<SharedPtrCell<Trigger>>,
     timer: Timer<SharedPtrCell<Trigger>>,
+    clones: CloneContext,
 }
 
 impl InjectState<'_> {
@@ -84,6 +97,7 @@ impl InjectState<'_> {
             trigger: Trigger::new(),
             menu: MenuFocus::Menu(InjectState::build_menu(MenuType::MainMenu, &Trigger::new())),
             timer: Timer::new(140, 200),
+            clones: CloneContext::new(0x80610000 as *mut u8, 0x80600000 as *mut CloneHeader),
         }
     }
 
@@ -115,6 +129,15 @@ impl InjectState<'_> {
             self.trigger.monitor = false;
         }
         self.timer.active = self.trigger.timer;
+
+        if self.trigger.save_state {
+            self.save_state(0);
+            self.trigger.save_state = false;
+        }
+        if self.trigger.load_state {
+            self.load_state(0);
+            self.trigger.load_state = false;
+        }
 
         if self.controller1.read_button(Button::StartInput, false)
             && self.controller1.read_button(Button::BInput, false)
@@ -231,6 +254,27 @@ impl InjectState<'_> {
         *PAUSE_FLAG = 0x00;
     }
 
+    fn save_state(&mut self, _state: usize) {
+        // grab all actors
+        let mut current = GLOVER_ACTOR;
+        loop {
+            self.clones.clone(current);
+            unsafe {
+                current = (*current).next;
+            }
+            if current == GLOVER_ACTOR {
+                break;
+            }
+        }
+
+        // grab camera
+        self.clones.clone(CAMERA);
+    }
+
+    fn load_state(&mut self, _state: usize) {
+        self.clones.restore_all();
+    }
+
     fn build_menu(menu_type: MenuType, trigger: &Trigger) -> Menu<SharedPtrCell<Trigger>> {
         let x = 20;
         let y = 60;
@@ -246,6 +290,8 @@ impl InjectState<'_> {
                     Entry::new("Level Select...", no_op, level_select_action),
                     Entry::new("Monitor...", no_op, monitor_action),
                     Entry::new("Cheats...", no_op, cheats_action),
+                    Entry::new("Save...", no_op, save_state_action),
+                    Entry::new("Load...", no_op, load_state_action),
                     Entry::checkbox("Timer", no_op, timer_action, trigger.timer),
                     Entry::new("Gdb...", no_op, gdb_action),
                 ],
@@ -260,6 +306,25 @@ impl InjectState<'_> {
                 &[
                     Entry::checkbox("Inf Lives", no_op, lives_cheat_action, trigger.inf_lives),
                     Entry::checkbox("Inf Health", no_op, hp_cheat_action, trigger.inf_hp),
+                    Entry::checkbox("Fog", no_op, fog_cheat_action, unsafe { *FOG == 1 }),
+                    Entry::checkbox("Collision", no_op, collision_cheat_action, unsafe {
+                        *COLLISION_DISABLE != 0x0
+                    }),
+                    Entry::checkbox("CS Skip", no_op, demo_end_cheat_action, unsafe {
+                        *DEMO_END_TIMER != 0
+                    }),
+                    Entry::checkbox("Debug Graph", no_op, debug_graph_cheat_action, unsafe {
+                        *DEBUG_GRAPH == 1
+                    }),
+                    Entry::checkbox("Pause", no_op, disable_pause_cheat_action, unsafe {
+                        *DISABLE_PAUSE_FLAG == 0
+                    }),
+                    Entry::checkbox(
+                        "Jump",
+                        no_op,
+                        inf_dobule_jump_cheat_action,
+                        trigger.infite_jump,
+                    ),
                 ],
             ),
             MenuType::GdbMenu => Menu::new(

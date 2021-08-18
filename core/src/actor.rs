@@ -45,3 +45,11 @@ union ActorPtrs {
     pub ball_attached: *mut Actor,
     pub unused: u32,
 }
+
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct Camera {
+    unknown0: [u8; 52],
+    position: Vector3<f32>,
+    unknown1: [u8; 416],
+}

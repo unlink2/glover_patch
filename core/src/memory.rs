@@ -10,6 +10,7 @@ pub const CURRENT_MAP: *mut u8 = 0x801E7531 as *mut u8;
 pub const IS_PAUSED: *mut u8 = 0x801EC7D2 as *mut u8;
 
 pub const GLOVER_ACTOR: *mut Actor = 0x802902D8 as *mut Actor;
+pub const CAMERA: *mut Camera = 0x8028F8E0 as *mut Camera;
 pub const BALL_ACTOR: *mut Actor = 0x8029F978 as *mut Actor;
 
 pub const HEALTH: *mut i32 = 0x80290194 as *mut i32;
@@ -31,3 +32,9 @@ pub const TEXT_LL_HEAD: *const c_void = 0x80284800 as *const c_void;
 pub const INSERT_TEXT_LL: *const c_void = 0x80145B98 as *const c_void;
 
 pub const IN_GAME_TIME: *const u32 = 0x80290198 as *const u32;
+pub const FOG: *mut u8 = 0x801ED403 as *mut u8;
+pub const COLLISION_DISABLE: *mut u32 = 0x8015D728 as *mut u32;
+pub const DEMO_END_TIMER: *mut u8 = 0x801EC775 as *mut u8;
+
+pub const DEBUG_GRAPH: *mut u8 = 0x801EFCA0 as *mut u8;
+pub const INFINITE_DOUBLE_JUMP: *mut u8 = 0x8028FC07 as *mut u8;

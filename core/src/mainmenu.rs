@@ -67,3 +67,19 @@ pub fn timer_action(
 
     return None;
 }
+
+pub fn save_state_action(
+    entry: &mut Entry<SharedPtrCell<Trigger>>,
+    mut trigger: SharedPtrCell<Trigger>,
+) -> Option<usize> {
+    trigger.as_mut().save_state = true;
+    return None;
+}
+
+pub fn load_state_action(
+    entry: &mut Entry<SharedPtrCell<Trigger>>,
+    mut trigger: SharedPtrCell<Trigger>,
+) -> Option<usize> {
+    trigger.as_mut().load_state = true;
+    return None;
+}
