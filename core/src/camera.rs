@@ -4,6 +4,6 @@ use super::ultrars::math::*;
 #[derive(Copy, Clone)]
 pub struct Camera {
     buffer: [u8; 52],
-    position: Vector3<f32>,
+    position: Point3<f32>,
     padding: [u8; 416],
 }

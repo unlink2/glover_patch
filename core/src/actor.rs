@@ -13,8 +13,8 @@ pub struct Actor {
     flags: u32,   // some flags for actors, e.g. for glover the 0th byte == 05 is on ball
     ptrs: ActorPtrs,
     unknown_2: u32,
-    position: Vector3<f32>,
-    previous_position: Vector3<f32>,
+    position: Point3<f32>,
+    previous_position: Point3<f32>,
 
     unknown_3: [u32; 3],
     velocity: Vector3<f32>,
