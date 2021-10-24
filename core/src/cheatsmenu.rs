@@ -1,6 +1,7 @@
 use super::update::Trigger;
 use crate::memory::{
-    COLLISION_DISABLE, DEBUG_GRAPH, DEMO_END_TIMER, DISABLE_PAUSE_FLAG, FOG, INFINITE_DOUBLE_JUMP,
+    self, COLLISION_DISABLE, DEBUG_GRAPH, DEMO_END_TIMER, DISABLE_PAUSE_FLAG, FOG,
+    INFINITE_DOUBLE_JUMP,
 };
 use crate::ultrars::memory::SharedPtrCell;
 use crate::ultrars::menu::Entry;
@@ -96,5 +97,15 @@ pub fn inf_dobule_jump_cheat_action(
 ) -> Option<usize> {
     trigger.as_mut().infite_jump = !trigger.as_ref().infite_jump;
     entry.set_checkbox(trigger.as_ref().infite_jump);
+    return None;
+}
+
+pub fn summon_ball_action(
+    _entry: &mut Entry<SharedPtrCell<Trigger>>,
+    _trigger: SharedPtrCell<Trigger>,
+) -> Option<usize> {
+    unsafe {
+        (*memory::BALL_ACTOR).position = (*memory::GLOVER_ACTOR).position;
+    }
     return None;
 }

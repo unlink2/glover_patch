@@ -325,6 +325,7 @@ impl InjectState<'_> {
                         inf_dobule_jump_cheat_action,
                         trigger.infite_jump,
                     ),
+                    Entry::new("Get ball", no_op, summon_ball_action),
                 ],
             ),
             MenuType::GdbMenu => Menu::new(

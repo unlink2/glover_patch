@@ -38,3 +38,6 @@ pub const DEMO_END_TIMER: *mut u8 = 0x801EC775 as *mut u8;
 
 pub const DEBUG_GRAPH: *mut u8 = 0x801EFCA0 as *mut u8;
 pub const INFINITE_DOUBLE_JUMP: *mut u8 = 0x8028FC07 as *mut u8;
+
+pub type Die = fn() -> ();
+pub const DIE: *const c_void = 0x8017479C as *const c_void;
