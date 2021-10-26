@@ -1,3 +1,5 @@
+use crate::memory;
+
 use super::memory::*;
 use super::ultrars::memory::SharedPtrCell;
 use super::ultrars::menu::*;
@@ -81,5 +83,23 @@ pub fn load_state_action(
     mut trigger: SharedPtrCell<Trigger>,
 ) -> Option<usize> {
     trigger.as_mut().load_state = true;
+    return None;
+}
+
+pub fn lives_zero_action(
+    _entry: &mut Entry<SharedPtrCell<Trigger>>,
+    mut trigger: SharedPtrCell<Trigger>,
+) -> Option<usize> {
+    unsafe {
+        *memory::LIVES = 0;
+    }
+    return None;
+}
+
+pub fn frame_advance_action(
+    _entry: &mut Entry<SharedPtrCell<Trigger>>,
+    mut trigger: SharedPtrCell<Trigger>,
+) -> Option<usize> {
+    trigger.as_mut().frame_advance = !trigger.as_mut().frame_advance;
     return None;
 }

@@ -14,6 +14,7 @@ use crate::actor::Actor;
 use crate::ultrars::clone::{CloneContext, CloneHeader};
 use crate::ultrars::render::{Drawable, RenderContext, Widget};
 use crate::ultrars::timer::Timer;
+use ultrars::frameadvance::FrameAdvance;
 
 #[derive(Copy, Clone)]
 pub enum MenuType {
@@ -34,6 +35,7 @@ pub struct Trigger {
     pub inf_hp: bool,
     pub usb: Usb,
     pub monitor: bool,
+    pub frame_advance: bool,
     pub timer: bool,
     pub infite_jump: bool,
     pub save_state: bool,
@@ -53,6 +55,7 @@ impl Trigger {
             inf_hp: false,
             usb: Usb::new(),
             monitor: false,
+            frame_advance: false,
             timer: false,
             infite_jump: false,
             save_state: false,
@@ -127,6 +130,13 @@ impl InjectState<'_> {
                 Entry::new("back", no_op, main_action),
             ));
             self.trigger.monitor = false;
+        } else if self.trigger.frame_advance {
+            self.menu = MenuFocus::FrameAdvance(FrameAdvance::new(
+                20,
+                60,
+                Entry::new("close", no_op, main_action),
+            ));
+            self.trigger.frame_advance = false;
         }
         self.timer.active = self.trigger.timer;
 
@@ -171,6 +181,7 @@ impl InjectState<'_> {
         match &mut self.menu {
             MenuFocus::Menu(_) => self.update_menu(),
             MenuFocus::Monitor(_) => self.update_monitor(),
+            MenuFocus::FrameAdvance(_) => self.update_frame_advance(),
         }
 
         self.menu.update(trigger_cell);
@@ -178,6 +189,30 @@ impl InjectState<'_> {
         self.timer.set(*IN_GAME_TIME);
 
         self.trigger.update();
+    }
+
+    pub fn update_frame_advance(&mut self) {
+        let trigger_cell = SharedPtrCell::new(&mut self.trigger);
+        if let MenuFocus::FrameAdvance(frame_adv) = &mut self.menu {
+            if self.controller1.read_button(Button::CUInput, true)
+                && self.controller1.read_button(Button::LInput, true)
+            {
+                frame_adv.close(trigger_cell);
+                unsafe {
+                    *IS_PAUSED = 0;
+                }
+            } else if self.controller1.read_button(Button::CDInput, true)
+                && self.controller1.read_button(Button::RInput, true)
+            {
+                unsafe {
+                    *IS_PAUSED = 0;
+                }
+            } else {
+                unsafe {
+                    *IS_PAUSED = 1;
+                }
+            }
+        }
     }
 
     pub fn update_monitor(&mut self) {
@@ -294,6 +329,8 @@ impl InjectState<'_> {
                     Entry::new("Load...", no_op, load_state_action),
                     Entry::checkbox("Timer", no_op, timer_action, trigger.timer),
                     Entry::new("Gdb...", no_op, gdb_action),
+                    Entry::new("Lives 0", no_op, lives_zero_action),
+                    Entry::new("Frame advance", no_op, frame_advance_action),
                 ],
             ),
             MenuType::CheatMenu => Menu::new(
