@@ -1,4 +1,4 @@
-use super::ultrars::math::*;
+use ultrars::math::*;
 
 #[repr(C)]
 #[derive(Copy, Clone)]

@@ -5,8 +5,15 @@
 #![feature(asm)]
 #![feature(global_asm)]
 #![feature(naked_functions)]
+#![feature(alloc_error_handler)]
 
-extern crate ultrars;
+use linked_list_allocator::LockedHeap;
+
+#[global_allocator]
+static ALLOCATOR: LockedHeap = LockedHeap::empty();
+
+extern crate alloc;
+
 pub mod actions;
 pub mod actor;
 pub mod camera;
@@ -30,8 +37,11 @@ pub unsafe extern "C" fn _start(arg: usize) -> () {
         // zero static ram space
         if !ZEROED_RAM {
             ZEROED_RAM = true;
-            ultrars::memory::umemset(0x80500000 as *mut u8, 0, 0x2FFFFF);
+            ultrars::memory::umemset(0x80500000 as *mut u8, 0, 0x200000);
+            // init heap
+            init_heap(0x80500000, 0x200000);
         }
+        alloc::boxed::Box::new(100);
         return;
     }
 
@@ -49,8 +59,20 @@ pub unsafe extern "C" fn _start(arg: usize) -> () {
     return;
 }
 
+/// This function must be called before the heap is usable!
+pub fn init_heap(address: usize, size: usize) {
+    unsafe {
+        ALLOCATOR.lock().init(address, size);
+    }
+}
+
 /// This function is called on panic.
 #[panic_handler]
 fn panic(_info: &PanicInfo) -> ! {
     loop {}
+}
+
+#[alloc_error_handler]
+fn alloc_error(_: core::alloc::Layout) -> ! {
+    panic!()
 }

@@ -2,6 +2,7 @@
 name = "glover-patch"
 version = "0.1.0"
 authors = ["Lukas Krickl <lukas@krickl.dev>"]
+edition="2021"
 
 [[bin]]
 name = "payload"
@@ -9,4 +10,4 @@ path = "src/main.rs"
 
 [dependencies]
 ultra-rs = { path = "../../ultra-rs/lib", version = "0.1.0" }
-
+linked_list_allocator = "0.9.1"

@@ -1,7 +1,7 @@
 use super::memory::*;
 use super::update::Trigger;
-use crate::ultrars::memory::SharedPtrCell;
-use crate::ultrars::menu::Entry;
+use ultrars::memory::SharedPtrCell;
+use ultrars::menu::Entry;
 
 pub fn pause() {
     unsafe {

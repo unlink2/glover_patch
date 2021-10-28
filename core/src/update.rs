@@ -4,17 +4,17 @@ use super::gdbmenu::*;
 use super::mainmenu::*;
 use super::memory::*;
 use super::renderer::GRendererContext;
-use super::ultrars::input::*;
-use super::ultrars::math::*;
-use super::ultrars::memory::SharedPtrCell;
-use super::ultrars::menu::*;
-use super::ultrars::monitor::*;
-use super::ultrars::usb::Usb;
 use crate::actor::Actor;
-use crate::ultrars::clone::{CloneContext, CloneHeader};
-use crate::ultrars::render::{Drawable, RenderContext, Widget};
-use crate::ultrars::timer::Timer;
+use ultrars::clone::{CloneContext, CloneHeader};
 use ultrars::frameadvance::FrameAdvance;
+use ultrars::input::*;
+use ultrars::math::*;
+use ultrars::memory::SharedPtrCell;
+use ultrars::menu::*;
+use ultrars::monitor::*;
+use ultrars::render::{Drawable, RenderContext, Widget};
+use ultrars::timer::Timer;
+use ultrars::usb::Usb;
 
 #[derive(Copy, Clone)]
 pub enum MenuType {

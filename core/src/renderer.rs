@@ -1,7 +1,7 @@
-use super::ultrars::color::Color;
-use super::ultrars::render::RenderContext;
 use core::ffi::c_void;
 use core::ptr::null;
+use ultrars::color::Color;
+use ultrars::render::RenderContext;
 
 #[repr(C)]
 struct TextDrawObject {
@@ -96,7 +96,7 @@ impl RenderContext for GRendererContext<'_> {
     fn puts(&mut self, s: &str, x: isize, y: isize) {
         self.insert(x, y);
         unsafe {
-            super::ultrars::memory::umemset(
+            ultrars::memory::umemset(
                 self.buffer[self.current].text.as_ptr() as *mut u8,
                 0,
                 self.buffer[self.current].text.len(),
@@ -113,7 +113,7 @@ impl RenderContext for GRendererContext<'_> {
     fn cputs(&mut self, s: &[char], x: isize, y: isize) {
         self.insert(x, y);
         unsafe {
-            super::ultrars::memory::umemset(
+            ultrars::memory::umemset(
                 self.buffer[self.current].text.as_ptr() as *mut u8,
                 0,
                 self.buffer[self.current].text.len(),
@@ -131,7 +131,7 @@ impl RenderContext for GRendererContext<'_> {
     fn putsu8(&mut self, s: &[u8], x: isize, y: isize) {
         self.insert(x, y);
         unsafe {
-            super::ultrars::memory::umemset(
+            ultrars::memory::umemset(
                 self.buffer[self.current].text.as_ptr() as *mut u8,
                 0,
                 self.buffer[self.current].text.len(),

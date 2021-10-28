@@ -3,8 +3,8 @@ use crate::memory::{
     self, COLLISION_DISABLE, DEBUG_GRAPH, DEMO_END_TIMER, DISABLE_PAUSE_FLAG, FOG,
     INFINITE_DOUBLE_JUMP,
 };
-use crate::ultrars::memory::SharedPtrCell;
-use crate::ultrars::menu::Entry;
+use ultrars::memory::SharedPtrCell;
+use ultrars::menu::Entry;
 
 // TODO modify live/hp code instead of using flags
 pub fn lives_cheat_action(

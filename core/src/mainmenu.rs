@@ -1,9 +1,9 @@
 use crate::memory;
 
 use super::memory::*;
-use super::ultrars::memory::SharedPtrCell;
-use super::ultrars::menu::*;
 use super::update::*;
+use ultrars::memory::SharedPtrCell;
+use ultrars::menu::*;
 
 pub fn level_select_action(
     _entry: &mut Entry<SharedPtrCell<Trigger>>,

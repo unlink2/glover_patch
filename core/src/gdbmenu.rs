@@ -1,7 +1,7 @@
 use super::update::Trigger;
-use crate::ultrars::memory::SharedPtrCell;
-use crate::ultrars::menu::Entry;
-use crate::ultrars::usb::*;
+use ultrars::memory::SharedPtrCell;
+use ultrars::menu::Entry;
+use ultrars::usb::*;
 
 pub fn enable_gdb_action(
     entry: &mut Entry<SharedPtrCell<Trigger>>,
