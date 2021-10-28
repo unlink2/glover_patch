@@ -13,3 +13,5 @@ bass/
 _site/
 .jekyll-cache
 .jekyll-metadata
+target/
+Cargo.lock
