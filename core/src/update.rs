@@ -40,6 +40,7 @@ pub struct Trigger {
     pub infite_jump: bool,
     pub save_state: bool,
     pub load_state: bool,
+    pub original_game_mode: u8,
 }
 
 impl Trigger {
@@ -60,6 +61,7 @@ impl Trigger {
             infite_jump: false,
             save_state: false,
             load_state: false,
+            original_game_mode: 0,
         }
     }
 
@@ -192,25 +194,20 @@ impl InjectState<'_> {
     }
 
     pub fn update_frame_advance(&mut self) {
-        let trigger_cell = SharedPtrCell::new(&mut self.trigger);
+        let mut trigger_cell = SharedPtrCell::new(&mut self.trigger);
         if let MenuFocus::FrameAdvance(frame_adv) = &mut self.menu {
             if self.controller1.read_button(Button::CUInput, true)
-                && self.controller1.read_button(Button::LInput, true)
+                && self.controller1.read_button(Button::LInput, false)
             {
                 frame_adv.close(trigger_cell);
-                unsafe {
-                    *IS_PAUSED = 0;
-                }
+                unfreeze(trigger_cell);
             } else if self.controller1.read_button(Button::CDInput, true)
-                && self.controller1.read_button(Button::RInput, true)
+                && self.controller1.read_button(Button::LInput, false)
             {
-                unsafe {
-                    *IS_PAUSED = 0;
-                }
+                unfreeze(trigger_cell);
             } else {
-                unsafe {
-                    *IS_PAUSED = 1;
-                }
+                unpause();
+                freeze(trigger_cell);
             }
         }
     }
