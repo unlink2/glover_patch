@@ -41,7 +41,6 @@ pub unsafe extern "C" fn _start(arg: usize) -> () {
             // init heap
             init_heap(0x80500000, 0x200000);
         }
-        alloc::boxed::Box::new(100);
         return;
     }
 
