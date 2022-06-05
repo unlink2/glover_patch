@@ -9,5 +9,5 @@ name = "payload"
 path = "src/main.rs"
 
 [dependencies]
-ultra-rs = { git = "https://github.com/unlink2/ultra-rs" }
+ultra-rs = { path = "../lib" }
 linked_list_allocator = "0.9.1"

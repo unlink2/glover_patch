@@ -91,8 +91,8 @@ pub struct InjectState<'a> {
     clones: CloneContext,
 }
 
-impl InjectState<'_> {
-    pub fn new() -> Self {
+impl Default for InjectState<'_> {
+    fn default() -> Self {
         // use built-in interupt enable/disable functions
         Self {
             start_timer: 0,
@@ -105,10 +105,18 @@ impl InjectState<'_> {
             clones: CloneContext::new(0x80610000 as *mut u8, 0x80600000 as *mut CloneHeader),
         }
     }
+}
+
+impl InjectState<'_> {
+    pub fn new() -> Self {
+        Self::default()
+    }
 
     /// render pushes the next frame to
     /// the framebuffer
     /// it should not do anything else!
+    /// # Safety
+    ///     Render needs hardware access
     pub unsafe fn render(&mut self) {
         self.menu.draw(&mut self.render_ctxt);
         self.timer.draw(&mut self.render_ctxt);
@@ -117,6 +125,8 @@ impl InjectState<'_> {
 
     /// update sets up the next frame and handles the general
     /// logic
+    /// # Safety
+    ///     update needs to be unsafe
     pub unsafe fn update(&mut self) {
         if self.start_timer < 2 {
             self.start_timer += 1;
@@ -159,9 +169,7 @@ impl InjectState<'_> {
 
         self.controller1.update();
         self.controller2.update();
-
         // update menus
-
         let trigger_cell = SharedPtrCell::new(&mut self.trigger);
         if self.trigger.load_menu {
             self.trigger.toggle = self.menu.active();
@@ -179,7 +187,6 @@ impl InjectState<'_> {
             self.menu.toggle(trigger_cell);
             self.trigger.toggle = false;
         }
-
         match &mut self.menu {
             MenuFocus::Menu(_) => self.update_menu(),
             MenuFocus::Monitor(_) => self.update_monitor(),

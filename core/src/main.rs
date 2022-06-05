@@ -1,9 +1,8 @@
 #![no_std]
 #![no_main]
+#![feature(alloc)]
 #![feature(lang_items)]
 #![feature(start)]
-#![feature(asm)]
-#![feature(global_asm)]
 #![feature(naked_functions)]
 #![feature(alloc_error_handler)]
 #![feature(asm_experimental_arch)]
@@ -39,7 +38,7 @@ pub unsafe extern "C" fn _start(arg: usize) -> () {
         // zero static ram space
         if !ZEROED_RAM {
             ZEROED_RAM = true;
-            ultrars::memory::umemset(0x80500000 as *mut u8, 0, 0x200000);
+            ultrars::memory::umemset(0x80500000 as *mut u8, 0, 0x100000);
             // init heap
             init_heap(0x80500000, 0x200000);
         }

@@ -5,7 +5,7 @@
 
 DMA_RAM equ 0x80400000
 DMA_ROM equ 0xB0780000
-DMA_SIZE equ 0x1FFFF
+DMA_SIZE equ 0x9FFFF
 
 // custom entry point
 

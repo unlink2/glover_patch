@@ -36,7 +36,7 @@ SECTIONS {
         *(.text .text.*)
         . = ALIGN(16);
     }
-
+	
     .rodata : {
         *(.rodata .rodata.*)
         . = ALIGN(16);
@@ -53,6 +53,9 @@ SECTIONS {
         . = ALIGN(16);
         __bss_end = .;
     }
+   
+   .eh_frame (INFO) : { KEEP(*(.eh_frame)) }
+   .eh_frame_hdr (INFO) : { *(.eh_frame_hdr) }
 
     __rom_end = . - __boot_start + 0xB0001000;
 

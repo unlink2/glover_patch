@@ -1,0 +1,13 @@
+[package]
+name = "ultra-rs"
+version = "0.1.0"
+authors = ["Lukas Krickl <lukas@krickl.dev>"]
+edition="2021"
+
+[lib]
+name = "ultrars"
+path = "src/lib.rs"
+
+
+[dependencies]
+embedgdb={git="https://github.com/unlink2/embedgdb"}
