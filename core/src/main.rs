@@ -6,6 +6,8 @@
 #![feature(global_asm)]
 #![feature(naked_functions)]
 #![feature(alloc_error_handler)]
+#![feature(asm_experimental_arch)]
+#![feature(asm_const)]
 
 use linked_list_allocator::LockedHeap;
 
