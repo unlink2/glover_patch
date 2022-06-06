@@ -5,6 +5,8 @@ use super::mainmenu::*;
 use super::memory::*;
 use super::renderer::GRendererContext;
 use crate::actor::Actor;
+use alloc::boxed::Box;
+use alloc::vec::Vec;
 use ultrars::clone::{CloneContext, CloneHeader};
 use ultrars::frameadvance::FrameAdvance;
 use ultrars::input::*;
@@ -86,7 +88,7 @@ pub struct InjectState<'a> {
     render_ctxt: GRendererContext<'a>,
     start_timer: u16,
     trigger: Trigger,
-    menu: MenuFocus<SharedPtrCell<Trigger>>,
+    menu: Box<dyn Widget<SharedPtrCell<Trigger>>>,
     timer: Timer<SharedPtrCell<Trigger>>,
     clones: CloneContext,
 }
@@ -100,7 +102,10 @@ impl Default for InjectState<'_> {
             controller2: InputHandler::new(CONTROLLER2),
             render_ctxt: GRendererContext::new(),
             trigger: Trigger::new(),
-            menu: MenuFocus::Menu(InjectState::build_menu(MenuType::MainMenu, &Trigger::new())),
+            menu: Box::new(MenuFocus::Menu(InjectState::build_menu(
+                MenuType::MainMenu,
+                &Trigger::new(),
+            ))),
             timer: Timer::new(140, 200),
             clones: CloneContext::new(0x80610000 as *mut u8, 0x80600000 as *mut CloneHeader),
         }

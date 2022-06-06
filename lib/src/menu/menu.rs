@@ -1,6 +1,7 @@
 use crate::{
     color::Color,
     font::{CHAR_H, CHAR_W},
+    input::InputHandler,
     render::{Drawable, RenderContext, Widget},
 };
 use alloc::vec::Vec;
@@ -121,7 +122,7 @@ where
         }
     }
 
-    fn update(&mut self, data: T) {
+    fn update(&mut self, data: T, input: &InputHandler) {
         if self.toggle_timer > 0 {
             self.toggle_timer -= 1;
         }

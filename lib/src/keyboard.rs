@@ -1,6 +1,6 @@
 use core::marker::PhantomData;
 
-use crate::color::Color;
+use crate::{color::Color, input::InputHandler};
 
 use super::render::{Drawable, RenderContext, Widget};
 
@@ -136,7 +136,7 @@ where
         }
     }
 
-    fn update(&mut self, _data: T) {}
+    fn update(&mut self, _data: T, input: &InputHandler) {}
 }
 
 impl<T> Widget<T> for Keyboard<'_, T>

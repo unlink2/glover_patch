@@ -1,3 +1,4 @@
+use crate::input::InputHandler;
 use crate::menu::EntryTypes;
 use crate::render::Drawable;
 use crate::render::RenderContext;
@@ -72,7 +73,7 @@ where
         ctxt.puts("Frame Advance", self.x, self.y);
     }
 
-    fn update(&mut self, data: T) {
+    fn update(&mut self, data: T, input: &InputHandler) {
         if self.toggle_timer > 0 {
             self.toggle_timer -= 1;
         }

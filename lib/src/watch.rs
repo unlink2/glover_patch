@@ -1,4 +1,7 @@
-use crate::render::{Drawable, RenderContext};
+use crate::{
+    input::InputHandler,
+    render::{Drawable, RenderContext},
+};
 use core::{ffi::c_void, marker::PhantomData};
 
 /**
@@ -59,7 +62,7 @@ where
         }
     }
 
-    fn update(&mut self, data: T) {}
+    fn update(&mut self, data: T, input: &InputHandler) {}
 }
 
 /**

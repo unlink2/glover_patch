@@ -1,4 +1,4 @@
-use crate::color::Color;
+use crate::{color::Color, input::InputHandler};
 
 /// The following usage only applies when writing a custom rendering pipeline
 /// if the game's font renderer is used you should be able to ignore the update function completely
@@ -50,10 +50,10 @@ where
 {
     fn draw(&mut self, ctxt: &mut dyn RenderContext);
 
-    fn update(&mut self, data: T);
+    fn update(&mut self, data: T, input: &InputHandler);
 }
 
-pub trait Widget<T>
+pub trait Widget<T>: Drawable<T>
 where
     T: Copy + Clone,
 {

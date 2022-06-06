@@ -1,3 +1,4 @@
+use crate::input::InputHandler;
 use crate::keyboard::{self, Keyboard, HEX};
 use embedgdb::Stream;
 
@@ -205,7 +206,7 @@ impl<T> Drawable<T> for Monitor<T>
 where
     T: Copy + Clone,
 {
-    fn update(&mut self, data: T) {
+    fn update(&mut self, data: T, input: &InputHandler) {
         if self.toggle_timer > 0 {
             self.toggle_timer -= 1;
         }
@@ -215,7 +216,7 @@ where
         }
 
         if self.keyboard.active() {
-            self.keyboard.update(data);
+            self.keyboard.update(data, input);
         } else if self.keyboard.enter {
             self.keyboard.enter = false;
             match self.keyboard.tag {

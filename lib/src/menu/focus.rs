@@ -1,5 +1,6 @@
 use crate::{
     frameadvance::FrameAdvance,
+    input::InputHandler,
     monitor::Monitor,
     render::{Drawable, RenderContext, Widget},
 };
@@ -44,11 +45,11 @@ impl<T> Drawable<T> for MenuFocus<T>
 where
     T: Copy + Clone,
 {
-    fn update(&mut self, data: T) {
+    fn update(&mut self, data: T, input: &InputHandler) {
         match self {
-            Self::Menu(m) => m.update(data),
-            Self::Monitor(m) => m.update(data),
-            Self::FrameAdvance(m) => m.update(data),
+            Self::Menu(m) => m.update(data, input),
+            Self::Monitor(m) => m.update(data, input),
+            Self::FrameAdvance(m) => m.update(data, input),
         }
     }
 

@@ -1,3 +1,5 @@
+use crate::input::InputHandler;
+
 use super::color::Color;
 use super::menu::*;
 use super::render::{to_decimal, Drawable, RenderContext, Widget};
@@ -61,7 +63,7 @@ impl<T> Drawable<T> for Timer<T>
 where
     T: Copy + Clone,
 {
-    fn update(&mut self, _data: T) {}
+    fn update(&mut self, _data: T, input: &InputHandler) {}
 
     fn draw(&mut self, ctxt: &mut dyn RenderContext) {
         if self.active {
