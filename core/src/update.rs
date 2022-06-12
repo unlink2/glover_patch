@@ -74,7 +74,7 @@ impl Default for InjectState {
                 no_op_action,
                 no_op_action,
                 no_op_action,
-                vec![],
+                vec![Box::new(Entry::new("Test Entry", no_op, no_op))],
             ))),
             timer: Timer::new(140, 200),
             clones: CloneContext::new(0x80610000 as *mut u8, 0x80600000 as *mut CloneHeader),
@@ -103,5 +103,9 @@ impl InjectState {
         let menu = self.menu.clone();
         let controller1 = self.controller1.clone();
         menu.borrow_mut().update(self, &controller1);
+
+        if !menu.borrow_mut().active() {
+            menu.borrow_mut().toggle(self);
+        }
     }
 }

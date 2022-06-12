@@ -30,9 +30,11 @@ use core::panic::PanicInfo;
 static mut GLOBALSTATE: Option<update::InjectState> = None;
 static mut ZEROED_RAM: bool = false;
 
+/// # Safety
+///     Called by assembly inject
 #[no_mangle]
 #[link_section = ".boot"]
-pub unsafe extern "C" fn _start(arg: usize) -> () {
+pub unsafe extern "C" fn _start(arg: usize) {
     // check if game is running
     if *CURRENT_MAP == 0xFF {
         // zero static ram space
@@ -55,8 +57,6 @@ pub unsafe extern "C" fn _start(arg: usize) -> () {
         }
         None => GLOBALSTATE = Some(update::InjectState::new()),
     }
-
-    return;
 }
 
 /// This function must be called before the heap is usable!
