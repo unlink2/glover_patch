@@ -120,12 +120,12 @@ impl InjectState<'_> {
     /// render pushes the next frame to
     /// the framebuffer
     /// it should not do anything else!
-    /// # Safety
-    ///     Render needs hardware access
-    pub unsafe fn render(&mut self) {
+    pub fn render(&mut self) {
         self.menu.draw(&mut self.render_ctxt);
         self.timer.draw(&mut self.render_ctxt);
-        self.render_ctxt.draw();
+        unsafe {
+            self.render_ctxt.draw();
+        }
     }
 
     /// update sets up the next frame and handles the general

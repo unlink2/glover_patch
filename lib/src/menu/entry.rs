@@ -1,84 +1,52 @@
+use alloc::boxed::Box;
 use alloc::string::String;
 use alloc::string::ToString;
 
+use crate::input::InputHandler;
 use crate::render::Drawable;
 
 use crate::render::{RenderContext, Widget};
-
-#[derive(Clone)]
-pub enum EntryTypes<T>
-where
-    T: Copy + Clone,
-{
-    Button(Entry<T>),
-}
-
-impl<T> EntryTypes<T>
-where
-    T: Copy + Clone,
-{
-    pub fn activate(&mut self, data: T) {
-        match self {
-            EntryTypes::Button(b) => b.activate(data),
-        }
-    }
-
-    pub fn active(&self) -> bool {
-        match self {
-            EntryTypes::Button(b) => b.active,
-        }
-    }
-
-    pub fn draw(&mut self, ctxt: &mut dyn RenderContext, x: isize, y: isize) {
-        match self {
-            EntryTypes::Button(b) => b.draw(ctxt, x, y),
-        }
-    }
-
-    pub fn call_update(&mut self, data: T) {
-        match self {
-            EntryTypes::Button(b) => b.call_update(data),
-        }
-    }
-}
 
 /**
  * An action function that returns either None
  * or a usize value
  */
-pub type EntryFn<T> = fn(entry: &mut Entry<T>, data: T) -> Option<usize>;
+pub type EntryFn<T> = fn(entry: &mut Entry<T>, data: &mut T) -> Option<usize>;
+pub type ActionFn<T> = fn(data: &mut T) -> Option<usize>;
 
 #[derive(Clone)]
-pub struct Entry<T>
-where
-    T: Copy + Clone,
-{
+pub struct Entry<T> {
     pub title: String,
     pub active: bool,
     pub update: EntryFn<T>,
     pub action: EntryFn<T>,
+    x: isize,
+    y: isize,
 }
 
-pub fn no_op<T: Copy + Clone>(_entry: &mut Entry<T>, _data: T) -> Option<usize> {
+pub fn no_op<T>(_entry: &mut Entry<T>, _data: &mut T) -> Option<usize> {
     None
 }
 
-impl<T> Entry<T>
-where
-    T: Copy + Clone,
-{
-    pub fn empty() -> EntryTypes<T> {
-        EntryTypes::Button(Self {
+pub fn no_op_action<T>(_data: &mut T) -> Option<usize> {
+    None
+}
+
+impl<T> Entry<T> {
+    pub fn empty() -> Box<dyn Widget<T>> {
+        Box::new(Self {
             title: "".to_string(),
             update: no_op,
             action: no_op,
             active: false,
+            x: 0,
+            y: 0,
         })
     }
 
     #[allow(clippy::new_ret_no_self)]
-    pub fn new(title: &str, update: EntryFn<T>, action: EntryFn<T>) -> EntryTypes<T> {
-        EntryTypes::Button(Self {
+    pub fn new(title: &str, update: EntryFn<T>, action: EntryFn<T>) -> Box<dyn Widget<T>> {
+        Box::new(Self {
             title: title.to_string(),
             update,
             action,
@@ -91,7 +59,7 @@ where
         update: EntryFn<T>,
         action: EntryFn<T>,
         value: bool,
-    ) -> EntryTypes<T> {
+    ) -> Box<dyn Widget<T>> {
         let mut title_ca = if value {
             "[x]".to_string()
         } else {
@@ -99,7 +67,7 @@ where
         };
         title_ca.push_str(title);
 
-        EntryTypes::Button(Self {
+        Box::new(Self {
             title: title_ca,
             update,
             action,
@@ -119,15 +87,34 @@ where
         self.title = title.to_string();
     }
 
-    pub fn draw(&mut self, ctxt: &mut dyn RenderContext, x: isize, y: isize) {
-        ctxt.puts(&self.title, x, y);
-    }
-
-    pub fn call_update(&mut self, data: T) {
+    pub fn call_update(&mut self, data: &mut T) {
         (self.update)(self, data);
     }
+}
 
-    pub fn activate(&mut self, data: T) {
+impl<T> Drawable<T> for Entry<T> {
+    fn draw(&mut self, ctxt: &mut dyn RenderContext) {
+        ctxt.puts(&self.title, self.x, self.y);
+    }
+
+    fn update(&mut self, data: &mut T, _input: &InputHandler) {
+        self.call_update(data)
+    }
+}
+
+impl<T> Widget<T> for Entry<T> {
+    fn toggle(&mut self, _data: &mut T) {}
+
+    fn activate(&mut self, data: &mut T) {
         (self.action)(self, data);
+    }
+
+    fn position(&mut self, x: isize, y: isize) {
+        self.x = x;
+        self.y = y;
+    }
+
+    fn active(&self) -> bool {
+        self.active
     }
 }

@@ -44,20 +44,16 @@ pub trait RenderContext {
     }
 }
 
-pub trait Drawable<T>
-where
-    T: Copy + Clone,
-{
+pub trait Drawable<T> {
     fn draw(&mut self, ctxt: &mut dyn RenderContext);
 
-    fn update(&mut self, data: T, input: &InputHandler);
+    fn update(&mut self, data: &mut T, input: &InputHandler);
 }
 
-pub trait Widget<T>: Drawable<T>
-where
-    T: Copy + Clone,
-{
-    fn toggle(&mut self, data: T);
+pub trait Widget<T>: Drawable<T> {
+    fn toggle(&mut self, data: &mut T);
+    fn activate(&mut self, data: &mut T);
+    fn position(&mut self, x: isize, y: isize);
     fn active(&self) -> bool;
 }
 
