@@ -4,9 +4,9 @@ use ultrars::color::Color;
 use ultrars::render::RenderContext;
 
 #[repr(C)]
-struct TextDrawObject {
-    next: *const TextDrawObject,
-    prev: *const TextDrawObject,
+struct TextNode {
+    next: *const TextNode,
+    prev: *const TextNode,
     text: [u8; 0x40],
     pos_x: isize,
     pos_y: isize,
@@ -18,11 +18,11 @@ struct TextDrawObject {
     unknown1: [u32; 3],
 }
 
-impl TextDrawObject {
+impl TextNode {
     pub fn new(pos_x: isize, pos_y: isize, scale_x: f32, scale_y: f32, color: Color) -> Self {
         Self {
-            next: null() as *const TextDrawObject,
-            prev: null() as *const TextDrawObject,
+            next: null() as *const TextNode,
+            prev: null() as *const TextNode,
             text: [b'\0'; 0x40],
             pos_x,
             pos_y,
@@ -37,15 +37,14 @@ impl TextDrawObject {
 }
 
 pub struct GRendererContext<'a> {
-    buffer: &'a mut [TextDrawObject],
+    buffer: &'a mut [TextNode],
     current: usize,
     next_color: Color,
 }
 
 impl GRendererContext<'_> {
     pub fn new() -> Self {
-        let buffer =
-            unsafe { core::slice::from_raw_parts_mut(0x80550000 as *mut TextDrawObject, 100) };
+        let buffer = unsafe { core::slice::from_raw_parts_mut(0x80550000 as *mut TextNode, 100) };
         let mut s = Self {
             current: 0,
             buffer,
@@ -64,11 +63,11 @@ impl GRendererContext<'_> {
 
     fn link(&mut self) {
         unsafe {
-            let link = core::mem::transmute::<*const c_void, fn(*const TextDrawObject, u8)>(
+            let link = core::mem::transmute::<*const c_void, fn(*const TextNode, u8)>(
                 super::memory::INSERT_TEXT_LL,
             );
             for b in self.buffer.iter_mut() {
-                *b = TextDrawObject::new(0, 0, 0.75, 0.75, Color::new(0xFF, 0xFF, 0xFF, 0xFE));
+                *b = TextNode::new(0, 0, 0.75, 0.75, Color::new(0xFF, 0xFF, 0xFF, 0xFE));
                 (link)(b, 1);
                 b.font = 0x801ED338 as *const c_void;
             }
