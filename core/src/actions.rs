@@ -1,3 +1,5 @@
+use crate::update::InjectState;
+
 use super::memory::*;
 use super::update::Trigger;
 use ultrars::memory::SharedPtrCell;
@@ -30,27 +32,17 @@ pub fn unfreeze(cell: SharedPtrCell<Trigger>) {
     }
 }
 
-pub fn open_menu(
-    _entry: &mut Entry<SharedPtrCell<Trigger>>,
-    _trigger: SharedPtrCell<Trigger>,
-) -> Option<usize> {
+pub fn open_menu(_trigger: &mut InjectState) -> Option<usize> {
     pause();
     return None;
 }
 
-pub fn close_menu(
-    _entry: &mut Entry<SharedPtrCell<Trigger>>,
-    mut trigger: SharedPtrCell<Trigger>,
-) -> Option<usize> {
+pub fn close_menu(state: &mut InjectState) -> Option<usize> {
     unpause();
-    trigger.as_mut().toggle = true;
     return None;
 }
 
-pub fn update_menu(
-    _entry: &mut Entry<SharedPtrCell<Trigger>>,
-    _trigger: SharedPtrCell<Trigger>,
-) -> Option<usize> {
+pub fn update_menu(_trigger: InjectState) -> Option<usize> {
     pause();
     return None;
 }

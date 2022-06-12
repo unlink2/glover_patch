@@ -9,10 +9,7 @@ use core::marker::PhantomData;
 /**
  * A tmter that counts time based on framerate
  */
-pub struct Timer<T>
-where
-    T: Copy + Clone,
-{
+pub struct Timer<T> {
     x: isize,
     y: isize,
     pub frames: u32,
@@ -22,10 +19,7 @@ where
     buffer: [u8; 32],
 }
 
-impl<T> Timer<T>
-where
-    T: Copy + Clone,
-{
+impl<T> Timer<T> {
     pub fn new(x: isize, y: isize) -> Self {
         Self {
             x,
@@ -59,11 +53,8 @@ where
     }
 }
 
-impl<T> Drawable<T> for Timer<T>
-where
-    T: Copy + Clone,
-{
-    fn update(&mut self, _data: T, input: &InputHandler) {}
+impl<T> Drawable<T> for Timer<T> {
+    fn update(&mut self, _data: &mut T, input: &InputHandler) {}
 
     fn draw(&mut self, ctxt: &mut dyn RenderContext) {
         if self.active {
@@ -83,15 +74,16 @@ where
     }
 }
 
-impl<T> Widget<T> for Timer<T>
-where
-    T: Copy + Clone,
-{
-    fn toggle(&mut self, _data: T) {
+impl<T> Widget<T> for Timer<T> {
+    fn toggle(&mut self, _data: &mut T) {
         self.active = !self.active
     }
 
     fn active(&self) -> bool {
         self.active
     }
+
+    fn activate(&mut self, data: &mut T) {}
+
+    fn position(&mut self, x: isize, y: isize) {}
 }

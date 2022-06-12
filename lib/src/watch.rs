@@ -24,10 +24,7 @@ pub enum WatchType {
 /**
  * An address to watch
  */
-pub struct WatchAddr<T>
-where
-    T: Copy,
-{
+pub struct WatchAddr<T> {
     pub x: isize,
     pub y: isize,
     pub watch_type: WatchType,
@@ -35,10 +32,7 @@ where
     pahntom: PhantomData<T>,
 }
 
-impl<T> WatchAddr<T>
-where
-    T: Copy,
-{
+impl<T> WatchAddr<T> {
     pub fn new(x: isize, y: isize, addr: WatchType) -> Self {
         Self {
             x,
@@ -50,10 +44,7 @@ where
     }
 }
 
-impl<T> Drawable<T> for WatchAddr<T>
-where
-    T: Copy,
-{
+impl<T> Drawable<T> for WatchAddr<T> {
     fn draw(&mut self, ctxt: &mut dyn RenderContext) {
         // decide which type to read
         match self.watch_type {
@@ -62,16 +53,13 @@ where
         }
     }
 
-    fn update(&mut self, data: T, input: &InputHandler) {}
+    fn update(&mut self, data: &mut T, input: &InputHandler) {}
 }
 
 /**
  * A drawable watch object
  */
-pub struct Watch<T>
-where
-    T: Copy,
-{
+pub struct Watch<T> {
     pub x: isize,
     pub y: isize,
     pub watch_list: [WatchAddr<T>; 8],

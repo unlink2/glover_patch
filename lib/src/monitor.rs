@@ -25,9 +25,9 @@ where
     bytes_per_row: usize,
     toggle_timer_max: u16,
     toggle_timer: u16,
-    close_action: EntryTypes<T>,
-    back_action: EntryTypes<T>,
-    open_action: EntryTypes<T>,
+    close_action: ActionFn<T>,
+    back_action: ActionFn<T>,
+    open_action: ActionFn<T>,
     cursor_x: usize,
     cursor_y: usize,
     addr_buffer: [u8; 8],
@@ -42,9 +42,9 @@ where
     pub fn new(
         x: isize,
         y: isize,
-        open_action: EntryTypes<T>,
-        close_action: EntryTypes<T>,
-        back_action: EntryTypes<T>,
+        open_action: ActionFn<T>,
+        close_action: ActionFn<T>,
+        back_action: ActionFn<T>,
     ) -> Self {
         Self {
             x,
@@ -178,22 +178,22 @@ where
         self.keyboard.active = true;
     }
 
-    pub fn open(&mut self, data: T) {
+    pub fn open(&mut self, data: &mut T) {
         self.active = true;
-        self.open_action.activate(data);
+        (self.open_action)(data);
     }
 
-    pub fn close(&mut self, data: T) {
+    pub fn close(&mut self, data: &mut T) {
         self.active = false;
-        self.close_action.activate(data);
+        (self.close_action)(data);
     }
 
-    pub fn back(&mut self, data: T) {
+    pub fn back(&mut self, data: &mut T) {
         if self.keyboard.active() {
             self.keyboard.back(&mut self.addr_buffer);
         } else {
             self.toggle_timer = 0;
-            self.back_action.activate(data);
+            (self.back_action)(data);
         }
     }
 
@@ -206,7 +206,7 @@ impl<T> Drawable<T> for Monitor<T>
 where
     T: Copy + Clone,
 {
-    fn update(&mut self, data: T, input: &InputHandler) {
+    fn update(&mut self, data: &mut T, input: &InputHandler) {
         if self.toggle_timer > 0 {
             self.toggle_timer -= 1;
         }
@@ -289,7 +289,7 @@ impl<T> Widget<T> for Monitor<T>
 where
     T: Copy + Clone,
 {
-    fn toggle(&mut self, data: T) {
+    fn toggle(&mut self, data: &mut T) {
         if self.toggle_timer > 0 {
             return;
         }
@@ -306,4 +306,8 @@ where
     fn active(&self) -> bool {
         self.active
     }
+
+    fn activate(&mut self, data: &mut T) {}
+
+    fn position(&mut self, x: isize, y: isize) {}
 }

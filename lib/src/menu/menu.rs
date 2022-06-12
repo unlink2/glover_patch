@@ -149,4 +149,8 @@ impl<T> Widget<T> for Menu<T> {
     fn active(&self) -> bool {
         self.active
     }
+
+    fn activate(&mut self, _data: &mut T) {}
+
+    fn position(&mut self, x: isize, y: isize) {}
 }

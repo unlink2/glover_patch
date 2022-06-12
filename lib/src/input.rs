@@ -34,6 +34,7 @@ pub const CONTROLLER2: *mut u32 = 0xBFC007CC as *mut u32;
 /**
  * Handles an input
  */
+#[derive(Clone)]
 pub struct InputHandler {
     controller: *mut u32,
     current: u32,
@@ -53,9 +54,12 @@ impl InputHandler {
      * Call once a frame to poll last controller
      * status
      */
-    pub unsafe fn update(&mut self) {
+    pub fn update(&mut self) {
         self.last = self.current;
-        self.current = *self.controller;
+
+        unsafe {
+            self.current = *self.controller;
+        }
     }
 
     /**
@@ -67,15 +71,14 @@ impl InputHandler {
         if self.current == 0xFFFFFFFF {
             return false;
         }
-        return self.is_pressed(button, self.current)
-            && (!just || !self.is_pressed(button, self.last));
+        self.is_pressed(button, self.current) && (!just || !self.is_pressed(button, self.last))
     }
 
     pub fn is_pressed(&self, button: Button, readout: u32) -> bool {
-        return ((readout >> (button as u32)) & 0x01) == 1;
+        ((readout >> (button as u32)) & 0x01) == 1
     }
 
     pub fn read_stick(&self, axis: Axis) -> u8 {
-        return ((self.current) >> (axis as u8 * 8)) as u8;
+        ((self.current) >> (axis as u8 * 8)) as u8
     }
 }

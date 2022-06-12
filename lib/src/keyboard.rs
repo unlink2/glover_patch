@@ -13,10 +13,7 @@ pub static HEX: [&[u8]; 3] = [&HEX_ROW1, &HEX_ROW2, &HEX_ROW3];
  * Represents a simple keyboard
  * that can be rendered to any render context
  */
-pub struct Keyboard<'a, T>
-where
-    T: Copy + Clone,
-{
+pub struct Keyboard<'a, T> {
     pos_x: isize,
     pos_y: isize,
     cursor_x: usize,
@@ -29,10 +26,7 @@ where
     phantom: PhantomData<T>,
 }
 
-impl<'a, T> Keyboard<'a, T>
-where
-    T: Copy + Clone,
-{
+impl<'a, T> Keyboard<'a, T> {
     pub fn new(pos_x: isize, pos_y: isize, grid: &'a [&'a [u8]]) -> Self {
         Self {
             pos_x,
@@ -116,10 +110,7 @@ where
     }
 }
 
-impl<T> Drawable<T> for Keyboard<'_, T>
-where
-    T: Copy + Clone,
-{
+impl<T> Drawable<T> for Keyboard<'_, T> {
     fn draw(&mut self, ctxt: &mut dyn RenderContext) {
         for (y, row) in self.grid.iter().enumerate() {
             for (x, col) in row.iter().enumerate() {
@@ -136,18 +127,19 @@ where
         }
     }
 
-    fn update(&mut self, _data: T, input: &InputHandler) {}
+    fn update(&mut self, _data: &mut T, input: &InputHandler) {}
 }
 
-impl<T> Widget<T> for Keyboard<'_, T>
-where
-    T: Copy + Clone,
-{
+impl<T> Widget<T> for Keyboard<'_, T> {
     fn active(&self) -> bool {
         self.active
     }
 
-    fn toggle(&mut self, _data: T) {
+    fn toggle(&mut self, _data: &mut T) {
         self.active = !self.active
     }
+
+    fn activate(&mut self, data: &mut T) {}
+
+    fn position(&mut self, x: isize, y: isize) {}
 }

@@ -1,3 +1,5 @@
+use core::marker::PhantomData;
+
 use alloc::boxed::Box;
 use alloc::string::String;
 use alloc::string::ToString;
@@ -33,33 +35,30 @@ pub fn no_op_action<T>(_data: &mut T) -> Option<usize> {
 }
 
 impl<T> Entry<T> {
-    pub fn empty() -> Box<dyn Widget<T>> {
-        Box::new(Self {
+    pub fn empty() -> Self {
+        Self {
             title: "".to_string(),
             update: no_op,
             action: no_op,
             active: false,
             x: 0,
             y: 0,
-        })
+        }
     }
 
     #[allow(clippy::new_ret_no_self)]
-    pub fn new(title: &str, update: EntryFn<T>, action: EntryFn<T>) -> Box<dyn Widget<T>> {
-        Box::new(Self {
+    pub fn new(title: &str, update: EntryFn<T>, action: EntryFn<T>) -> Self {
+        Self {
             title: title.to_string(),
             update,
             action,
             active: true,
-        })
+            x: 0,
+            y: 0,
+        }
     }
 
-    pub fn checkbox(
-        title: &str,
-        update: EntryFn<T>,
-        action: EntryFn<T>,
-        value: bool,
-    ) -> Box<dyn Widget<T>> {
+    pub fn checkbox(title: &str, update: EntryFn<T>, action: EntryFn<T>, value: bool) -> Self {
         let mut title_ca = if value {
             "[x]".to_string()
         } else {
@@ -67,12 +66,14 @@ impl<T> Entry<T> {
         };
         title_ca.push_str(title);
 
-        Box::new(Self {
+        Self {
             title: title_ca,
             update,
             action,
             active: true,
-        })
+            x: 0,
+            y: 0,
+        }
     }
 
     pub fn set_checkbox(&mut self, value: bool) {

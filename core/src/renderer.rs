@@ -81,6 +81,12 @@ impl GRendererContext<'_> {
     }
 }
 
+impl Default for GRendererContext<'_> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 /// TODO render context for internal font renderer
 impl RenderContext for GRendererContext<'_> {
     fn draw(&mut self) {
