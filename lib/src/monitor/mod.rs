@@ -1,12 +1,16 @@
-use crate::input::InputHandler;
-use crate::keyboard::{self, Keyboard, HEX};
-use embedgdb::Stream;
+pub mod parser;
+pub mod stream;
+
+use crate::monitor::stream::{BufferedStream, Stream};
+use crate::{
+    input::InputHandler,
+    keyboard::{Keyboard, HEX},
+};
 
 use super::color::Color;
 use super::menu::*;
 use super::render::{Drawable, RenderContext, Widget};
 use core::ffi::c_void;
-use embedgdb::{BufferedStream, Parser};
 
 /**
  * This is a memory monitor
@@ -222,11 +226,11 @@ where
             match self.keyboard.tag {
                 0 => {
                     // this input cannot fail because of the restricted keyboard input
-                    let addr = Parser::from_hexu(&self.addr_buffer).unwrap_or(0);
+                    let addr = parser::from_hexu(&self.addr_buffer).unwrap_or(0);
                     self.addr = addr as *mut c_void;
                 }
                 _ => {
-                    let value = Parser::from_hexu(&self.addr_buffer).unwrap_or(0) as u8;
+                    let value = parser::from_hexu(&self.addr_buffer).unwrap_or(0) as u8;
                     let addr = unsafe {
                         self.addr
                             .add(self.calc_offset(self.cursor_x, self.cursor_y))
@@ -243,13 +247,13 @@ where
             self.keyboard.draw(ctxt);
         } else {
             let mut stream = BufferedStream::new();
-            let _ = Parser::to_hexu(&(self.addr as usize).to_be_bytes(), &mut stream); // this should not fail!
+            let _ = parser::to_hexu(&(self.addr as usize).to_be_bytes(), &mut stream); // this should not fail!
             let _ = stream.write(0); // make sure to terminate the string
             ctxt.putsu8(&stream.buffer, self.x, self.y);
 
             for r in 0..self.rows {
                 let offset_hex =
-                    Parser::to_hex_tuple(unsafe { self.addr.add(self.calc_offset(0, r)) as u8 });
+                    parser::to_hex_tuple(unsafe { self.addr.add(self.calc_offset(0, r)) as u8 });
 
                 let addr_offset = [offset_hex.0 as char, offset_hex.1 as char];
                 let y = self.y as isize + ctxt.char_height() * (r as isize + 1);
@@ -275,7 +279,7 @@ where
                     let value_str = if self.ascii_mode {
                         [ctxt.convert(value) as char, 0 as char]
                     } else {
-                        let value_hex = Parser::to_hex_tuple(value);
+                        let value_hex = parser::to_hex_tuple(value);
                         [value_hex.0 as char, value_hex.1 as char]
                     };
                     ctxt.cputs(&value_str, x, y);

@@ -10,4 +10,3 @@ path = "src/lib.rs"
 
 
 [dependencies]
-embedgdb={git="https://github.com/unlink2/embedgdb"}
