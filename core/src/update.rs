@@ -52,7 +52,7 @@ pub struct Trigger {
 pub struct InjectState {
     controller1: InputHandler,
     controller2: InputHandler,
-    render_ctxt: GRendererContext<'static>,
+    render_ctxt: GRendererContext,
     start_timer: u16,
     menu: Rc<RefCell<dyn Widget<InjectState>>>,
     timer: Timer<InjectState>,

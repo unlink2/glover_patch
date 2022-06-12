@@ -1,5 +1,6 @@
+use alloc::boxed::Box;
 use core::ffi::c_void;
-use core::ptr::null;
+use core::ptr::{self, null};
 use ultrars::color::Color;
 use ultrars::render::RenderContext;
 
@@ -16,6 +17,29 @@ struct TextNode {
     unkown0: u32,
     font: *const c_void, // TODO make struct
     unknown1: [u32; 3],
+}
+
+impl Default for TextNode {
+    fn default() -> Self {
+        Self {
+            next: ptr::null(),
+            prev: ptr::null(),
+            text: [0; 0x40],
+            pos_x: Default::default(),
+            pos_y: Default::default(),
+            scale_x: Default::default(),
+            scale_y: Default::default(),
+            color: Color {
+                red: 0,
+                green: 0,
+                blue: 0,
+                alpha: 0,
+            },
+            unkown0: Default::default(),
+            font: ptr::null(),
+            unknown1: Default::default(),
+        }
+    }
 }
 
 impl TextNode {
@@ -36,18 +60,20 @@ impl TextNode {
     }
 }
 
-pub struct GRendererContext<'a> {
-    buffer: &'a mut [TextNode],
+const CAP: usize = 32;
+
+pub struct GRendererContext {
+    buffer: Box<[TextNode; CAP]>,
     current: usize,
     next_color: Color,
 }
 
-impl GRendererContext<'_> {
+impl GRendererContext {
     pub fn new() -> Self {
-        let buffer = unsafe { core::slice::from_raw_parts_mut(0x80550000 as *mut TextNode, 100) };
+        let buffer: [TextNode; CAP] = Default::default();
         let mut s = Self {
             current: 0,
-            buffer,
+            buffer: Box::new(buffer),
             next_color: Color::new(0xFF, 0xFF, 0xFF, 0xFE),
         };
 
@@ -80,14 +106,14 @@ impl GRendererContext<'_> {
     }
 }
 
-impl Default for GRendererContext<'_> {
+impl Default for GRendererContext {
     fn default() -> Self {
         Self::new()
     }
 }
 
 /// TODO render context for internal font renderer
-impl RenderContext for GRendererContext<'_> {
+impl RenderContext for GRendererContext {
     fn draw(&mut self) {
         if self.buffer[self.current].next.is_null() {
             self.link();
