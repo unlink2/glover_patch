@@ -188,7 +188,7 @@ impl RenderContext for GRendererContext {
 
     // font does not have lower case letters
     fn convert(&self, c: u8) -> u8 {
-        if c >= b'a' && c <= b'z' {
+        if (b'a'..=b'z').contains(&c) {
             c - 32
         } else {
             match c {
