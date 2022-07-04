@@ -4,7 +4,7 @@ members = ["core", "lib"]
 [profile.dev]
 panic = "abort"
 overflow-checks = false
-# opt-level = 2
+opt-level = "z"
 
 [profile.release]
 panic = "abort"
